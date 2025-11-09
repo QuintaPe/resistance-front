@@ -4,7 +4,7 @@ import type { Player } from "../types";
 interface TeamSelectorProps {
     players: Player[];
     selectedTeam: string[];
-    setSelectedTeam: (team: string[]) => void;
+    setSelectedTeam: React.Dispatch<React.SetStateAction<string[]>>;
     teamSize: number;
 }
 
@@ -14,33 +14,56 @@ const TeamSelector: React.FC<TeamSelectorProps> = ({
     setSelectedTeam,
     teamSize,
 }) => {
-    const togglePlayer = (id: string) => {
-        if (selectedTeam.includes(id)) {
-            // Deseleccionar
-            setSelectedTeam(selectedTeam.filter((pid) => pid !== id));
+    const togglePlayer = (playerId: string) => {
+        if (selectedTeam.includes(playerId)) {
+            setSelectedTeam(selectedTeam.filter((id) => id !== playerId));
         } else {
-            // Seleccionar solo si no se excede el tamaño del equipo
             if (selectedTeam.length < teamSize) {
-                setSelectedTeam([...selectedTeam, id]);
+                setSelectedTeam([...selectedTeam, playerId]);
             }
         }
     };
 
     return (
-        <div className="flex flex-wrap gap-2 justify-center">
-            {players.map((p) => {
-                const isSelected = selectedTeam.includes(p.id);
-                return (
-                    <button
-                        key={p.id}
-                        onClick={() => togglePlayer(p.id)}
-                        className={`px-4 py-2 rounded border ${isSelected ? "bg-blue-600 text-white" : "bg-gray-200"
-                            }`}
-                    >
-                        {p.name}
-                    </button>
-                );
-            })}
+        <div className="w-full max-w-lg">
+            <div className="grid grid-cols-2 gap-2 sm:gap-3">
+                {players.map((player) => {
+                    const isSelected = selectedTeam.includes(player.id);
+                    const canSelect = selectedTeam.length < teamSize || isSelected;
+
+                    return (
+                        <button
+                            key={player.id}
+                            onClick={() => togglePlayer(player.id)}
+                            disabled={!canSelect}
+                            className={`
+                                p-2.5 sm:p-4 rounded-xl font-semibold transition-all duration-200 text-sm sm:text-base
+                                ${isSelected
+                                    ? "bg-gradient-to-r from-blue-600 to-purple-600 text-white scale-105 shadow-lg ring-2 ring-blue-400"
+                                    : canSelect
+                                        ? "bg-slate-700/50 hover:bg-slate-700 text-slate-300 hover:text-white border border-slate-600"
+                                        : "bg-slate-800/30 text-slate-600 cursor-not-allowed border border-slate-700/30"
+                                }
+                            `}
+                        >
+                            <div className="flex items-center justify-between">
+                                <span className="truncate">{player.name}</span>
+                                {isSelected && (
+                                    <span className="ml-1 sm:ml-2 text-lg sm:text-xl shrink-0">✓</span>
+                                )}
+                            </div>
+                        </button>
+                    );
+                })}
+            </div>
+            <div className="mt-3 sm:mt-4 text-center">
+                <div className="inline-flex items-center gap-2 px-3 py-1.5 sm:px-4 sm:py-2 bg-slate-700/50 rounded-xl border border-slate-600">
+                    <span className="text-slate-400 text-sm">Seleccionados:</span>
+                    <span className={`font-bold text-sm sm:text-base ${selectedTeam.length === teamSize ? "text-green-400" : "text-blue-400"}`}>
+                        {selectedTeam.length}/{teamSize}
+                    </span>
+                </div>
+            </div>
         </div>
     );
 };

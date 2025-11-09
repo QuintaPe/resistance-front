@@ -7,25 +7,32 @@ interface MissionActionProps {
 
 const MissionAction: React.FC<MissionActionProps> = ({ canFail = false, onAction }) => {
     return (
-        <div className="flex flex-col items-center gap-4">
-            <p>Elige tu acción para la misión:</p>
-            <div className="flex gap-4">
+        <div className="space-y-4 sm:space-y-6 w-full max-w-md px-2 sm:px-0">
+            <div className="flex flex-col gap-3 sm:gap-4">
                 <button
                     onClick={() => onAction("success")}
-                    className="px-6 py-2 bg-green-600 text-white rounded hover:bg-green-700"
+                    className="btn-success text-base sm:text-lg py-3 sm:py-4 flex items-center justify-center gap-2 sm:gap-3"
                 >
-                    Éxito
+                    <span className="text-2xl sm:text-3xl">✓</span>
+                    <span>Contribuir al Éxito</span>
                 </button>
                 {canFail && (
                     <button
                         onClick={() => onAction("fail")}
-                        className="px-6 py-2 bg-red-600 text-white rounded hover:bg-red-700"
+                        className="btn-danger text-base sm:text-lg py-3 sm:py-4 flex items-center justify-center gap-2 sm:gap-3"
                     >
-                        Fallo
+                        <span className="text-2xl sm:text-3xl">✗</span>
+                        <span>Sabotear Misión</span>
                     </button>
                 )}
             </div>
-            {!canFail && <p className="text-gray-600">Como miembro de la resistencia solo puedes elegir Éxito</p>}
+            {!canFail && (
+                <div className="card bg-blue-500/10 border-blue-500/30 text-center">
+                    <p className="text-blue-300 text-xs sm:text-sm">
+                        ℹ️ Como miembro de la resistencia solo puedes contribuir al éxito
+                    </p>
+                </div>
+            )}
         </div>
     );
 };

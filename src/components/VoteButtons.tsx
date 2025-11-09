@@ -6,18 +6,20 @@ interface VoteButtonsProps {
 
 const VoteButtons: React.FC<VoteButtonsProps> = ({ onVote }) => {
     return (
-        <div className="flex gap-4 mt-2">
+        <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 w-full">
             <button
                 onClick={() => onVote("approve")}
-                className="px-6 py-2 bg-green-600 text-white rounded hover:bg-green-700"
+                className="btn-success flex-1 flex items-center justify-center gap-2 text-base sm:text-lg"
             >
-                Aprobar
+                <span className="text-xl sm:text-2xl">✓</span>
+                <span>Aprobar</span>
             </button>
             <button
                 onClick={() => onVote("reject")}
-                className="px-6 py-2 bg-red-600 text-white rounded hover:bg-red-700"
+                className="btn-danger flex-1 flex items-center justify-center gap-2 text-base sm:text-lg"
             >
-                Rechazar
+                <span className="text-xl sm:text-2xl">✗</span>
+                <span>Rechazar</span>
             </button>
         </div>
     );
