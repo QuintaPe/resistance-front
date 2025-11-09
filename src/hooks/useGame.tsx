@@ -1,0 +1,101 @@
+import { useCallback } from "react";
+import { useSocket } from "../context/SocketContext";
+
+/**
+ * Hook principal para gestionar las acciones del juego
+ * (proponer equipo, votar, actuar en misión, etc.)
+ */
+export const useGame = () => {
+    const { socket, roomState, playerId } = useSocket();
+
+    // =========================
+    // 📡 EVENTOS SOCKET
+    // =========================
+
+    /** Proponer un equipo (solo líder) */
+    const proposeTeam = useCallback(
+        (roomCode: string, teamIds: string[]) => {
+            if (!roomCode || !teamIds.length) return;
+            socket.emit("team:propose", { roomCode, teamIds });
+        },
+        [socket]
+    );
+
+    /** Votar por un equipo */
+    const voteTeam = useCallback(
+        (roomCode: string, vote: "approve" | "reject") => {
+            if (!roomCode) return;
+            socket.emit("team:vote", { roomCode, vote });
+        },
+        [socket]
+    );
+
+    /** Actuar en una misión */
+    const missionAct = useCallback(
+        (roomCode: string, action: "success" | "fail") => {
+            if (!roomCode) return;
+            socket.emit("mission:act", { roomCode, action });
+        },
+        [socket]
+    );
+
+    // =========================
+    // 🧠 UTILIDADES DEL ESTADO
+    // =========================
+
+    /** Jugador actual es el líder */
+    const isLeader = roomState
+        ? roomState.players[roomState.leaderIndex]?.id === playerId
+        : false;
+
+    /** Jugador actual está en el equipo propuesto */
+    const isInTeam = roomState?.proposedTeam?.includes(playerId || "") ?? false;
+
+    /** Fase actual del juego */
+    const phase = roomState?.phase ?? "lobby";
+
+    /** Tamaño del equipo requerido para la misión actual */
+    const teamSize =
+        roomState?.teamSizePerMission?.[roomState.currentMission || 0] ?? 0;
+
+    /** Progreso de misiones (para barra de estado o visual) */
+    const missionProgress = roomState?.results?.length ?? 0;
+
+    /** Verifica si el juego ha terminado */
+    const gameEnded = phase === "reveal";
+
+    /** Determina quién ganó */
+    const winner = (() => {
+        if (!roomState) return null;
+        const passed = roomState.results.filter((r) => r.passed).length;
+        const failed = roomState.results.filter((r) => !r.passed).length;
+        if (roomState.rejectedTeamsInRow >= 5) return "spies";
+        if (passed >= 3) return "resistance";
+        if (failed >= 3) return "spies";
+        return null;
+    })();
+
+    // =========================
+    // 🚀 API del Hook
+    // =========================
+
+    return {
+        // Estado base
+        roomState,
+        playerId,
+        phase,
+        teamSize,
+        missionProgress,
+        isLeader,
+        isInTeam,
+        gameEnded,
+        winner,
+
+        // Acciones
+        proposeTeam,
+        voteTeam,
+        missionAct,
+    };
+};
+
+export default useGame;

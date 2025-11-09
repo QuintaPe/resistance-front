@@ -1,0 +1,43 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ===== Opcionales: Estilos adicionales ===== */
+
+/* Fondo de toda la app */
+body {
+    @apply bg-gray-100 text-gray-800;
+}
+
+/* Botones */
+button {
+    @apply transition-colors duration-200;
+}
+
+/* Inputs */
+input {
+    @apply border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500;
+}
+
+/* Scrollbars bonitos */
+::-webkit-scrollbar {
+    width: 8px;
+}
+
+::-webkit-scrollbar-track {
+    @apply bg-gray-200;
+}
+
+::-webkit-scrollbar-thumb {
+    @apply bg-gray-400 rounded;
+}
+
+/* Texto centrado en pantallas de carga */
+.loading-screen {
+    @apply flex items-center justify-center h-screen text-xl font-semibold text-gray-700;
+}
+
+/* Estilos para los contenedores de listas */
+.list-container {
+    @apply flex flex-col gap-2 border p-4 rounded bg-white shadow-sm;
+}
