@@ -3,6 +3,11 @@ import { io, Socket } from "socket.io-client";
 import type { PublicState } from "../types";
 
 // =========================
+// 📦 Separar URL en variable de entorno
+// =========================
+const SOCKET_SERVER_URL = import.meta.env.VITE_SOCKET_SERVER_URL || "http://localhost:3000";
+
+// =========================
 // ⚙️ Contexto
 // =========================
 
@@ -39,7 +44,7 @@ export const useSocket = () => {
 // =========================
 
 export const SocketProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-    const [socket] = useState(() => io("http://localhost:3000", { transports: ["websocket"] }));
+    const [socket] = useState(() => io(SOCKET_SERVER_URL, { transports: ["websocket"] }));
     const [connected, setConnected] = useState(false);
     const [playerId, setPlayerId] = useState<string | null>(null);
     const [roomState, setRoomState] = useState<PublicState | null>(null);

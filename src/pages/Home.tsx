@@ -31,119 +31,184 @@ const Home: React.FC = () => {
     };
 
     return (
-        <div className="flex flex-col items-center justify-center min-h-screen p-4 sm:p-6 animate-fadeIn">
-            {/* Fondo decorativo */}
+        <div className="relative flex flex-col items-center justify-center min-h-screen p-4 sm:p-6 overflow-hidden">
+            {/* Fondo animado mejorado */}
             <div className="absolute inset-0 overflow-hidden pointer-events-none">
-                <div className="absolute top-20 left-10 w-48 h-48 sm:w-72 sm:h-72 bg-blue-500/10 rounded-full blur-3xl"></div>
-                <div className="absolute bottom-20 right-10 w-64 h-64 sm:w-96 sm:h-96 bg-purple-500/10 rounded-full blur-3xl"></div>
+                {/* Gradiente base */}
+                <div className="absolute inset-0 bg-linear-to-br from-slate-900 via-slate-800 to-slate-900"></div>
+
+                {/* Orbes de luz animados */}
+                <div className="absolute top-0 -left-20 w-96 h-96 bg-blue-500/20 rounded-full blur-3xl animate-pulse-slow"></div>
+                <div className="absolute top-1/4 right-0 w-80 h-80 bg-purple-500/20 rounded-full blur-3xl animate-pulse-slow animation-delay-2000"></div>
+                <div className="absolute bottom-0 left-1/3 w-96 h-96 bg-cyan-500/15 rounded-full blur-3xl animate-pulse-slow animation-delay-4000"></div>
+
+                {/* Grid decorativo */}
+                <div className="absolute inset-0 bg-[linear-gradient(rgba(148,163,184,0.05)_1px,transparent_1px),linear-gradient(90deg,rgba(148,163,184,0.05)_1px,transparent_1px)] bg-size-[50px_50px]"></div>
             </div>
 
             {/* Contenido principal */}
-            <div className="relative z-10 w-full max-w-md px-4 sm:px-0">
-                {/* Logo y título */}
-                <div className="text-center mb-8 sm:mb-10">
-                    <div className="inline-block mb-4">
-                        <div className="w-16 h-16 sm:w-20 sm:h-20 bg-gradient-to-br from-blue-500 to-purple-600 rounded-2xl flex items-center justify-center shadow-2xl animate-pulse-glow">
-                            <span className="text-3xl sm:text-4xl">🕵️</span>
+            <div className="relative z-10 w-full max-w-md px-4 sm:px-0 animate-fadeIn">
+                {/* Logo y título mejorado */}
+                <div className="text-center mb-10 sm:mb-12">
+                    <div className="inline-block mb-6 relative group">
+                        {/* Anillo exterior animado */}
+                        <div className="absolute inset-0 bg-linear-to-r from-blue-500 via-purple-500 to-pink-500 rounded-3xl blur-xl opacity-50 group-hover:opacity-75 transition-opacity duration-500 animate-pulse-glow"></div>
+
+                        {/* Logo principal */}
+                        <div className="relative w-20 h-20 sm:w-24 sm:h-24 bg-linear-to-br from-blue-500 via-purple-600 to-pink-600 rounded-3xl flex items-center justify-center shadow-2xl transform group-hover:scale-110 transition-transform duration-300">
+                            <span className="text-4xl sm:text-5xl">🕵️</span>
                         </div>
                     </div>
-                    <h1 className="text-4xl sm:text-5xl font-black bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 bg-clip-text text-transparent mb-2">
-                        The Resistance
+
+                    <h1 className="text-5xl sm:text-6xl font-black mb-3 tracking-tight">
+                        <span className="bg-linear-to-r from-blue-400 via-purple-400 to-pink-400 bg-clip-text text-transparent animate-gradient">
+                            The Resistance
+                        </span>
                     </h1>
-                    <p className="text-slate-400 text-base sm:text-lg">Confianza, traición y estrategia</p>
+
+                    <p className="text-slate-400 text-lg sm:text-xl font-medium">
+                        Confianza, traición y estrategia
+                    </p>
+
+                    {/* Badges decorativos */}
+                    <div className="flex items-center justify-center gap-3 mt-4">
+                        <span className="px-3 py-1 bg-blue-500/10 border border-blue-500/30 rounded-full text-blue-400 text-xs font-semibold">
+                            5-10 jugadores
+                        </span>
+                        <span className="px-3 py-1 bg-purple-500/10 border border-purple-500/30 rounded-full text-purple-400 text-xs font-semibold">
+                            En línea
+                        </span>
+                    </div>
                 </div>
 
-                {/* Card principal */}
-                <div className="card-glow space-y-4 sm:space-y-6">
-                    {/* Input de nombre */}
+                {/* Card principal con glassmorphism mejorado */}
+                <div className="relative backdrop-blur-xl bg-white/5 rounded-3xl p-6 sm:p-8 shadow-2xl border border-white/10 space-y-5 sm:space-y-6 hover:shadow-blue-500/10 hover:shadow-3xl transition-all duration-300">
+                    {/* Efecto de brillo superior */}
+                    <div className="absolute top-0 left-1/2 -translate-x-1/2 w-1/2 h-px bg-linear-to-r from-transparent via-white/20 to-transparent"></div>
+
+                    {/* Input de nombre mejorado */}
                     <div>
-                        <label className="block text-sm font-semibold text-slate-300 mb-2">
-                            Tu nombre
+                        <label className="flex items-center gap-2 text-sm font-bold text-slate-200 mb-3">
+                            <span className="text-lg">👤</span>
+                            <span>Tu nombre</span>
                         </label>
                         <input
                             type="text"
                             placeholder="Ingresa tu nombre"
                             value={name}
                             onChange={(e) => setName(e.target.value)}
-                            onKeyDown={(e) => e.key === "Enter" && handleCreateRoom()}
-                            className="input-field w-full"
+                            onKeyDown={(e) => e.key === "Enter" && !showJoinForm && handleCreateRoom()}
+                            className="w-full px-4 py-3.5 bg-slate-800/50 border border-slate-700/50 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 transition-all duration-200 backdrop-blur-sm hover:bg-slate-800/70"
                             maxLength={20}
                         />
                     </div>
 
-                    {/* Mensaje de error */}
+                    {/* Mensaje de error mejorado */}
                     {error && (
-                        <div className="bg-red-500/10 border border-red-500/50 rounded-xl p-3 text-red-400 text-sm animate-fadeIn">
-                            ⚠️ {error}
+                        <div className="relative overflow-hidden bg-red-500/10 border border-red-500/50 rounded-xl p-4 animate-fadeIn">
+                            <div className="absolute inset-0 bg-linear-to-r from-red-500/0 via-red-500/5 to-red-500/0 animate-shimmer"></div>
+                            <div className="relative flex items-center gap-2 text-red-400 text-sm font-medium">
+                                <span className="text-lg">⚠️</span>
+                                <span>{error}</span>
+                            </div>
                         </div>
                     )}
 
-                    {/* Botón crear sala */}
+                    {/* Botón crear sala mejorado */}
                     <button
                         onClick={handleCreateRoom}
-                        className="btn-primary w-full text-base sm:text-lg"
+                        className="relative w-full group overflow-hidden"
                         disabled={!name.trim()}
                     >
-                        🎮 Crear Nueva Sala
+                        <div className="absolute inset-0 bg-linear-to-r from-blue-600 via-blue-500 to-purple-600 rounded-xl opacity-90 group-hover:opacity-100 transition-opacity duration-200"></div>
+                        <div className="absolute inset-0 bg-linear-to-r from-blue-400/0 via-white/20 to-blue-400/0 translate-x-[-200%] group-hover:translate-x-[200%] transition-transform duration-1000"></div>
+                        <div className="relative px-6 py-4 flex items-center justify-center gap-2 text-white font-bold text-lg disabled:opacity-50 disabled:cursor-not-allowed">
+                            <span className="text-xl group-hover:scale-110 transition-transform duration-200">🎮</span>
+                            <span>Crear Nueva Sala</span>
+                        </div>
                     </button>
 
-                    {/* Divisor */}
-                    <div className="relative">
+                    {/* Divisor elegante */}
+                    <div className="relative py-2">
                         <div className="absolute inset-0 flex items-center">
-                            <div className="w-full border-t border-slate-700"></div>
+                            <div className="w-full border-t border-slate-700/50"></div>
                         </div>
-                        <div className="relative flex justify-center text-sm">
-                            <span className="px-4 bg-slate-800/50 text-slate-400">O</span>
+                        <div className="relative flex justify-center">
+                            <span className="px-4 bg-slate-800/80 backdrop-blur-sm text-slate-400 text-sm font-semibold rounded-full border border-slate-700/50">
+                                O
+                            </span>
                         </div>
                     </div>
 
-                    {/* Toggle para mostrar formulario de unirse */}
+                    {/* Toggle/Formulario de unirse mejorado */}
                     {!showJoinForm ? (
                         <button
                             onClick={() => setShowJoinForm(true)}
-                            className="w-full text-blue-400 hover:text-blue-300 font-semibold py-2 transition-colors"
+                            className="group w-full flex items-center justify-center gap-2 text-blue-400 hover:text-blue-300 font-semibold py-3 rounded-xl hover:bg-blue-500/5 transition-all duration-200"
                         >
-                            ¿Tienes un código? Únete a una sala →
+                            <span>¿Tienes un código? Únete a una sala</span>
+                            <span className="group-hover:translate-x-1 transition-transform duration-200">→</span>
                         </button>
                     ) : (
                         <div className="space-y-4 animate-fadeIn">
                             <div>
-                                <label className="block text-sm font-semibold text-slate-300 mb-2">
-                                    Código de sala
+                                <label className="flex items-center gap-2 text-sm font-bold text-slate-200 mb-3">
+                                    <span className="text-lg">🔑</span>
+                                    <span>Código de sala</span>
                                 </label>
                                 <input
                                     type="text"
-                                    placeholder="Ej: ABC123"
+                                    placeholder="ABC123"
                                     value={roomCode}
                                     onChange={(e) => setRoomCode(e.target.value.toUpperCase())}
                                     onKeyDown={(e) => e.key === "Enter" && handleJoinRoom()}
-                                    className="input-field w-full uppercase tracking-wider text-center text-xl"
+                                    className="w-full px-4 py-4 bg-slate-800/50 border border-slate-700/50 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-purple-500/50 transition-all duration-200 backdrop-blur-sm hover:bg-slate-800/70 uppercase tracking-[0.3em] text-center text-2xl font-bold"
                                     maxLength={6}
+                                    autoFocus
                                 />
                             </div>
+
                             <div className="flex gap-3">
                                 <button
-                                    onClick={() => setShowJoinForm(false)}
-                                    className="flex-1 bg-slate-700 hover:bg-slate-600 text-white px-6 py-3 rounded-xl font-semibold transition-all"
+                                    onClick={() => {
+                                        setShowJoinForm(false);
+                                        setRoomCode("");
+                                        setError("");
+                                    }}
+                                    className="flex-1 bg-slate-700/50 hover:bg-slate-600/50 border border-slate-600/50 text-white px-6 py-3.5 rounded-xl font-semibold transition-all duration-200 hover:scale-105 active:scale-95"
                                 >
                                     Cancelar
                                 </button>
                                 <button
                                     onClick={handleJoinRoom}
-                                    className="btn-secondary flex-1"
+                                    className="relative flex-1 group overflow-hidden"
                                     disabled={!name.trim() || !roomCode.trim()}
                                 >
-                                    Unirse
+                                    <div className="absolute inset-0 bg-linear-to-r from-purple-600 via-purple-500 to-pink-600 rounded-xl opacity-90 group-hover:opacity-100 transition-opacity duration-200"></div>
+                                    <div className="relative px-6 py-3.5 text-white font-semibold disabled:opacity-50 disabled:cursor-not-allowed transition-transform duration-200 group-hover:scale-105 active:scale-95">
+                                        Unirse
+                                    </div>
                                 </button>
                             </div>
                         </div>
                     )}
                 </div>
 
-                {/* Información adicional */}
-                <div className="mt-6 sm:mt-8 text-center text-slate-500 text-xs sm:text-sm">
-                    <p>Se necesitan 5-10 jugadores para comenzar</p>
+                {/* Información adicional mejorada */}
+                <div className="mt-8 text-center space-y-3">
+                    <div className="inline-flex items-center gap-2 px-4 py-2 bg-slate-800/30 backdrop-blur-sm rounded-full border border-slate-700/30">
+                        <span className="text-slate-400 text-sm">
+                            💡 Consejo: Invita a tus amigos para más diversión
+                        </span>
+                    </div>
                 </div>
+            </div>
+
+            {/* Partículas decorativas (opcional) */}
+            <div className="absolute inset-0 pointer-events-none overflow-hidden">
+                <div className="absolute top-1/4 left-1/4 w-2 h-2 bg-blue-400/30 rounded-full animate-float"></div>
+                <div className="absolute top-3/4 right-1/4 w-1.5 h-1.5 bg-purple-400/30 rounded-full animate-float animation-delay-2000"></div>
+                <div className="absolute top-1/2 right-1/3 w-2 h-2 bg-pink-400/30 rounded-full animate-float animation-delay-4000"></div>
             </div>
         </div>
     );

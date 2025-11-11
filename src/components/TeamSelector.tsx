@@ -26,7 +26,7 @@ const TeamSelector: React.FC<TeamSelectorProps> = ({
 
     return (
         <div className="w-full max-w-lg">
-            <div className="grid grid-cols-2 gap-2 sm:gap-3">
+            <div className="grid grid-cols-2 gap-3">
                 {players.map((player) => {
                     const isSelected = selectedTeam.includes(player.id);
                     const canSelect = selectedTeam.length < teamSize || isSelected;
@@ -37,31 +37,63 @@ const TeamSelector: React.FC<TeamSelectorProps> = ({
                             onClick={() => togglePlayer(player.id)}
                             disabled={!canSelect}
                             className={`
-                                p-2.5 sm:p-4 rounded-xl font-semibold transition-all duration-200 text-sm sm:text-base
+                                relative group p-3.5 sm:p-4 rounded-xl font-semibold transition-all duration-200 text-sm sm:text-base overflow-hidden
                                 ${isSelected
-                                    ? "bg-gradient-to-r from-blue-600 to-purple-600 text-white scale-105 shadow-lg ring-2 ring-blue-400"
+                                    ? "scale-[1.03] shadow-xl ring-2 ring-blue-400/50"
                                     : canSelect
-                                        ? "bg-slate-700/50 hover:bg-slate-700 text-slate-300 hover:text-white border border-slate-600"
-                                        : "bg-slate-800/30 text-slate-600 cursor-not-allowed border border-slate-700/30"
+                                        ? "hover:scale-[1.02] hover:shadow-lg"
+                                        : "cursor-not-allowed opacity-40"
                                 }
                             `}
                         >
-                            <div className="flex items-center justify-between">
-                                <span className="truncate">{player.name}</span>
+                            {/* Fondo */}
+                            {isSelected ? (
+                                <>
+                                    <div className="absolute inset-0 bg-linear-to-r from-blue-600 via-purple-600 to-blue-600 opacity-90 group-hover:opacity-100 transition-opacity"></div>
+                                    <div className="absolute inset-0 bg-linear-to-r from-blue-400/0 via-white/20 to-blue-400/0 translate-x-[-200%] group-hover:translate-x-[200%] transition-transform duration-1000"></div>
+                                </>
+                            ) : canSelect ? (
+                                <div className="absolute inset-0 bg-slate-800/40 backdrop-blur-sm border border-slate-700/50 rounded-xl group-hover:bg-slate-700/50 group-hover:border-slate-600/70 transition-all"></div>
+                            ) : (
+                                <div className="absolute inset-0 bg-slate-800/20 border border-slate-700/30 rounded-xl"></div>
+                            )}
+
+                            {/* Contenido */}
+                            <div className="relative flex items-center justify-between">
+                                <span className={`truncate ${isSelected ? "text-white" : canSelect ? "text-slate-300 group-hover:text-white" : "text-slate-600"}`}>
+                                    {player.name}
+                                </span>
                                 {isSelected && (
-                                    <span className="ml-1 sm:ml-2 text-lg sm:text-xl shrink-0">✓</span>
+                                    <span className="ml-2 text-xl text-white shrink-0 animate-pulse">✓</span>
                                 )}
                             </div>
                         </button>
                     );
                 })}
             </div>
-            <div className="mt-3 sm:mt-4 text-center">
-                <div className="inline-flex items-center gap-2 px-3 py-1.5 sm:px-4 sm:py-2 bg-slate-700/50 rounded-xl border border-slate-600">
-                    <span className="text-slate-400 text-sm">Seleccionados:</span>
-                    <span className={`font-bold text-sm sm:text-base ${selectedTeam.length === teamSize ? "text-green-400" : "text-blue-400"}`}>
-                        {selectedTeam.length}/{teamSize}
-                    </span>
+
+            {/* Contador de seleccionados */}
+            <div className="mt-5 text-center">
+                <div className={`inline-flex items-center gap-3 px-5 py-3 rounded-xl border transition-all duration-300 ${
+                    selectedTeam.length === teamSize
+                        ? "bg-green-500/20 border-green-500/40 shadow-lg shadow-green-500/20"
+                        : "bg-slate-800/40 backdrop-blur-sm border-slate-700/50"
+                }`}>
+                    <div className="flex items-center gap-2">
+                        <span className="text-slate-300 text-sm font-medium">Seleccionados:</span>
+                        <span className={`font-black text-xl transition-all duration-200 ${
+                            selectedTeam.length === teamSize 
+                                ? "text-green-400 scale-110" 
+                                : "text-blue-400"
+                        }`}>
+                            {selectedTeam.length}
+                        </span>
+                        <span className="text-slate-500 text-lg font-bold">/</span>
+                        <span className="text-slate-400 text-xl font-bold">{teamSize}</span>
+                    </div>
+                    {selectedTeam.length === teamSize && (
+                        <span className="text-green-400 text-lg animate-bounce">✓</span>
+                    )}
                 </div>
             </div>
         </div>
