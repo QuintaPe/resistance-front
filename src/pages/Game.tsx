@@ -144,7 +144,11 @@ const Game: React.FC = () => {
                         <h2 className="text-lg sm:text-xl font-bold text-white">Progreso de Misiones</h2>
                     </div>
                     <div className="overflow-x-auto flex justify-center pb-2">
-                        <MissionTracker total={5} results={roomState.results} />
+                        <MissionTracker 
+                            total={5} 
+                            results={roomState.results} 
+                            failsRequired={roomState.failsRequired}
+                        />
                     </div>
                 </div>
 

@@ -60,7 +60,7 @@ const Home: React.FC = () => {
                     {/* Badges decorativos */}
                     <div className="flex items-center justify-center gap-3 mt-4">
                         <span className="px-3 py-1 bg-blue-500/10 border border-blue-500/30 rounded-full text-blue-400 text-xs font-semibold">
-                            5-10 jugadores
+                            5-12 jugadores
                         </span>
                         <span className="px-3 py-1 bg-purple-500/10 border border-purple-500/30 rounded-full text-purple-400 text-xs font-semibold">
                             En línea

@@ -128,7 +128,11 @@ const Reveal: React.FC = () => {
                     </div>
 
                     <div className="overflow-x-auto flex justify-center mb-6 sm:mb-8 pb-2">
-                        <MissionTracker total={5} results={roomState.results} />
+                        <MissionTracker
+                            total={5}
+                            results={roomState.results}
+                            failsRequired={roomState.failsRequired}
+                        />
                     </div>
 
                     <div className="space-y-3">

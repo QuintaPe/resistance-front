@@ -123,7 +123,7 @@ const Lobby: React.FC = () => {
                                 <span className={roomState.players.length >= 5 ? "text-green-400" : "text-yellow-400"}>
                                     {roomState.players.length}
                                 </span>
-                                <span className="text-slate-500">/10</span>
+                                <span className="text-slate-500">/12</span>
                             </span>
                         </div>
                     </div>

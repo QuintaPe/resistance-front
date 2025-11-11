@@ -4,14 +4,16 @@ import type { MissionResult } from "../types";
 interface MissionTrackerProps {
     total: number;
     results: MissionResult[];
+    failsRequired?: number[];
 }
 
-const MissionTracker: React.FC<MissionTrackerProps> = ({ total, results }) => {
+const MissionTracker: React.FC<MissionTrackerProps> = ({ total, results, failsRequired }) => {
     return (
         <div className="flex gap-3 sm:gap-4 md:gap-5">
             {Array.from({ length: total }).map((_, idx) => {
                 const result = results[idx];
                 const isCompleted = idx < results.length;
+                const requiresTwoFails = failsRequired && failsRequired[idx] === 2;
 
                 let bgColor = "bg-slate-700/50 border-slate-600/50";
                 let icon = "";
@@ -34,7 +36,8 @@ const MissionTracker: React.FC<MissionTrackerProps> = ({ total, results }) => {
                         hoverClass = "hover:scale-110";
                     }
                 } else {
-                    tooltip = `Misión ${idx + 1}: Pendiente`;
+                    const failsText = requiresTwoFails ? " (Requiere 2 fracasos)" : "";
+                    tooltip = `Misión ${idx + 1}: Pendiente${failsText}`;
                     hoverClass = "hover:scale-105";
                 }
 
@@ -64,10 +67,17 @@ const MissionTracker: React.FC<MissionTrackerProps> = ({ total, results }) => {
                             )}
                         </div>
 
-                        {/* Badge pequeño para el número de fallos */}
+                        {/* Badge para el número de fallos (completadas) */}
                         {isCompleted && !result.passed && result.fails > 0 && (
                             <div className="absolute -top-1 -right-1 w-5 h-5 sm:w-6 sm:h-6 bg-red-600 border-2 border-slate-900 rounded-full flex items-center justify-center text-[10px] sm:text-xs font-bold">
                                 {result.fails}
+                            </div>
+                        )}
+
+                        {/* Badge especial para misiones que requieren 2 fracasos (pendientes) */}
+                        {!isCompleted && requiresTwoFails && (
+                            <div className="absolute -top-1 -right-1 w-5 h-5 sm:w-6 sm:h-6 bg-yellow-600 border-2 border-slate-900 rounded-full flex items-center justify-center text-[10px] sm:text-xs font-bold">
+                                2
                             </div>
                         )}
                     </div>

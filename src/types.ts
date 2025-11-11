@@ -17,6 +17,7 @@ export type PublicState = {
     leaderIndex: number;
     currentMission: number;
     teamSizePerMission: number[];
+    failsRequired: number[];
     proposedTeam: string[];
     results: MissionResult[];
     rejectedTeamsInRow: number;
