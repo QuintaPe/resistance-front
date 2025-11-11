@@ -8,7 +8,7 @@ import MissionAction from "../components/MissionAction";
 import MissionTracker from "../components/MissionTracker";
 import GameStatus from "../components/GameStatus";
 import RulesButton from "../components/RulesButton";
-import { Gamepad2, Loader2, Target, Users, UserX, Shield, Clock, Swords, Vote } from "lucide-react";
+import { Gamepad2, Loader2, Target, Users, Clock, Swords, Vote } from "lucide-react";
 
 const Game: React.FC = () => {
     const { roomCode } = useParams<{ roomCode: string }>();
@@ -149,63 +149,18 @@ const Game: React.FC = () => {
                 </div>
 
                 {/* Layout responsive */}
-                <div className="grid grid-cols-1 lg:grid-cols-3 gap-3 sm:gap-6">
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-2 sm:gap-6">
                     {/* Columna izquierda: Estado e información */}
-                    <div className="lg:col-span-1 space-y-3 sm:space-y-4 order-2 lg:order-1">
-                        {/* Estado del juego */}
-                        <div className="relative backdrop-blur-xl bg-white/5 rounded-2xl p-4 sm:p-5 shadow-xl border border-white/10 hover:shadow-blue-500/10 hover:shadow-2xl transition-all duration-300">
+                    <div className="lg:col-span-1 space-y-2 sm:space-y-4 order-2 lg:order-1">
+                        {/* Estado del juego y rol */}
+                        <div className="relative backdrop-blur-xl bg-white/5 rounded-xl sm:rounded-2xl p-3 sm:p-5 shadow-xl border border-white/10 hover:shadow-blue-500/10 hover:shadow-2xl transition-all duration-300">
                             <GameStatus
                                 leader={roomState.players[roomState.leaderIndex].name}
                                 phase={phase}
                                 rejectedTeams={roomState.rejectedTeamsInRow}
+                                role={role}
+                                otherSpies={otherSpiesNames}
                             />
-                        </div>
-
-                        {/* Tu rol mejorado */}
-                        <div className={`relative backdrop-blur-xl rounded-2xl p-4 sm:p-5 shadow-xl border transition-all duration-300 ${role === "spy"
-                            ? "bg-red-500/10 border-red-500/40 hover:shadow-red-500/20 hover:shadow-2xl"
-                            : "bg-blue-500/10 border-blue-500/40 hover:shadow-blue-500/20 hover:shadow-2xl"
-                            }`}>
-                            <div className="flex items-center gap-2 mb-3">
-                                {role === "spy" ? (
-                                    <UserX className="w-5 h-5 text-red-400" />
-                                ) : (
-                                    <Shield className="w-5 h-5 text-blue-400" />
-                                )}
-                                <h3 className="text-sm font-bold text-white uppercase tracking-wider">Tu Rol</h3>
-                            </div>
-                            {role ? (
-                                <div>
-                                    <div className="relative group overflow-hidden rounded-xl inline-block">
-                                        <div className={`absolute inset-0 ${role === "spy"
-                                            ? "bg-linear-to-r from-red-600 to-red-700"
-                                            : "bg-linear-to-r from-blue-600 to-blue-700"
-                                            } opacity-90 group-hover:opacity-100 transition-opacity duration-200`}></div>
-                                        <div className="relative px-4 py-2.5 flex items-center gap-2 font-bold text-lg">
-                                            {role === "spy" ? (
-                                                <UserX className="w-6 h-6 text-white" />
-                                            ) : (
-                                                <Shield className="w-6 h-6 text-white" />
-                                            )}
-                                            <span className="text-white">{role === "spy" ? "Espía" : "Resistencia"}</span>
-                                        </div>
-                                    </div>
-                                    {role === "spy" && otherSpiesNames.length > 0 && (
-                                        <div className="mt-3 p-3 bg-red-500/20 border border-red-500/30 rounded-xl">
-                                            <div className="flex items-center gap-2 text-red-300 font-semibold mb-1.5 text-sm">
-                                                <Users className="w-4 h-4" />
-                                                <span>Compañeros espías:</span>
-                                            </div>
-                                            <div className="text-sm text-red-200 font-medium">{otherSpiesNames.join(", ")}</div>
-                                        </div>
-                                    )}
-                                </div>
-                            ) : (
-                                <div className="flex items-center gap-2 px-3 py-2 bg-yellow-500/10 border border-yellow-500/30 rounded-xl">
-                                    <Clock className="w-5 h-5 text-yellow-400 animate-pulse" />
-                                    <span className="text-yellow-400 text-sm font-medium">Aún no recibiste tu rol</span>
-                                </div>
-                            )}
                         </div>
 
                         {/* Resultado de la última misión mejorado */}
@@ -262,15 +217,10 @@ const Game: React.FC = () => {
                                     {isLeader ? (
                                         <>
                                             <div className="text-center">
-                                                <div className="inline-block mb-4">
-                                                    <div className="relative">
-                                                        <div className="absolute inset-0 bg-linear-to-r from-blue-500 to-purple-500 rounded-2xl blur-lg opacity-50 animate-pulse-glow"></div>
-                                                        <div className="relative w-16 h-16 bg-linear-to-br from-blue-500 to-purple-600 rounded-2xl flex items-center justify-center shadow-xl">
-                                                            <Users className="w-8 h-8 text-white" />
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <h2 className="text-2xl sm:text-3xl font-black mb-2 text-white">Selecciona tu Equipo</h2>
+                                                <h2 className="text-2xl sm:text-3xl font-black mb-2 text-white flex items-center justify-center gap-2 sm:gap-3">
+                                                    <Users className="w-6 h-6 sm:w-7 sm:h-7 text-white" />
+                                                    <span>Selecciona tu Equipo</span>
+                                                </h2>
                                                 <p className="text-slate-300 text-base sm:text-lg">
                                                     Elige <span className="font-bold text-blue-400">{teamSize}</span> jugador{teamSize > 1 ? "es" : ""} para la misión
                                                 </p>
@@ -317,15 +267,10 @@ const Game: React.FC = () => {
                             {phase === "voteTeam" && (
                                 <div className="flex-1 flex flex-col items-center justify-center space-y-5 sm:space-y-6 p-2 sm:p-4">
                                     <div className="text-center">
-                                        <div className="inline-block mb-4">
-                                            <div className="relative">
-                                                <div className="absolute inset-0 bg-linear-to-r from-purple-500 to-pink-500 rounded-2xl blur-lg opacity-50 animate-pulse-glow"></div>
-                                                <div className="relative w-16 h-16 bg-linear-to-br from-purple-500 to-pink-600 rounded-2xl flex items-center justify-center shadow-xl">
-                                                    <Vote className="w-8 h-8 text-white" />
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <h2 className="text-2xl sm:text-3xl font-black mb-2 text-white">Votación de Equipo</h2>
+                                        <h2 className="text-2xl sm:text-3xl font-black mb-2 text-white flex items-center justify-center gap-2 sm:gap-3">
+                                            <Vote className="w-6 h-6 sm:w-7 sm:h-7 text-white" />
+                                            <span>Votación de Equipo</span>
+                                        </h2>
                                         <p className="text-slate-300 text-base sm:text-lg mb-4">¿Apruebas este equipo?</p>
                                     </div>
 
@@ -367,15 +312,10 @@ const Game: React.FC = () => {
                                     {isInTeam ? (
                                         <>
                                             <div className="text-center">
-                                                <div className="inline-block mb-4">
-                                                    <div className="relative">
-                                                        <div className="absolute inset-0 bg-linear-to-r from-green-500 to-emerald-500 rounded-2xl blur-lg opacity-50 animate-pulse-glow"></div>
-                                                        <div className="relative w-16 h-16 bg-linear-to-br from-green-500 to-emerald-600 rounded-2xl flex items-center justify-center shadow-xl">
-                                                            <Target className="w-8 h-8 text-white" />
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <h2 className="text-2xl sm:text-3xl font-black mb-2 text-white">Misión en Curso</h2>
+                                                <h2 className="text-2xl sm:text-3xl font-black mb-2 text-white flex items-center justify-center gap-2 sm:gap-3">
+                                                    <Target className="w-6 h-6 sm:w-7 sm:h-7 text-white" />
+                                                    <span>Misión en Curso</span>
+                                                </h2>
                                                 <p className="text-slate-300 text-base sm:text-lg">Elige el resultado de tu acción</p>
                                             </div>
                                             <MissionAction

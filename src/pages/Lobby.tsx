@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router";
 import { useSocket } from "../context/SocketContext";
-import { Target, Gamepad2, Loader2, Clipboard, Check, Crown, Users, Rocket, Clock, Lightbulb } from "lucide-react";
+import { Gamepad2, Loader2, Clipboard, Check, Crown, Users, Rocket, Clock, Lightbulb } from "lucide-react";
 
 const Lobby: React.FC = () => {
     const { roomCode } = useParams<{ roomCode: string }>();
@@ -74,16 +74,6 @@ const Lobby: React.FC = () => {
                 {/* Header con código de sala mejorado */}
                 <div className="relative backdrop-blur-xl bg-white/5 rounded-3xl p-6 sm:p-8 shadow-2xl border border-white/10 text-center hover:shadow-blue-500/10 hover:shadow-3xl transition-all duration-300">
                     <div className="absolute top-0 left-1/2 -translate-x-1/2 w-1/2 h-px bg-linear-to-r from-transparent via-white/20 to-transparent"></div>
-
-                    {/* Icono decorativo */}
-                    <div className="inline-block mb-4">
-                        <div className="relative">
-                            <div className="absolute inset-0 bg-linear-to-r from-blue-500 via-purple-500 to-pink-500 rounded-2xl blur-lg opacity-50 animate-pulse-glow"></div>
-                            <div className="relative w-14 h-14 bg-linear-to-br from-blue-500 via-purple-600 to-pink-600 rounded-2xl flex items-center justify-center shadow-xl">
-                                <Target className="w-7 h-7 text-white" />
-                            </div>
-                        </div>
-                    </div>
 
                     <h1 className="text-3xl sm:text-4xl font-black mb-4">
                         <span className="bg-linear-to-r from-blue-400 via-purple-400 to-pink-400 bg-clip-text text-transparent animate-gradient">
@@ -173,10 +163,10 @@ const Lobby: React.FC = () => {
 
                 {/* Mensaje de estado / Botón de inicio mejorado */}
                 {roomState.players.length < 5 ? (
-                    <div className="relative backdrop-blur-xl bg-yellow-500/10 rounded-2xl p-6 shadow-xl border border-yellow-500/30 text-center">
+                    <div className="relative backdrop-blur-xl bg-yellow-500/10 rounded-2xl p-6 shadow-xl border border-yellow-500/30 text-center overflow-hidden">
                         <div className="absolute inset-0 bg-linear-to-r from-yellow-500/0 via-yellow-500/5 to-yellow-500/0 animate-shimmer"></div>
                         <div className="relative">
-                            <Clock className="w-12 h-12 sm:w-14 sm:h-14 mb-3 animate-bounce text-yellow-400 mx-auto" />
+                            <Clock className="w-12 h-12 sm:w-14 sm:h-14 mb-3 animate-pulse text-yellow-400 mx-auto" />
                             <p className="text-yellow-400 font-bold mb-2 text-base sm:text-lg">
                                 Esperando más jugadores...
                             </p>
