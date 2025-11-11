@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { Check, X, Clock } from "lucide-react";
 
 interface VoteButtonsProps {
     onVote: (vote: "approve" | "reject") => void;
@@ -38,7 +39,7 @@ const VoteButtons: React.FC<VoteButtonsProps> = ({ onVote }) => {
                         <div className="relative">
                             <div className="absolute inset-0 bg-linear-to-r from-blue-500 to-purple-500 rounded-2xl blur-lg opacity-50 animate-pulse-glow"></div>
                             <div className="relative w-16 h-16 bg-linear-to-br from-blue-500 to-purple-600 rounded-2xl flex items-center justify-center shadow-xl">
-                                <span className="text-4xl">✓</span>
+                                <Check className="w-8 h-8 text-white" />
                             </div>
                         </div>
                     </div>
@@ -51,7 +52,7 @@ const VoteButtons: React.FC<VoteButtonsProps> = ({ onVote }) => {
                     </p>
                     
                     <div className="flex items-center justify-center gap-2 px-4 py-3 bg-slate-800/40 backdrop-blur-sm rounded-xl border border-slate-700/50">
-                        <span className="text-2xl animate-pulse">⏳</span>
+                        <Clock className="w-6 h-6 animate-pulse text-slate-400" />
                         <p className="text-slate-400 text-sm sm:text-base font-medium">
                             Esperando a los demás jugadores...
                         </p>

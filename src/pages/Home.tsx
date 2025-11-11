@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router";
 import { useSocket } from "../context/SocketContext";
+import { UserSearch, User, Key, AlertTriangle, Gamepad2, Lightbulb } from "lucide-react";
 
 const Home: React.FC = () => {
     const { createRoom, joinRoom } = useSocket();
@@ -56,7 +57,7 @@ const Home: React.FC = () => {
 
                         {/* Logo principal */}
                         <div className="relative w-20 h-20 sm:w-24 sm:h-24 bg-linear-to-br from-blue-500 via-purple-600 to-pink-600 rounded-3xl flex items-center justify-center shadow-2xl transform group-hover:scale-110 transition-transform duration-300">
-                            <span className="text-4xl sm:text-5xl">🕵️</span>
+                            <UserSearch className="w-10 h-10 sm:w-12 sm:h-12 text-white" />
                         </div>
                     </div>
 
@@ -89,7 +90,7 @@ const Home: React.FC = () => {
                     {/* Input de nombre mejorado */}
                     <div>
                         <label className="flex items-center gap-2 text-sm font-bold text-slate-200 mb-3">
-                            <span className="text-lg">👤</span>
+                            <User className="w-4 h-4" />
                             <span>Tu nombre</span>
                         </label>
                         <input
@@ -108,7 +109,7 @@ const Home: React.FC = () => {
                         <div className="relative overflow-hidden bg-red-500/10 border border-red-500/50 rounded-xl p-4 animate-fadeIn">
                             <div className="absolute inset-0 bg-linear-to-r from-red-500/0 via-red-500/5 to-red-500/0 animate-shimmer"></div>
                             <div className="relative flex items-center gap-2 text-red-400 text-sm font-medium">
-                                <span className="text-lg">⚠️</span>
+                                <AlertTriangle className="w-5 h-5" />
                                 <span>{error}</span>
                             </div>
                         </div>
@@ -123,7 +124,7 @@ const Home: React.FC = () => {
                         <div className="absolute inset-0 bg-linear-to-r from-blue-600 via-blue-500 to-purple-600 rounded-xl opacity-90 group-hover:opacity-100 transition-opacity duration-200"></div>
                         <div className="absolute inset-0 bg-linear-to-r from-blue-400/0 via-white/20 to-blue-400/0 translate-x-[-200%] group-hover:translate-x-[200%] transition-transform duration-1000"></div>
                         <div className="relative px-6 py-4 flex items-center justify-center gap-2 text-white font-bold text-lg disabled:opacity-50 disabled:cursor-not-allowed">
-                            <span className="text-xl group-hover:scale-110 transition-transform duration-200">🎮</span>
+                            <Gamepad2 className="w-6 h-6 group-hover:scale-110 transition-transform duration-200" />
                             <span>Crear Nueva Sala</span>
                         </div>
                     </button>
@@ -153,7 +154,7 @@ const Home: React.FC = () => {
                         <div className="space-y-4 animate-fadeIn">
                             <div>
                                 <label className="flex items-center gap-2 text-sm font-bold text-slate-200 mb-3">
-                                    <span className="text-lg">🔑</span>
+                                    <Key className="w-4 h-4" />
                                     <span>Código de sala</span>
                                 </label>
                                 <input
@@ -197,8 +198,9 @@ const Home: React.FC = () => {
                 {/* Información adicional mejorada */}
                 <div className="mt-8 text-center space-y-3">
                     <div className="inline-flex items-center gap-2 px-4 py-2 bg-slate-800/30 backdrop-blur-sm rounded-full border border-slate-700/30">
+                        <Lightbulb className="w-4 h-4 text-yellow-400" />
                         <span className="text-slate-400 text-sm">
-                            💡 Consejo: Invita a tus amigos para más diversión
+                            Consejo: Invita a tus amigos para más diversión
                         </span>
                     </div>
                 </div>

@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router";
 import { useSocket } from "../context/SocketContext";
+import { Target, Gamepad2, Loader2, Clipboard, Check, Crown, Users, Rocket, Clock, Lightbulb } from "lucide-react";
 
 const Lobby: React.FC = () => {
     const { roomCode } = useParams<{ roomCode: string }>();
@@ -39,14 +40,12 @@ const Lobby: React.FC = () => {
                     <div className="inline-block mb-6 relative">
                         <div className="absolute inset-0 bg-linear-to-r from-blue-500 via-purple-500 to-pink-500 rounded-3xl blur-xl opacity-50 animate-pulse-glow"></div>
                         <div className="relative w-20 h-20 bg-linear-to-br from-blue-500 via-purple-600 to-pink-600 rounded-3xl flex items-center justify-center shadow-2xl">
-                            <span className="text-4xl animate-pulse">🎮</span>
+                            <Gamepad2 className="w-10 h-10 text-white animate-pulse" />
                         </div>
                     </div>
                     <div className="text-xl font-semibold text-slate-300">Cargando sala...</div>
                     <div className="mt-4 flex gap-2 justify-center">
-                        <div className="w-2 h-2 bg-blue-500 rounded-full animate-bounce"></div>
-                        <div className="w-2 h-2 bg-purple-500 rounded-full animate-bounce animation-delay-2000"></div>
-                        <div className="w-2 h-2 bg-pink-500 rounded-full animate-bounce animation-delay-4000"></div>
+                        <Loader2 className="w-6 h-6 text-blue-400 animate-spin" />
                     </div>
                 </div>
             </div>
@@ -55,7 +54,6 @@ const Lobby: React.FC = () => {
 
     const leader = roomState.players[roomState.leaderIndex];
     const canStart = roomState.players.length >= 5 && playerId === leader.id;
-    const isLeader = playerId === leader.id;
 
     const handleStart = () => {
         if (roomCode) startGame(roomCode);
@@ -82,7 +80,7 @@ const Lobby: React.FC = () => {
                         <div className="relative">
                             <div className="absolute inset-0 bg-linear-to-r from-blue-500 via-purple-500 to-pink-500 rounded-2xl blur-lg opacity-50 animate-pulse-glow"></div>
                             <div className="relative w-14 h-14 bg-linear-to-br from-blue-500 via-purple-600 to-pink-600 rounded-2xl flex items-center justify-center shadow-xl">
-                                <span className="text-2xl">🎯</span>
+                                <Target className="w-7 h-7 text-white" />
                             </div>
                         </div>
                     </div>
@@ -107,9 +105,9 @@ const Lobby: React.FC = () => {
                                     title="Copiar código"
                                 >
                                     {copied ? (
-                                        <span className="text-green-400">✓</span>
+                                        <Check className="w-5 h-5 text-green-400" />
                                     ) : (
-                                        <span className="text-slate-400 group-hover/btn:text-white transition-colors">📋</span>
+                                        <Clipboard className="w-5 h-5 text-slate-400 group-hover/btn:text-white transition-colors" />
                                     )}
                                 </button>
                             </div>
@@ -121,37 +119,13 @@ const Lobby: React.FC = () => {
                     </p>
                 </div>
 
-                {/* Información del líder mejorada */}
-                <div className="relative backdrop-blur-xl bg-white/5 rounded-2xl p-5 shadow-xl border border-white/10 transition-all duration-300 hover:shadow-yellow-500/10 hover:shadow-2xl">
-                    <div className="flex flex-col sm:flex-row items-center justify-between gap-3">
-                        <div className="flex items-center gap-4">
-                            <div className="relative">
-                                <div className="absolute inset-0 bg-linear-to-br from-yellow-400 to-orange-500 rounded-2xl blur-md opacity-50 animate-pulse"></div>
-                                <div className="relative w-12 h-12 sm:w-14 sm:h-14 bg-linear-to-br from-yellow-500 to-orange-500 rounded-2xl flex items-center justify-center text-2xl sm:text-3xl shadow-xl">
-                                    👑
-                                </div>
-                            </div>
-                            <div>
-                                <div className="text-xs text-slate-400 uppercase tracking-wider font-semibold mb-1">Líder de la sala</div>
-                                <div className="font-bold text-lg sm:text-xl text-white">
-                                    {leader.name}
-                                    {isLeader && <span className="text-blue-400 ml-2">(Tú)</span>}
-                                </div>
-                            </div>
-                        </div>
-                        {isLeader && (
-                            <div className="px-4 py-2 bg-linear-to-r from-blue-500/20 to-purple-500/20 border border-blue-500/30 rounded-full">
-                                <span className="text-blue-400 text-sm font-bold uppercase tracking-wider">Tu turno</span>
-                            </div>
-                        )}
-                    </div>
-                </div>
+
 
                 {/* Lista de jugadores mejorada */}
                 <div className="relative backdrop-blur-xl bg-white/5 rounded-2xl p-5 sm:p-6 shadow-xl border border-white/10">
                     <div className="flex items-center justify-between mb-5">
                         <h3 className="text-xl sm:text-2xl font-bold text-white flex items-center gap-2">
-                            <span>👥</span>
+                            <Users className="w-6 h-6" />
                             <span>Jugadores</span>
                         </h3>
                         <div className="px-4 py-1.5 bg-slate-800/80 backdrop-blur-sm border border-slate-700/50 rounded-full">
@@ -174,8 +148,7 @@ const Lobby: React.FC = () => {
                                         ? "bg-linear-to-r from-yellow-500/20 to-orange-500/20 border border-yellow-500/40 hover:border-yellow-500/60"
                                         : "bg-slate-800/40 border border-slate-700/40 hover:border-slate-600/60 hover:bg-slate-800/60"
                                     }
-                                    ${p.id === playerId ? "ring-2 ring-blue-500/50 shadow-lg shadow-blue-500/20" : ""}
-                                    hover:scale-[1.02] hover:shadow-lg
+                                    
                                 `}
                             >
                                 <div className={`w-9 h-9 rounded-xl flex items-center justify-center text-sm font-bold shrink-0 shadow-md ${p.id === leader.id
@@ -191,7 +164,7 @@ const Lobby: React.FC = () => {
                                     </div>
                                 </div>
                                 {p.id === leader.id && (
-                                    <span className="text-xl shrink-0 animate-pulse">👑</span>
+                                    <Crown className="w-5 h-5 text-yellow-400 shrink-0 animate-pulse" />
                                 )}
                             </div>
                         ))}
@@ -203,7 +176,7 @@ const Lobby: React.FC = () => {
                     <div className="relative backdrop-blur-xl bg-yellow-500/10 rounded-2xl p-6 shadow-xl border border-yellow-500/30 text-center">
                         <div className="absolute inset-0 bg-linear-to-r from-yellow-500/0 via-yellow-500/5 to-yellow-500/0 animate-shimmer"></div>
                         <div className="relative">
-                            <div className="text-4xl sm:text-5xl mb-3 animate-bounce">⏳</div>
+                            <Clock className="w-12 h-12 sm:w-14 sm:h-14 mb-3 animate-bounce text-yellow-400 mx-auto" />
                             <p className="text-yellow-400 font-bold mb-2 text-base sm:text-lg">
                                 Esperando más jugadores...
                             </p>
@@ -220,13 +193,13 @@ const Lobby: React.FC = () => {
                         <div className="absolute inset-0 bg-linear-to-r from-green-600 via-green-500 to-emerald-600 rounded-2xl opacity-90 group-hover:opacity-100 transition-opacity duration-200"></div>
                         <div className="absolute inset-0 bg-linear-to-r from-green-400/0 via-white/20 to-green-400/0 translate-x-[-200%] group-hover:translate-x-[200%] transition-transform duration-1000"></div>
                         <div className="relative px-6 py-4 flex items-center justify-center gap-3 text-white font-bold text-xl sm:text-2xl">
-                            <span className="text-2xl group-hover:scale-110 transition-transform duration-200">🚀</span>
+                            <Rocket className="w-7 h-7 group-hover:scale-110 transition-transform duration-200" />
                             <span>Iniciar Juego</span>
                         </div>
                     </button>
                 ) : (
                     <div className="relative backdrop-blur-xl bg-blue-500/10 rounded-2xl p-6 shadow-xl border border-blue-500/30 text-center">
-                        <div className="text-4xl sm:text-5xl mb-3 animate-pulse">⏳</div>
+                        <Clock className="w-12 h-12 sm:w-14 sm:h-14 mb-3 animate-pulse text-blue-400 mx-auto" />
                         <p className="text-blue-400 font-semibold text-base sm:text-lg">
                             Esperando al líder para iniciar el juego...
                         </p>
@@ -236,13 +209,15 @@ const Lobby: React.FC = () => {
                 {/* Instrucciones mejoradas */}
                 <div className="flex flex-col sm:flex-row items-center justify-center gap-4 text-center">
                     <div className="flex items-center gap-2 px-4 py-2 bg-slate-800/30 backdrop-blur-sm rounded-full border border-slate-700/30">
+                        <Lightbulb className="w-4 h-4 text-yellow-400" />
                         <span className="text-slate-400 text-xs sm:text-sm">
-                            💡 Mínimo 5 jugadores para empezar
+                            Mínimo 5 jugadores para empezar
                         </span>
                     </div>
                     <div className="hidden sm:flex items-center gap-2 px-4 py-2 bg-slate-800/30 backdrop-blur-sm rounded-full border border-slate-700/30">
+                        <Crown className="w-4 h-4 text-yellow-400" />
                         <span className="text-slate-400 text-xs sm:text-sm">
-                            👑 El líder inicia la partida
+                            El líder inicia la partida
                         </span>
                     </div>
                 </div>

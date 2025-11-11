@@ -2,6 +2,7 @@ import React from "react";
 import { useNavigate } from "react-router";
 import { useSocket } from "../context/SocketContext";
 import MissionTracker from "../components/MissionTracker";
+import { Trophy, Loader2, BarChart3, Drama, Home, UserX, Shield, CheckCircle, XCircle } from "lucide-react";
 
 const Reveal: React.FC = () => {
     const navigate = useNavigate();
@@ -22,14 +23,12 @@ const Reveal: React.FC = () => {
                     <div className="inline-block mb-6 relative">
                         <div className="absolute inset-0 bg-linear-to-r from-yellow-500 via-orange-500 to-yellow-500 rounded-3xl blur-xl opacity-50 animate-pulse-glow"></div>
                         <div className="relative w-24 h-24 bg-linear-to-br from-yellow-500 via-orange-600 to-yellow-600 rounded-3xl flex items-center justify-center shadow-2xl">
-                            <span className="text-5xl animate-pulse">🏆</span>
+                            <Trophy className="w-14 h-14 text-white animate-pulse" />
                         </div>
                     </div>
                     <div className="text-xl font-semibold text-slate-300">Cargando resultados...</div>
                     <div className="mt-4 flex gap-2 justify-center">
-                        <div className="w-2 h-2 bg-yellow-500 rounded-full animate-bounce"></div>
-                        <div className="w-2 h-2 bg-orange-500 rounded-full animate-bounce animation-delay-2000"></div>
-                        <div className="w-2 h-2 bg-yellow-500 rounded-full animate-bounce animation-delay-4000"></div>
+                        <Loader2 className="w-6 h-6 text-yellow-400 animate-spin" />
                     </div>
                 </div>
             </div>
@@ -40,18 +39,18 @@ const Reveal: React.FC = () => {
     const failedMissions = roomState.results.filter((r) => !r.passed).length;
 
     let winner = "";
-    let winnerIcon = "";
+    let WinnerIcon = null;
     let winnerGradient = "";
     let winnerBg = "";
 
     if (roomState.rejectedTeamsInRow >= 5 || failedMissions >= 3) {
         winner = "Los Espías";
-        winnerIcon = "🕵️";
+        WinnerIcon = UserX;
         winnerGradient = "from-red-500 via-red-600 to-rose-600";
         winnerBg = "bg-red-500/20";
     } else if (passedMissions >= 3) {
         winner = "La Resistencia";
-        winnerIcon = "🛡️";
+        WinnerIcon = Shield;
         winnerGradient = "from-blue-500 via-blue-600 to-cyan-600";
         winnerBg = "bg-blue-500/20";
     }
@@ -84,7 +83,7 @@ const Reveal: React.FC = () => {
                         <div className="relative">
                             <div className="absolute inset-0 bg-linear-to-r from-yellow-500 via-orange-500 to-yellow-500 rounded-3xl blur-2xl opacity-50 animate-pulse-glow"></div>
                             <div className="relative w-20 h-20 sm:w-24 sm:h-24 bg-linear-to-br from-yellow-500 via-orange-600 to-yellow-600 rounded-3xl flex items-center justify-center shadow-2xl">
-                                <span className="text-5xl sm:text-6xl">🏆</span>
+                                <Trophy className="w-12 h-12 sm:w-14 sm:h-14 text-white" />
                             </div>
                         </div>
                     </div>
@@ -99,12 +98,12 @@ const Reveal: React.FC = () => {
                     <div className="relative inline-block mb-6">
                         <div className={`absolute inset-0 rounded-2xl blur-xl opacity-60 ${winnerBg} animate-pulse-glow`}></div>
                         <div className={`relative flex flex-col sm:flex-row items-center gap-4 sm:gap-5 px-8 py-5 sm:px-10 sm:py-6 rounded-2xl bg-linear-to-r ${winnerGradient} shadow-2xl`}>
-                            <div className="text-5xl sm:text-6xl drop-shadow-lg">
-                                {winnerIcon}
+                            <div className="drop-shadow-lg">
+                                {WinnerIcon && <WinnerIcon className="w-14 h-14 sm:w-16 sm:h-16 text-white" />}
                             </div>
                             <div className="text-center sm:text-left">
-                                <div className="text-sm text-white/90 uppercase tracking-[0.2em] font-bold mb-1">
-                                    🎊 Ganador 🎊
+                                <div className="text-sm text-white/90 uppercase tracking-[0.2em] font-bold mb-1 flex items-center gap-2">
+                                    <Trophy className="w-4 h-4" /> Ganador <Trophy className="w-4 h-4" />
                                 </div>
                                 <div className="text-3xl sm:text-4xl font-black text-white drop-shadow-lg">
                                     {winner}
@@ -132,7 +131,7 @@ const Reveal: React.FC = () => {
                     <div className="absolute top-0 left-1/2 -translate-x-1/2 w-1/2 h-px bg-linear-to-r from-transparent via-white/20 to-transparent"></div>
 
                     <div className="flex items-center justify-center gap-2 mb-6">
-                        <span className="text-2xl">📊</span>
+                        <BarChart3 className="w-6 h-6 sm:w-7 sm:h-7 text-purple-400" />
                         <h2 className="text-2xl sm:text-3xl font-black text-white">Resumen de Misiones</h2>
                     </div>
 
@@ -151,11 +150,15 @@ const Reveal: React.FC = () => {
                             >
                                 <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 mb-3">
                                     <div className="flex items-center gap-3 sm:gap-4">
-                                        <div className={`w-12 h-12 rounded-xl flex items-center justify-center text-2xl ${r.passed
+                                        <div className={`w-12 h-12 rounded-xl flex items-center justify-center ${r.passed
                                             ? "bg-green-500/20 border border-green-500/40"
                                             : "bg-red-500/20 border border-red-500/40"
                                             }`}>
-                                            {r.passed ? "✅" : "❌"}
+                                            {r.passed ? (
+                                                <CheckCircle className="w-7 h-7 text-green-400" />
+                                            ) : (
+                                                <XCircle className="w-7 h-7 text-red-400" />
+                                            )}
                                         </div>
                                         <div>
                                             <div className="font-bold text-base sm:text-lg text-white">Misión {idx + 1}</div>
@@ -190,7 +193,7 @@ const Reveal: React.FC = () => {
                     <div className="absolute top-0 left-1/2 -translate-x-1/2 w-1/2 h-px bg-linear-to-r from-transparent via-white/20 to-transparent"></div>
 
                     <div className="flex items-center justify-center gap-2 mb-6">
-                        <span className="text-2xl">🎭</span>
+                        <Drama className="w-6 h-6 sm:w-7 sm:h-7 text-pink-400" />
                         <h2 className="text-2xl sm:text-3xl font-black text-white">Roles Revelados</h2>
                     </div>
 
@@ -214,11 +217,15 @@ const Reveal: React.FC = () => {
                                     <div className={`absolute inset-0 rounded-xl opacity-0 hover:opacity-100 transition-opacity duration-300 ${isSpy ? "bg-linear-to-tr from-red-500/0 via-red-500/10 to-red-500/0" : "bg-linear-to-tr from-blue-500/0 via-blue-500/10 to-blue-500/0"
                                         }`}></div>
 
-                                    <div className={`relative w-14 h-14 rounded-xl flex items-center justify-center text-2xl shrink-0 shadow-lg ${isSpy
+                                    <div className={`relative w-14 h-14 rounded-xl flex items-center justify-center shrink-0 shadow-lg ${isSpy
                                         ? "bg-linear-to-br from-red-600 to-red-700"
                                         : "bg-linear-to-br from-blue-600 to-blue-700"
                                         }`}>
-                                        {isSpy ? "🕵️" : "🛡️"}
+                                        {isSpy ? (
+                                            <UserX className="w-7 h-7 text-white" />
+                                        ) : (
+                                            <Shield className="w-7 h-7 text-white" />
+                                        )}
                                     </div>
                                     <div className="relative flex-1 min-w-0">
                                         <div className="font-bold flex items-center gap-2 text-base text-white">
@@ -229,8 +236,12 @@ const Reveal: React.FC = () => {
                                                 </span>
                                             )}
                                         </div>
-                                        <div className={`text-sm font-semibold ${isSpy ? "text-red-400" : "text-blue-400"}`}>
-                                            {isSpy ? "🕵️ Espía" : "🛡️ Resistencia"}
+                                        <div className={`text-sm font-semibold flex items-center gap-1 ${isSpy ? "text-red-400" : "text-blue-400"}`}>
+                                            {isSpy ? (
+                                                <><UserX className="w-4 h-4" /> Espía</>
+                                            ) : (
+                                                <><Shield className="w-4 h-4" /> Resistencia</>
+                                            )}
                                         </div>
                                     </div>
                                 </div>
@@ -248,7 +259,7 @@ const Reveal: React.FC = () => {
                         <div className="absolute inset-0 bg-linear-to-r from-blue-600 via-purple-600 to-pink-600 rounded-xl opacity-90 group-hover:opacity-100 transition-opacity duration-200"></div>
                         <div className="absolute inset-0 bg-linear-to-r from-blue-400/0 via-white/20 to-pink-400/0 translate-x-[-200%] group-hover:translate-x-[200%] transition-transform duration-1000"></div>
                         <div className="relative px-8 py-4 flex items-center justify-center gap-3 text-white font-bold text-lg sm:text-xl">
-                            <span className="text-2xl group-hover:scale-110 transition-transform duration-200">🏠</span>
+                            <Home className="w-6 h-6 group-hover:scale-110 transition-transform duration-200" />
                             <span>Volver al Inicio</span>
                         </div>
                     </button>

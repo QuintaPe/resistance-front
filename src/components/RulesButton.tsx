@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { createPortal } from "react-dom";
+import { BookOpen, X } from "lucide-react";
 
 const RulesButton: React.FC = () => {
     const [showModal, setShowModal] = useState(false);
@@ -53,7 +54,7 @@ const RulesButton: React.FC = () => {
                 <div className="flex items-center justify-between px-4 sm:px-6 py-3 sm:py-4 bg-slate-800 border-b border-slate-700 shrink-0">
                     <div className="flex items-center gap-2 sm:gap-3">
                         <div className="w-8 h-8 sm:w-10 sm:h-10 bg-linear-to-br from-blue-500 to-purple-600 rounded-xl flex items-center justify-center shadow-lg">
-                            <span className="text-lg sm:text-2xl">📖</span>
+                            <BookOpen className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
                         </div>
                         <h2 className="text-lg sm:text-2xl font-bold text-white">Reglas del Juego</h2>
                     </div>
@@ -62,7 +63,7 @@ const RulesButton: React.FC = () => {
                         className="w-8 h-8 sm:w-10 sm:h-10 flex items-center justify-center bg-slate-700/50 hover:bg-red-500/20 rounded-xl border border-slate-600 hover:border-red-500/50 transition-all duration-200 group"
                         aria-label="Cerrar"
                     >
-                        <span className="text-slate-400 group-hover:text-red-400 text-xl sm:text-2xl font-bold leading-none">×</span>
+                        <X className="w-5 h-5 sm:w-6 sm:h-6 text-slate-400 group-hover:text-red-400" />
                     </button>
                 </div>
 
@@ -87,7 +88,7 @@ const RulesButton: React.FC = () => {
                 aria-label="Ver reglas del juego"
             >
                 <span className="flex items-center gap-2 text-xs sm:text-sm font-bold text-white">
-                    <span className="text-base">📖</span>
+                    <BookOpen className="w-4 h-4" />
                     <span>Reglas</span>
                 </span>
             </button>

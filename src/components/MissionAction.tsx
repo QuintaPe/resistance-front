@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { Check, X, Clock, Info } from "lucide-react";
 
 interface MissionActionProps {
     canFail?: boolean; // true si el jugador es espía
@@ -43,9 +44,11 @@ const MissionAction: React.FC<MissionActionProps> = ({ canFail = false, onAction
                                     ? "bg-linear-to-br from-green-500 to-green-600"
                                     : "bg-linear-to-br from-red-500 to-red-600"
                                 }`}>
-                                <span className="text-4xl">
-                                    {selectedAction === "success" ? "✓" : "✗"}
-                                </span>
+                                {selectedAction === "success" ? (
+                                    <Check className="w-8 h-8 text-white" />
+                                ) : (
+                                    <X className="w-8 h-8 text-white" />
+                                )}
                             </div>
                         </div>
                     </div>
@@ -58,7 +61,7 @@ const MissionAction: React.FC<MissionActionProps> = ({ canFail = false, onAction
                     </p>
 
                     <div className="flex items-center justify-center gap-2 px-4 py-3 bg-slate-800/40 backdrop-blur-sm rounded-xl border border-slate-700/50">
-                        <span className="text-2xl animate-pulse">⏳</span>
+                        <Clock className="w-6 h-6 animate-pulse text-slate-400" />
                         <p className="text-slate-400 text-sm sm:text-base font-medium">
                             Esperando a los demás miembros del equipo...
                         </p>

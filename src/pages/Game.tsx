@@ -8,6 +8,7 @@ import MissionAction from "../components/MissionAction";
 import MissionTracker from "../components/MissionTracker";
 import GameStatus from "../components/GameStatus";
 import RulesButton from "../components/RulesButton";
+import { Gamepad2, Loader2, Target, Users, UserX, Shield, Clock, Swords, Vote } from "lucide-react";
 
 const Game: React.FC = () => {
     const { roomCode } = useParams<{ roomCode: string }>();
@@ -30,7 +31,7 @@ const Game: React.FC = () => {
     // Solicitar rol si el juego ya comenzó pero no tenemos rol
     useEffect(() => {
         if (roomCode && roomState && phase !== "lobby" && !role) {
-            console.log("⚠️ Solicitando rol porque no lo tenemos");
+            console.log("⚠ Solicitando rol porque no lo tenemos");
             requestRole(roomCode);
         }
     }, [roomCode, roomState, phase, role, requestRole]);
@@ -58,14 +59,12 @@ const Game: React.FC = () => {
                     <div className="inline-block mb-6 relative">
                         <div className="absolute inset-0 bg-linear-to-r from-blue-500 via-purple-500 to-pink-500 rounded-3xl blur-xl opacity-50 animate-pulse-glow"></div>
                         <div className="relative w-20 h-20 bg-linear-to-br from-blue-500 via-purple-600 to-pink-600 rounded-3xl flex items-center justify-center shadow-2xl">
-                            <span className="text-4xl animate-pulse">🎮</span>
+                            <Gamepad2 className="w-10 h-10 text-white animate-pulse" />
                         </div>
                     </div>
                     <div className="text-xl font-semibold text-slate-300">Cargando juego...</div>
                     <div className="mt-4 flex gap-2 justify-center">
-                        <div className="w-2 h-2 bg-blue-500 rounded-full animate-bounce"></div>
-                        <div className="w-2 h-2 bg-purple-500 rounded-full animate-bounce animation-delay-2000"></div>
-                        <div className="w-2 h-2 bg-pink-500 rounded-full animate-bounce animation-delay-4000"></div>
+                        <Loader2 className="w-6 h-6 text-blue-400 animate-spin" />
                     </div>
                 </div>
             </div>
@@ -120,7 +119,7 @@ const Game: React.FC = () => {
                         <div className="relative">
                             <div className="absolute inset-0 bg-linear-to-r from-blue-500 to-purple-500 rounded-xl blur-md opacity-50"></div>
                             <div className="relative w-10 h-10 sm:w-12 sm:h-12 bg-linear-to-br from-blue-500 to-purple-600 rounded-xl flex items-center justify-center shadow-xl">
-                                <span className="text-xl sm:text-2xl">🎮</span>
+                                <Gamepad2 className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
                             </div>
                         </div>
                         <div>
@@ -141,7 +140,7 @@ const Game: React.FC = () => {
                     <div className="absolute top-0 left-1/2 -translate-x-1/2 w-1/2 h-px bg-linear-to-r from-transparent via-white/20 to-transparent"></div>
 
                     <div className="flex items-center justify-center gap-2 mb-4">
-                        <span className="text-xl">🎯</span>
+                        <Target className="w-5 h-5 sm:w-6 sm:h-6 text-blue-400" />
                         <h2 className="text-lg sm:text-xl font-bold text-white">Progreso de Misiones</h2>
                     </div>
                     <div className="overflow-x-auto flex justify-center pb-2">
@@ -168,7 +167,11 @@ const Game: React.FC = () => {
                             : "bg-blue-500/10 border-blue-500/40 hover:shadow-blue-500/20 hover:shadow-2xl"
                             }`}>
                             <div className="flex items-center gap-2 mb-3">
-                                <span className="text-lg">{role === "spy" ? "🕵️" : "🛡️"}</span>
+                                {role === "spy" ? (
+                                    <UserX className="w-5 h-5 text-red-400" />
+                                ) : (
+                                    <Shield className="w-5 h-5 text-blue-400" />
+                                )}
                                 <h3 className="text-sm font-bold text-white uppercase tracking-wider">Tu Rol</h3>
                             </div>
                             {role ? (
@@ -179,14 +182,18 @@ const Game: React.FC = () => {
                                             : "bg-linear-to-r from-blue-600 to-blue-700"
                                             } opacity-90 group-hover:opacity-100 transition-opacity duration-200`}></div>
                                         <div className="relative px-4 py-2.5 flex items-center gap-2 font-bold text-lg">
-                                            <span className="text-2xl">{role === "spy" ? "🕵️" : "🛡️"}</span>
+                                            {role === "spy" ? (
+                                                <UserX className="w-6 h-6 text-white" />
+                                            ) : (
+                                                <Shield className="w-6 h-6 text-white" />
+                                            )}
                                             <span className="text-white">{role === "spy" ? "Espía" : "Resistencia"}</span>
                                         </div>
                                     </div>
                                     {role === "spy" && otherSpiesNames.length > 0 && (
                                         <div className="mt-3 p-3 bg-red-500/20 border border-red-500/30 rounded-xl">
                                             <div className="flex items-center gap-2 text-red-300 font-semibold mb-1.5 text-sm">
-                                                <span>👥</span>
+                                                <Users className="w-4 h-4" />
                                                 <span>Compañeros espías:</span>
                                             </div>
                                             <div className="text-sm text-red-200 font-medium">{otherSpiesNames.join(", ")}</div>
@@ -195,7 +202,7 @@ const Game: React.FC = () => {
                                 </div>
                             ) : (
                                 <div className="flex items-center gap-2 px-3 py-2 bg-yellow-500/10 border border-yellow-500/30 rounded-xl">
-                                    <span className="text-yellow-400 animate-pulse">⚠️</span>
+                                    <Clock className="w-5 h-5 text-yellow-400 animate-pulse" />
                                     <span className="text-yellow-400 text-sm font-medium">Aún no recibiste tu rol</span>
                                 </div>
                             )}
@@ -208,7 +215,7 @@ const Game: React.FC = () => {
                                 : "bg-red-500/10 border-red-500/40 hover:shadow-red-500/20 hover:shadow-2xl"
                                 }`}>
                                 <div className="flex items-center gap-2 mb-3">
-                                    <span className="text-lg">📊</span>
+                                    <Target className="w-5 h-5 text-purple-400" />
                                     <h3 className="text-sm font-bold text-white uppercase tracking-wider">Última Misión</h3>
                                 </div>
                                 <div className="space-y-3">
@@ -259,7 +266,7 @@ const Game: React.FC = () => {
                                                     <div className="relative">
                                                         <div className="absolute inset-0 bg-linear-to-r from-blue-500 to-purple-500 rounded-2xl blur-lg opacity-50 animate-pulse-glow"></div>
                                                         <div className="relative w-16 h-16 bg-linear-to-br from-blue-500 to-purple-600 rounded-2xl flex items-center justify-center shadow-xl">
-                                                            <span className="text-4xl">👥</span>
+                                                            <Users className="w-8 h-8 text-white" />
                                                         </div>
                                                     </div>
                                                 </div>
@@ -296,7 +303,7 @@ const Game: React.FC = () => {
                                         </>
                                     ) : (
                                         <div className="text-center">
-                                            <div className="text-5xl mb-4 animate-pulse">⏳</div>
+                                            <Clock className="w-14 h-14 mb-4 animate-pulse text-blue-400 mx-auto" />
                                             <h2 className="text-2xl sm:text-3xl font-black mb-2 text-white">Esperando al Líder</h2>
                                             <p className="text-slate-300 text-base sm:text-lg">
                                                 <span className="font-semibold text-blue-400">{roomState.players[roomState.leaderIndex].name}</span> está seleccionando el equipo...
@@ -314,7 +321,7 @@ const Game: React.FC = () => {
                                             <div className="relative">
                                                 <div className="absolute inset-0 bg-linear-to-r from-purple-500 to-pink-500 rounded-2xl blur-lg opacity-50 animate-pulse-glow"></div>
                                                 <div className="relative w-16 h-16 bg-linear-to-br from-purple-500 to-pink-600 rounded-2xl flex items-center justify-center shadow-xl">
-                                                    <span className="text-4xl">🗳️</span>
+                                                    <Vote className="w-8 h-8 text-white" />
                                                 </div>
                                             </div>
                                         </div>
@@ -324,7 +331,7 @@ const Game: React.FC = () => {
 
                                     <div className="w-full max-w-md p-5 bg-slate-800/40 backdrop-blur-sm border border-slate-700/50 rounded-2xl">
                                         <div className="flex items-center gap-2 justify-center mb-3">
-                                            <span className="text-lg">👥</span>
+                                            <Users className="w-5 h-5 text-blue-400" />
                                             <h3 className="font-bold text-white text-base">Equipo Propuesto</h3>
                                         </div>
                                         <div className="flex flex-wrap gap-2 justify-center">
@@ -359,13 +366,12 @@ const Game: React.FC = () => {
                                 <div className="flex-1 flex flex-col items-center justify-center space-y-5 sm:space-y-6 p-2 sm:p-4">
                                     {isInTeam ? (
                                         <>
-                                            {console.log("🎮 Fase misión - Role:", role, "canFail:", role === "spy")}
                                             <div className="text-center">
                                                 <div className="inline-block mb-4">
                                                     <div className="relative">
                                                         <div className="absolute inset-0 bg-linear-to-r from-green-500 to-emerald-500 rounded-2xl blur-lg opacity-50 animate-pulse-glow"></div>
                                                         <div className="relative w-16 h-16 bg-linear-to-br from-green-500 to-emerald-600 rounded-2xl flex items-center justify-center shadow-xl">
-                                                            <span className="text-4xl">🎯</span>
+                                                            <Target className="w-8 h-8 text-white" />
                                                         </div>
                                                     </div>
                                                 </div>
@@ -379,14 +385,14 @@ const Game: React.FC = () => {
                                         </>
                                     ) : (
                                         <div className="text-center">
-                                            <div className="text-5xl mb-4 animate-pulse">⏳</div>
+                                            <Clock className="w-14 h-14 mb-4 animate-pulse text-green-400 mx-auto" />
                                             <h2 className="text-2xl sm:text-3xl font-black mb-2 text-white">Misión en Progreso</h2>
                                             <p className="text-slate-300 text-base sm:text-lg mb-6">
                                                 El equipo está completando la misión...
                                             </p>
                                             <div className="max-w-md mx-auto p-5 bg-slate-800/40 backdrop-blur-sm border border-slate-700/50 rounded-2xl">
                                                 <div className="flex items-center gap-2 justify-center mb-3">
-                                                    <span className="text-lg">⚔️</span>
+                                                    <Swords className="w-5 h-5 text-green-400" />
                                                     <h3 className="font-bold text-white text-base">Equipo en Misión</h3>
                                                 </div>
                                                 <div className="flex flex-wrap gap-2 justify-center">

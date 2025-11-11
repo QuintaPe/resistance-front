@@ -5,6 +5,7 @@ import Lobby from "./pages/Lobby";
 import Game from "./pages/Game";
 import Reveal from "./pages/Reveal";
 import { useSocket } from "./context/SocketContext";
+import { UserSearch, Loader2 } from "lucide-react";
 
 /**
  * Componente principal que define las rutas del juego.
@@ -38,7 +39,7 @@ const App: React.FC = () => {
                     <div className="inline-block mb-8 relative">
                         <div className="absolute inset-0 bg-linear-to-r from-blue-500 via-purple-500 to-pink-500 rounded-3xl blur-2xl opacity-50 animate-pulse-glow"></div>
                         <div className="relative w-24 h-24 sm:w-32 sm:h-32 bg-linear-to-br from-blue-500 via-purple-600 to-pink-600 rounded-3xl flex items-center justify-center shadow-2xl animate-pulse">
-                            <span className="text-5xl sm:text-6xl">🕵️</span>
+                            <UserSearch className="w-14 h-14 sm:w-16 sm:h-16 text-white" />
                         </div>
                     </div>
 
@@ -73,11 +74,9 @@ const App: React.FC = () => {
                         </div>
                     </div>
 
-                    {/* Puntos de carga */}
+                    {/* Icono de carga */}
                     <div className="mt-8 flex gap-2 justify-center">
-                        <div className="w-3 h-3 bg-blue-500 rounded-full animate-bounce"></div>
-                        <div className="w-3 h-3 bg-purple-500 rounded-full animate-bounce animation-delay-2000"></div>
-                        <div className="w-3 h-3 bg-pink-500 rounded-full animate-bounce animation-delay-4000"></div>
+                        <Loader2 className="w-8 h-8 text-blue-400 animate-spin" />
                     </div>
                 </div>
             </div>

@@ -72,30 +72,7 @@ const TeamSelector: React.FC<TeamSelectorProps> = ({
                 })}
             </div>
 
-            {/* Contador de seleccionados */}
-            <div className="mt-5 text-center">
-                <div className={`inline-flex items-center gap-3 px-5 py-3 rounded-xl border transition-all duration-300 ${
-                    selectedTeam.length === teamSize
-                        ? "bg-green-500/20 border-green-500/40 shadow-lg shadow-green-500/20"
-                        : "bg-slate-800/40 backdrop-blur-sm border-slate-700/50"
-                }`}>
-                    <div className="flex items-center gap-2">
-                        <span className="text-slate-300 text-sm font-medium">Seleccionados:</span>
-                        <span className={`font-black text-xl transition-all duration-200 ${
-                            selectedTeam.length === teamSize 
-                                ? "text-green-400 scale-110" 
-                                : "text-blue-400"
-                        }`}>
-                            {selectedTeam.length}
-                        </span>
-                        <span className="text-slate-500 text-lg font-bold">/</span>
-                        <span className="text-slate-400 text-xl font-bold">{teamSize}</span>
-                    </div>
-                    {selectedTeam.length === teamSize && (
-                        <span className="text-green-400 text-lg animate-bounce">✓</span>
-                    )}
-                </div>
-            </div>
+
         </div>
     );
 };
