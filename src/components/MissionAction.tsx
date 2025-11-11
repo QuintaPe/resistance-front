@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Check, X, Clock, Info } from "lucide-react";
+import { Check, X, Clock } from "lucide-react";
 
 interface MissionActionProps {
     canFail?: boolean; // true si el jugador es espía
@@ -41,8 +41,8 @@ const MissionAction: React.FC<MissionActionProps> = ({ canFail = false, onAction
                             <div className={`absolute inset-0 rounded-2xl blur-lg opacity-50 animate-pulse-glow ${selectedAction === "success" ? "bg-green-500/50" : "bg-red-500/50"
                                 }`}></div>
                             <div className={`relative w-16 h-16 rounded-2xl flex items-center justify-center shadow-xl ${selectedAction === "success"
-                                    ? "bg-linear-to-br from-green-500 to-green-600"
-                                    : "bg-linear-to-br from-red-500 to-red-600"
+                                ? "bg-linear-to-br from-green-500 to-green-600"
+                                : "bg-linear-to-br from-red-500 to-red-600"
                                 }`}>
                                 {selectedAction === "success" ? (
                                     <Check className="w-8 h-8 text-white" />
@@ -133,8 +133,8 @@ const MissionAction: React.FC<MissionActionProps> = ({ canFail = false, onAction
                                 <div className={`absolute inset-0 rounded-2xl blur-xl opacity-60 animate-pulse-glow ${selectedAction === "success" ? "bg-green-500/50" : "bg-red-500/50"
                                     }`}></div>
                                 <div className={`relative w-16 h-16 rounded-2xl flex items-center justify-center shadow-xl ${selectedAction === "success"
-                                        ? "bg-linear-to-br from-green-500 to-green-600"
-                                        : "bg-linear-to-br from-red-500 to-red-600"
+                                    ? "bg-linear-to-br from-green-500 to-green-600"
+                                    : "bg-linear-to-br from-red-500 to-red-600"
                                     }`}>
                                     <span className="text-4xl">
                                         {selectedAction === "success" ? "✓" : "✗"}
@@ -179,8 +179,8 @@ const MissionAction: React.FC<MissionActionProps> = ({ canFail = false, onAction
                                 className="relative flex-1 group overflow-hidden"
                             >
                                 <div className={`absolute inset-0 rounded-xl opacity-90 group-hover:opacity-100 transition-opacity duration-200 ${selectedAction === "success"
-                                        ? "bg-linear-to-r from-green-600 to-emerald-600"
-                                        : "bg-linear-to-r from-red-600 to-rose-600"
+                                    ? "bg-linear-to-r from-green-600 to-emerald-600"
+                                    : "bg-linear-to-r from-red-600 to-rose-600"
                                     }`}></div>
                                 <div className="relative px-4 py-3 text-white font-semibold">
                                     Confirmar

@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Check, X, Clock } from "lucide-react";
+import { Check, Clock } from "lucide-react";
 
 interface VoteButtonsProps {
     onVote: (vote: "approve" | "reject") => void;
@@ -34,7 +34,7 @@ const VoteButtons: React.FC<VoteButtonsProps> = ({ onVote }) => {
             <div className="w-full max-w-md animate-fadeIn">
                 <div className="relative backdrop-blur-xl bg-white/5 rounded-2xl p-6 sm:p-8 shadow-2xl border border-white/10 text-center">
                     <div className="absolute top-0 left-1/2 -translate-x-1/2 w-1/2 h-px bg-linear-to-r from-transparent via-white/20 to-transparent"></div>
-                    
+
                     <div className="inline-block mb-4">
                         <div className="relative">
                             <div className="absolute inset-0 bg-linear-to-r from-blue-500 to-purple-500 rounded-2xl blur-lg opacity-50 animate-pulse-glow"></div>
@@ -50,7 +50,7 @@ const VoteButtons: React.FC<VoteButtonsProps> = ({ onVote }) => {
                             {selectedVote === "approve" ? "Aprobar ✓" : "Rechazar ✗"}
                         </span>
                     </p>
-                    
+
                     <div className="flex items-center justify-center gap-2 px-4 py-3 bg-slate-800/40 backdrop-blur-sm rounded-xl border border-slate-700/50">
                         <Clock className="w-6 h-6 animate-pulse text-slate-400" />
                         <p className="text-slate-400 text-sm sm:text-base font-medium">
@@ -97,22 +97,20 @@ const VoteButtons: React.FC<VoteButtonsProps> = ({ onVote }) => {
                 <div className="fixed inset-0 z-50 flex items-center justify-center p-4 animate-fadeIn">
                     {/* Overlay */}
                     <div className="absolute inset-0 bg-black/70 backdrop-blur-sm" onClick={handleCancel}></div>
-                    
+
                     {/* Modal */}
                     <div className="relative w-full max-w-md backdrop-blur-xl bg-slate-900/95 rounded-2xl p-6 sm:p-8 shadow-2xl border border-white/20 animate-fadeIn">
                         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-1/2 h-px bg-linear-to-r from-transparent via-white/20 to-transparent"></div>
-                        
+
                         {/* Icono */}
                         <div className="flex justify-center mb-4">
                             <div className="relative">
-                                <div className={`absolute inset-0 rounded-2xl blur-xl opacity-60 animate-pulse-glow ${
-                                    selectedVote === "approve" ? "bg-green-500/50" : "bg-red-500/50"
-                                }`}></div>
-                                <div className={`relative w-16 h-16 rounded-2xl flex items-center justify-center shadow-xl ${
-                                    selectedVote === "approve" 
-                                        ? "bg-linear-to-br from-green-500 to-green-600" 
+                                <div className={`absolute inset-0 rounded-2xl blur-xl opacity-60 animate-pulse-glow ${selectedVote === "approve" ? "bg-green-500/50" : "bg-red-500/50"
+                                    }`}></div>
+                                <div className={`relative w-16 h-16 rounded-2xl flex items-center justify-center shadow-xl ${selectedVote === "approve"
+                                        ? "bg-linear-to-br from-green-500 to-green-600"
                                         : "bg-linear-to-br from-red-500 to-red-600"
-                                }`}>
+                                    }`}>
                                     <span className="text-4xl">
                                         {selectedVote === "approve" ? "✓" : "✗"}
                                     </span>
@@ -144,11 +142,10 @@ const VoteButtons: React.FC<VoteButtonsProps> = ({ onVote }) => {
                                 onClick={handleConfirm}
                                 className="relative flex-1 group overflow-hidden"
                             >
-                                <div className={`absolute inset-0 rounded-xl opacity-90 group-hover:opacity-100 transition-opacity duration-200 ${
-                                    selectedVote === "approve" 
-                                        ? "bg-linear-to-r from-green-600 to-emerald-600" 
+                                <div className={`absolute inset-0 rounded-xl opacity-90 group-hover:opacity-100 transition-opacity duration-200 ${selectedVote === "approve"
+                                        ? "bg-linear-to-r from-green-600 to-emerald-600"
                                         : "bg-linear-to-r from-red-600 to-rose-600"
-                                }`}></div>
+                                    }`}></div>
                                 <div className="relative px-4 py-3 text-white font-semibold">
                                     Confirmar
                                 </div>
