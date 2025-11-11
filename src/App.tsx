@@ -11,7 +11,7 @@ import { useSocket } from "./context/SocketContext";
  * El socket se inicializa desde el contexto global.
  */
 const App: React.FC = () => {
-    const { socket, connected } = useSocket();
+    const { connected } = useSocket();
 
     if (!connected) {
         return (
