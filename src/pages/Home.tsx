@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router";
 import { useSocket } from "../context/SocketContext";
-import { UserSearch, User, Key, AlertTriangle, Gamepad2, Lightbulb } from "lucide-react";
+import { User, Key, AlertTriangle, Gamepad2, Lightbulb } from "lucide-react";
 
 const Home: React.FC = () => {
     const { createRoom, joinRoom } = useSocket();
@@ -51,21 +51,7 @@ const Home: React.FC = () => {
             <div className="relative z-10 w-full max-w-md px-4 sm:px-0 animate-fadeIn">
                 {/* Logo y título mejorado */}
                 <div className="text-center mb-10 sm:mb-12">
-                    <div className="inline-block mb-6 relative group">
-                        {/* Anillo exterior animado */}
-                        <div className="absolute inset-0 bg-linear-to-r from-blue-500 via-purple-500 to-pink-500 rounded-3xl blur-xl opacity-50 group-hover:opacity-75 transition-opacity duration-500 animate-pulse-glow"></div>
-
-                        {/* Logo principal */}
-                        <div className="relative w-20 h-20 sm:w-24 sm:h-24 bg-linear-to-br from-blue-500 via-purple-600 to-pink-600 rounded-3xl flex items-center justify-center shadow-2xl transform group-hover:scale-110 transition-transform duration-300">
-                            <UserSearch className="w-10 h-10 sm:w-12 sm:h-12 text-white" />
-                        </div>
-                    </div>
-
-                    <h1 className="text-5xl sm:text-6xl font-black mb-3 tracking-tight">
-                        <span className="bg-linear-to-r from-blue-400 via-purple-400 to-pink-400 bg-clip-text text-transparent animate-gradient">
-                            The Resistance
-                        </span>
-                    </h1>
+                    <img src="/img/Hero.png" alt="The Resistance" className="w-full h-full mx-auto" />
 
                     <p className="text-slate-400 text-lg sm:text-xl font-medium">
                         Confianza, traición y estrategia
