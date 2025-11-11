@@ -7,6 +7,7 @@ import VoteButtons from "../components/VoteButtons";
 import MissionAction from "../components/MissionAction";
 import MissionTracker from "../components/MissionTracker";
 import GameStatus from "../components/GameStatus";
+import RulesButton from "../components/RulesButton";
 
 const Game: React.FC = () => {
     const { roomCode } = useParams<{ roomCode: string }>();
@@ -132,12 +133,7 @@ const Game: React.FC = () => {
                         </div>
                     </div>
 
-                    <div className="px-4 py-2 bg-slate-800/80 backdrop-blur-sm border border-slate-700/50 rounded-full">
-                        <span className="text-xs sm:text-sm font-bold text-white">
-                            Misión <span className="text-blue-400">{roomState.currentMission + 1}</span>
-                            <span className="text-slate-500">/5</span>
-                        </span>
-                    </div>
+                    <RulesButton />
                 </div>
 
                 {/* Tracker de misiones mejorado */}
