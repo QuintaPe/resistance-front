@@ -78,34 +78,26 @@ const Reveal: React.FC = () => {
                 <div className="relative backdrop-blur-xl bg-white/5 rounded-3xl p-8 sm:p-10 shadow-2xl border border-white/10 text-center hover:shadow-yellow-500/10 hover:shadow-3xl transition-all duration-300">
                     <div className="absolute top-0 left-1/2 -translate-x-1/2 w-1/2 h-px bg-linear-to-r from-transparent via-white/20 to-transparent"></div>
 
-                    {/* Icono decorativo superior */}
-                    <div className="inline-block mb-6">
-                        <div className="relative">
-                            <div className="absolute inset-0 bg-linear-to-r from-yellow-500 via-orange-500 to-yellow-500 rounded-3xl blur-2xl opacity-50 animate-pulse-glow"></div>
-                            <div className="relative w-20 h-20 sm:w-24 sm:h-24 bg-linear-to-br from-yellow-500 via-orange-600 to-yellow-600 rounded-3xl flex items-center justify-center shadow-2xl">
-                                <Trophy className="w-12 h-12 sm:w-14 sm:h-14 text-white" />
-                            </div>
-                        </div>
-                    </div>
-
                     <h1 className="text-4xl sm:text-5xl md:text-6xl font-black mb-6 sm:mb-8">
                         <span className="bg-linear-to-r from-blue-400 via-purple-400 to-pink-400 bg-clip-text text-transparent animate-gradient">
                             ¡Juego Terminado!
                         </span>
                     </h1>
 
-                    {/* Badge del ganador */}
-                    <div className="relative inline-block mb-6">
+                    {/* Badge del ganador (mejorado para mobile, sin romper desktop) */}
+                    <div className="relative inline-block mb-6 w-full sm:w-auto max-w-xs sm:max-w-none">
                         <div className={`absolute inset-0 rounded-2xl blur-xl opacity-60 ${winnerBg} animate-pulse-glow`}></div>
-                        <div className={`relative flex flex-col sm:flex-row items-center gap-4 sm:gap-5 px-8 py-5 sm:px-10 sm:py-6 rounded-2xl bg-linear-to-r ${winnerGradient} shadow-2xl`}>
-                            <div className="drop-shadow-lg">
-                                {WinnerIcon && <WinnerIcon className="w-14 h-14 sm:w-16 sm:h-16 text-white" />}
+                        <div className={`relative flex flex-col sm:flex-row items-center gap-3 sm:gap-5 px-4 py-4 sm:px-10 sm:py-6 rounded-2xl bg-linear-to-r ${winnerGradient} shadow-2xl w-full sm:w-auto`}>
+                            <div className="drop-shadow-lg flex justify-center sm:block w-full sm:w-auto">
+                                {WinnerIcon && (
+                                    <WinnerIcon className="w-12 h-12 sm:w-16 sm:h-16 text-white" />
+                                )}
                             </div>
-                            <div className="text-center sm:text-left">
-                                <div className="text-sm text-white/90 uppercase tracking-[0.2em] font-bold mb-1 flex items-center gap-2">
+                            <div className="text-center sm:text-left w-full sm:w-auto">
+                                <div className="text-xs sm:text-sm text-white/90 uppercase tracking-[0.18em] sm:tracking-[0.2em] font-bold mb-1 flex items-center justify-center sm:justify-start gap-2">
                                     <Trophy className="w-4 h-4" /> Ganador <Trophy className="w-4 h-4" />
                                 </div>
-                                <div className="text-3xl sm:text-4xl font-black text-white drop-shadow-lg">
+                                <div className="text-2xl sm:text-4xl font-black text-white drop-shadow-lg break-words">
                                     {winner}
                                 </div>
                             </div>

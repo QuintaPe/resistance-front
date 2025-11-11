@@ -12,7 +12,7 @@ const MissionTracker: React.FC<MissionTrackerProps> = ({ total, results }) => {
             {Array.from({ length: total }).map((_, idx) => {
                 const result = results[idx];
                 const isCompleted = idx < results.length;
-                
+
                 let bgColor = "bg-slate-700/50 border-slate-600/50";
                 let icon = "";
                 let tooltip = `Misión ${idx + 1}`;
@@ -24,13 +24,13 @@ const MissionTracker: React.FC<MissionTrackerProps> = ({ total, results }) => {
                         bgColor = "bg-linear-to-br from-green-500 to-green-600 border-green-400/50";
                         icon = "✓";
                         tooltip = `Misión ${idx + 1}: Éxito`;
-                        glowClass = "shadow-xl shadow-green-500/50 animate-pulse-glow";
+                        glowClass = "";
                         hoverClass = "hover:scale-110";
                     } else {
                         bgColor = "bg-linear-to-br from-red-500 to-red-600 border-red-400/50";
                         icon = "✗";
                         tooltip = `Misión ${idx + 1}: Fallo (${result.fails} fallo${result.fails > 1 ? 's' : ''})`;
-                        glowClass = "shadow-xl shadow-red-500/50 animate-pulse-glow";
+                        glowClass = "";
                         hoverClass = "hover:scale-110";
                     }
                 } else {
@@ -54,7 +54,7 @@ const MissionTracker: React.FC<MissionTrackerProps> = ({ total, results }) => {
                         {isCompleted && (
                             <div className="absolute inset-0 bg-linear-to-tr from-white/0 via-white/10 to-white/0 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                         )}
-                        
+
                         {/* Contenido */}
                         <div className="relative">
                             {isCompleted ? (
