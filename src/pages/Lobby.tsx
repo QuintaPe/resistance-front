@@ -83,140 +83,192 @@ const Lobby: React.FC = () => {
             </div>
 
             <div className="relative z-10 w-full max-w-2xl space-y-5 sm:space-y-6 px-4 sm:px-0 animate-fadeIn">
-                {/* Header con código de sala mejorado */}
-                <div className="relative backdrop-blur-xl bg-white/5 rounded-3xl p-6 sm:p-8 shadow-2xl border border-white/10 text-center hover:shadow-blue-500/10 hover:shadow-3xl transition-all duration-300">
-                    <div className="absolute top-0 left-1/2 -translate-x-1/2 w-1/2 h-px bg-linear-to-r from-transparent via-white/20 to-transparent"></div>
+                {/* Header con código de sala - estilo táctico */}
+                <div className="relative group">
+                    <div className="absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-linear-to-r from-blue-500/0 via-blue-500/10 to-blue-500/0"></div>
 
-                    <h1 className="text-3xl sm:text-4xl font-black mb-4">
-                        <span className="text-white">
-                            Sala de Espera
-                        </span>
-                    </h1>
+                    <div className="relative backdrop-blur-xl bg-slate-800/40 rounded-2xl p-6 sm:p-8 shadow-2xl border border-slate-700/50 text-center transition-all duration-300">
 
-                    <div className="flex flex-col items-center gap-3 mb-3">
-                        <span className="text-slate-400 text-sm font-medium">Código de sala</span>
-                        <div className="relative group">
-                            <div className="absolute inset-0 bg-linear-to-r from-blue-500/30 to-purple-500/30 rounded-xl blur"></div>
-                            <div className="relative bg-slate-800/80 backdrop-blur-sm px-6 py-3 rounded-xl border border-slate-700/50 flex items-center gap-3">
-                                <span className="text-2xl sm:text-3xl font-black tracking-[0.3em] text-white">
-                                    {roomState.code}
-                                </span>
-                                <button
-                                    onClick={handleCopyCode}
-                                    className="ml-2 p-2 hover:bg-slate-700/50 rounded-lg transition-all duration-200 group/btn"
-                                    title="Copiar código"
-                                >
-                                    {copied ? (
-                                        <Check className="w-5 h-5 text-green-400" />
-                                    ) : (
-                                        <Clipboard className="w-5 h-5 text-slate-400 group-hover/btn:text-white transition-colors" />
-                                    )}
-                                </button>
+                        {/* Título con estilo dossier */}
+                        <div className="flex items-center justify-center gap-3 mb-6">
+                            <div className="h-px flex-1 max-w-24 bg-linear-to-r from-transparent to-slate-500/50"></div>
+                            <h1 className="text-2xl sm:text-3xl font-black text-white uppercase tracking-wider">
+                                Sala de Espera
+                            </h1>
+                            <div className="h-px flex-1 max-w-24 bg-linear-to-l from-transparent to-slate-500/50"></div>
+                        </div>
+
+                        <div className="flex flex-col items-center gap-3">
+                            <div className="flex items-center gap-2">
+                                <span className="text-[10px] text-slate-400 uppercase tracking-wide font-semibold">Código de sala</span>
                             </div>
+                            <div className="relative group/code">
+                                <div className="absolute inset-0 rounded-lg opacity-0 group-hover/code:opacity-100 transition-opacity duration-300 bg-linear-to-r from-blue-500/0 via-blue-500/10 to-blue-500/0"></div>
+
+                                <div className="relative bg-slate-700/60 backdrop-blur-sm px-6 py-3 rounded-lg border border-slate-600/50 flex items-center gap-3">
+                                    <span className="text-2xl sm:text-3xl font-black tracking-[0.3em] text-white">
+                                        {roomState.code}
+                                    </span>
+                                    <button
+                                        onClick={handleCopyCode}
+                                        className="ml-2 p-2 hover:bg-slate-600/50 rounded transition-all duration-200 group/btn"
+                                        title="Copiar código"
+                                    >
+                                        {copied ? (
+                                            <Check className="w-5 h-5 text-green-400" />
+                                        ) : (
+                                            <Clipboard className="w-5 h-5 text-slate-400 group-hover/btn:text-white transition-colors" />
+                                        )}
+                                    </button>
+                                </div>
+                            </div>
+                            <p className="text-slate-400 text-xs font-medium">
+                                {copied ? (
+                                    <span className="flex items-center gap-1 text-green-400">
+                                        <Check className="w-3 h-3" />
+                                        ¡Código copiado!
+                                    </span>
+                                ) : (
+                                    "Comparte este código con tus amigos"
+                                )}
+                            </p>
                         </div>
                     </div>
-
-                    <p className="text-slate-400 text-sm">
-                        {copied ? "¡Código copiado!" : "Comparte este código con tus amigos"}
-                    </p>
                 </div>
 
-                {/* Lista de jugadores mejorada */}
-                <div className="relative backdrop-blur-xl bg-white/5 rounded-2xl p-5 sm:p-6 shadow-xl border border-white/10">
-                    <div className="flex items-center justify-between mb-5">
-                        <h3 className="text-xl sm:text-2xl font-bold text-white flex items-center gap-2">
-                            <Users className="w-6 h-6" />
-                            <span>Jugadores</span>
-                        </h3>
-                        <div className="px-4 py-1.5 bg-slate-800/80 backdrop-blur-sm border border-slate-700/50 rounded-full">
-                            <span className="text-sm font-bold">
-                                <span className={roomState.players.length >= 5 ? "text-green-400" : "text-yellow-400"}>
-                                    {roomState.players.length}
-                                </span>
-                                <span className="text-slate-500">/12</span>
-                            </span>
-                        </div>
-                    </div>
+                {/* Lista de jugadores - estilo táctico */}
+                <div className="relative group">
+                    <div className="absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-linear-to-r from-purple-500/0 via-purple-500/10 to-purple-500/0"></div>
 
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 max-h-80 overflow-y-auto custom-scrollbar">
-                        {roomState.players.map((p, index) => (
-                            <div
-                                key={p.id}
-                                className={`
-                                    group relative p-3.5 rounded-xl flex items-center gap-3 transition-all duration-200
-                                    ${p.id === leader.id
-                                        ? "bg-linear-to-r from-yellow-500/20 to-orange-500/20 border border-yellow-500/40 hover:border-yellow-500/60"
-                                        : "bg-slate-800/40 border border-slate-700/40 hover:border-slate-600/60 hover:bg-slate-800/60"
-                                    }
-                                `}
-                            >
-                                <div className={`w-9 h-9 rounded-xl flex items-center justify-center text-sm font-bold shrink-0 shadow-md ${p.id === leader.id
-                                    ? "bg-linear-to-br from-yellow-500 to-orange-500 text-white"
-                                    : "bg-linear-to-br from-blue-500 to-purple-500 text-white"
-                                    }`}>
-                                    {index + 1}
+                    <div className="relative backdrop-blur-xl bg-slate-800/40 rounded-2xl p-5 sm:p-6 shadow-xl border border-slate-700/50">
+                        {/* Header estilo dossier */}
+                        <div className="flex items-center justify-center gap-3 mb-5">
+                            <div className="h-px flex-1 bg-linear-to-r from-transparent to-purple-500/50"></div>
+                            <div className="flex items-center gap-2 px-3 py-1 bg-purple-500/10 border border-purple-500/30 rounded">
+                                <Users className="w-4 h-4 text-purple-400" />
+                                <span className="text-purple-300 text-xs font-bold uppercase tracking-widest">Jugadores</span>
+                                <div className="ml-2 px-2 py-0.5 bg-slate-800/60 rounded text-xs font-bold">
+                                    <span className={roomState.players.length >= 5 ? "text-green-400" : "text-yellow-400"}>
+                                        {roomState.players.length}
+                                    </span>
+                                    <span className="text-slate-500">/12</span>
                                 </div>
-                                <div className="flex-1 min-w-0">
-                                    <div className="font-semibold truncate text-base text-white">
-                                        {p.name}
-                                        {p.id === playerId && <span className="text-blue-400 ml-1.5 text-sm">(Tú)</span>}
+                            </div>
+                            <div className="h-px flex-1 bg-linear-to-l from-transparent to-purple-500/50"></div>
+                        </div>
+
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 max-h-80 overflow-y-auto custom-scrollbar">
+                            {roomState.players.map((p, index) => (
+                                <div
+                                    key={p.id}
+                                    className="group/player relative"
+                                >
+                                    <div className={`absolute inset-0 rounded-lg opacity-0 group-hover/player:opacity-100 transition-opacity duration-300 ${p.id === leader.id
+                                        ? "bg-linear-to-r from-yellow-500/0 via-yellow-500/10 to-yellow-500/0"
+                                        : "bg-linear-to-r from-blue-500/0 via-blue-500/5 to-blue-500/0"
+                                        }`}></div>
+
+                                    <div className={`
+                                        relative p-3 rounded-lg flex items-center gap-3 transition-all duration-200
+                                        ${p.id === leader.id
+                                            ? "bg-yellow-500/15 border border-yellow-500/40"
+                                            : "bg-slate-700/40 border border-slate-600/40"
+                                        }
+                                    `}>
+                                        <div className={`w-8 h-8 rounded flex items-center justify-center text-sm font-bold shrink-0 ${p.id === leader.id
+                                            ? "bg-linear-to-br from-yellow-500 to-orange-500 text-white"
+                                            : "bg-linear-to-br from-blue-500 to-purple-500 text-white"
+                                            }`}>
+                                            {index + 1}
+                                        </div>
+                                        <div className="flex-1 min-w-0">
+                                            <div className="font-semibold truncate text-sm text-white">
+                                                {p.name}
+                                                {p.id === playerId && <span className="text-blue-400 ml-1.5 text-xs font-bold">(Tú)</span>}
+                                            </div>
+                                        </div>
+                                        {p.id === leader.id && (
+                                            <div className="flex items-center gap-1">
+                                                <Crown className="w-4 h-4 text-yellow-400 shrink-0 animate-pulse" />
+                                            </div>
+                                        )}
                                     </div>
                                 </div>
-                                {p.id === leader.id && (
-                                    <Crown className="w-5 h-5 text-yellow-400 shrink-0 animate-pulse" />
-                                )}
-                            </div>
-                        ))}
+                            ))}
+                        </div>
                     </div>
                 </div>
 
-                {/* Mensaje de estado / Botón de inicio mejorado */}
+                {/* Mensaje de estado / Botón de inicio - estilo táctico */}
                 {roomState.players.length < 5 ? (
-                    <div className="relative backdrop-blur-xl bg-yellow-500/10 rounded-2xl p-6 shadow-xl border border-yellow-500/30 text-center overflow-hidden">
-                        <div className="absolute inset-0 bg-linear-to-r from-yellow-500/0 via-yellow-500/5 to-yellow-500/0 animate-shimmer"></div>
-                        <div className="relative">
-                            <Clock className="w-12 h-12 sm:w-14 sm:h-14 mb-3 animate-pulse text-yellow-400 mx-auto" />
-                            <p className="text-yellow-400 font-bold mb-2 text-base sm:text-lg">
-                                Esperando más jugadores...
-                            </p>
-                            <p className="text-slate-300 text-sm sm:text-base">
-                                Se necesitan al menos <span className="font-bold text-yellow-400">{5 - roomState.players.length}</span> jugador{5 - roomState.players.length > 1 ? 'es' : ''} más
+                    <div className="relative group">
+                        <div className="absolute inset-0 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-linear-to-r from-yellow-500/0 via-yellow-500/10 to-yellow-500/0"></div>
+
+                        <div className="relative backdrop-blur-sm rounded-xl p-6 border bg-yellow-500/15 border-yellow-500/40 text-center">
+                            <div className="flex items-center justify-center gap-3 mb-4">
+                                <div className="w-12 h-12 rounded flex items-center justify-center bg-linear-to-br from-yellow-500 to-yellow-600">
+                                    <Clock className="w-6 h-6 text-white animate-pulse" />
+                                </div>
+                                <div className="text-left">
+                                    <p className="text-[10px] text-yellow-200 uppercase tracking-wide font-semibold">Estado</p>
+                                    <p className="text-lg font-bold text-yellow-300">Esperando jugadores</p>
+                                </div>
+                            </div>
+                            <p className="text-slate-300 text-sm">
+                                Se necesitan al menos <span className="font-bold text-yellow-300">{5 - roomState.players.length}</span> jugador{5 - roomState.players.length > 1 ? 'es' : ''} más
                             </p>
                         </div>
                     </div>
                 ) : canStart ? (
                     <button
                         onClick={handleStart}
-                        className="relative w-full group overflow-hidden"
+                        className="relative w-full group overflow-hidden rounded-lg"
                     >
-                        <div className="absolute inset-0 bg-linear-to-r from-green-600 via-green-500 to-emerald-600 rounded-2xl opacity-90 group-hover:opacity-100 transition-opacity duration-200"></div>
-                        <div className="absolute inset-0 bg-linear-to-r from-green-400/0 via-white/20 to-green-400/0 translate-x-[-200%] group-hover:translate-x-[200%] transition-transform duration-1000"></div>
-                        <div className="relative px-6 py-4 flex items-center justify-center gap-3 text-white font-bold text-xl sm:text-2xl">
-                            <Rocket className="w-7 h-7 group-hover:scale-110 transition-transform duration-200" />
-                            <span>Iniciar Juego</span>
+                        <div className="absolute inset-0 bg-linear-to-r from-green-600 to-emerald-600 opacity-90 group-hover:opacity-100 transition-opacity"></div>
+                        <div className="relative px-6 py-4 flex items-center justify-center gap-3">
+                            <div className="w-10 h-10 rounded flex items-center justify-center bg-white/20">
+                                <Rocket className="w-6 h-6 text-white" />
+                            </div>
+                            <div className="text-left">
+                                <p className="text-[10px] text-green-200 uppercase tracking-wide font-semibold">Acción</p>
+                                <p className="text-lg font-bold text-white">Iniciar Juego</p>
+                            </div>
                         </div>
                     </button>
                 ) : (
-                    <div className="relative backdrop-blur-xl bg-blue-500/10 rounded-2xl p-6 shadow-xl border border-blue-500/30 text-center">
-                        <Clock className="w-12 h-12 sm:w-14 sm:h-14 mb-3 animate-pulse text-blue-400 mx-auto" />
-                        <p className="text-blue-400 font-semibold text-base sm:text-lg">
-                            Esperando al líder para iniciar el juego...
-                        </p>
+                    <div className="relative group">
+                        <div className="absolute inset-0 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-linear-to-r from-blue-500/0 via-blue-500/10 to-blue-500/0"></div>
+
+                        <div className="relative backdrop-blur-sm rounded-xl p-6 border bg-blue-500/15 border-blue-500/40 text-center">
+                            <div className="flex items-center justify-center gap-3">
+                                <div className="w-12 h-12 rounded flex items-center justify-center bg-linear-to-br from-blue-500 to-blue-600">
+                                    <Clock className="w-6 h-6 text-white animate-pulse" />
+                                </div>
+                                <div className="text-left">
+                                    <p className="text-[10px] text-blue-200 uppercase tracking-wide font-semibold">Estado</p>
+                                    <p className="text-base font-bold text-blue-300">Esperando al líder</p>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 )}
 
-                {/* Instrucciones mejoradas */}
-                <div className="flex flex-col sm:flex-row items-center justify-center gap-4 text-center">
-                    <div className="flex items-center gap-2 px-4 py-2 bg-slate-800/30 backdrop-blur-sm rounded-full border border-slate-700/30">
-                        <Lightbulb className="w-4 h-4 text-yellow-400" />
-                        <span className="text-slate-400 text-xs sm:text-sm">
-                            Mínimo 5 jugadores para empezar
+                {/* Instrucciones tácticas */}
+                <div className="flex flex-col sm:flex-row items-center justify-center gap-3 text-center">
+                    <div className="flex items-center gap-2 px-3 py-1.5 bg-slate-800/40 backdrop-blur-sm rounded border border-slate-700/40">
+                        <div className="w-5 h-5 rounded flex items-center justify-center bg-linear-to-br from-yellow-500 to-yellow-600">
+                            <Lightbulb className="w-3 h-3 text-white" />
+                        </div>
+                        <span className="text-slate-300 text-xs font-semibold">
+                            Mínimo 5 jugadores
                         </span>
                     </div>
-                    <div className="hidden sm:flex items-center gap-2 px-4 py-2 bg-slate-800/30 backdrop-blur-sm rounded-full border border-slate-700/30">
-                        <Crown className="w-4 h-4 text-yellow-400" />
-                        <span className="text-slate-400 text-xs sm:text-sm">
-                            El líder inicia la partida
+                    <div className="hidden sm:flex items-center gap-2 px-3 py-1.5 bg-slate-800/40 backdrop-blur-sm rounded border border-slate-700/40">
+                        <div className="w-5 h-5 rounded flex items-center justify-center bg-linear-to-br from-orange-500 to-orange-600">
+                            <Crown className="w-3 h-3 text-white" />
+                        </div>
+                        <span className="text-slate-300 text-xs font-semibold">
+                            El líder inicia
                         </span>
                     </div>
                 </div>
