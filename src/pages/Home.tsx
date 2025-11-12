@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router";
 import { useSocket } from "../context/SocketContext";
-import { User, Key, AlertTriangle, Gamepad2, Lightbulb } from "lucide-react";
+import { User, Key, AlertTriangle, Gamepad2 } from "lucide-react";
 
 const Home: React.FC = () => {
     const { createRoom, joinRoom } = useSocket();

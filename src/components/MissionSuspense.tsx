@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useMemo } from "react";
-import { Target } from "lucide-react";
 
 interface MissionSuspenseProps {
     missionNumber: number;
@@ -30,8 +29,8 @@ const IndividualCard: React.FC<{ isSuccess: boolean; cardNumber: number; total: 
                     <div
                         key={idx}
                         className={`w-2.5 h-2.5 rounded-full transition-all duration-300 ${idx < cardNumber ? 'bg-purple-400 scale-100' :
-                                idx === cardNumber ? 'bg-purple-400 animate-pulse scale-125' :
-                                    'bg-slate-600 scale-90'
+                            idx === cardNumber ? 'bg-purple-400 animate-pulse scale-125' :
+                                'bg-slate-600 scale-90'
                             }`}
                     />
                 ))}
@@ -40,8 +39,8 @@ const IndividualCard: React.FC<{ isSuccess: boolean; cardNumber: number; total: 
             {/* Tarjeta con animaciones */}
             <div
                 className={`relative w-full max-w-xs transition-all duration-500 ${isExiting
-                        ? 'opacity-0 -translate-x-full rotate-[-10deg] scale-75'
-                        : 'opacity-100 translate-x-0 rotate-0 scale-100 animate-slideInRight'
+                    ? 'opacity-0 -translate-x-full rotate-[-10deg] scale-75'
+                    : 'opacity-100 translate-x-0 rotate-0 scale-100 animate-slideInRight'
                     }`}
                 style={{
                     perspective: '1000px'
@@ -95,14 +94,14 @@ const IndividualCard: React.FC<{ isSuccess: boolean; cardNumber: number; total: 
                                 } animate-pulse`}></div>
 
                             <div className={`relative backdrop-blur-xl rounded-xl shadow-2xl border-2 transition-all duration-300 ${isSuccess
-                                    ? 'bg-green-500/15 border-green-500/40'
-                                    : 'bg-red-500/15 border-red-500/40'
+                                ? 'bg-green-500/15 border-green-500/40'
+                                : 'bg-red-500/15 border-red-500/40'
                                 }`}>
                                 <div className="p-8">
                                     <div className="flex flex-col items-center gap-4">
                                         <div className={`w-20 h-20 rounded-lg flex items-center justify-center transition-transform duration-500 animate-scaleIn ${isSuccess
-                                                ? 'bg-linear-to-br from-green-500 to-green-600'
-                                                : 'bg-linear-to-br from-red-500 to-red-600'
+                                            ? 'bg-linear-to-br from-green-500 to-green-600'
+                                            : 'bg-linear-to-br from-red-500 to-red-600'
                                             }`}>
                                             <span className="text-5xl text-white font-bold animate-bounce">
                                                 {isSuccess ? '✓' : '✗'}
@@ -191,14 +190,14 @@ const MissionSuspense: React.FC<MissionSuspenseProps> = ({ missionNumber, result
                             }`}></div>
 
                         <div className={`relative backdrop-blur-xl rounded-xl shadow-2xl border-2 animate-scaleIn ${result.passed
-                                ? 'bg-green-500/15 border-green-500/40'
-                                : 'bg-red-500/15 border-red-500/40'
+                            ? 'bg-green-500/15 border-green-500/40'
+                            : 'bg-red-500/15 border-red-500/40'
                             }`}>
                             <div className="p-6 border-b border-white/10">
                                 <div className="flex flex-col items-center gap-3">
                                     <div className={`w-16 h-16 rounded-lg flex items-center justify-center ${result.passed
-                                            ? 'bg-linear-to-br from-green-500 to-green-600'
-                                            : 'bg-linear-to-br from-red-500 to-red-600'
+                                        ? 'bg-linear-to-br from-green-500 to-green-600'
+                                        : 'bg-linear-to-br from-red-500 to-red-600'
                                         }`}>
                                         <span className="text-4xl text-white font-bold">
                                             {result.passed ? '✓' : '✗'}
