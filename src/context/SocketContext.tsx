@@ -25,6 +25,8 @@ interface SocketContextValue {
     joinRoom: (roomCode: string, name: string, callback?: (ok: boolean, error?: string) => void) => void;
     startGame: (roomCode: string) => void;
     requestRole: (roomCode: string) => void;
+    restartGame: (roomCode: string, callback?: (ok: boolean, error?: string) => void) => void;
+    returnToLobby: (roomCode: string, callback?: (ok: boolean, error?: string) => void) => void;
 }
 
 const SocketContext = createContext<SocketContextValue | undefined>(undefined);
@@ -135,6 +137,40 @@ export const SocketProvider: React.FC<{ children: React.ReactNode }> = ({ childr
         [socket]
     );
 
+    const restartGame = useCallback(
+        (roomCode: string, callback?: (ok: boolean, error?: string) => void) => {
+            socket.emit(
+                "game:restart",
+                { roomCode },
+                (response: { ok?: boolean; error?: string }) => {
+                    if (response.error) {
+                        callback?.(false, response.error);
+                    } else {
+                        callback?.(true);
+                    }
+                }
+            );
+        },
+        [socket]
+    );
+
+    const returnToLobby = useCallback(
+        (roomCode: string, callback?: (ok: boolean, error?: string) => void) => {
+            socket.emit(
+                "game:returnToLobby",
+                { roomCode },
+                (response: { ok?: boolean; error?: string }) => {
+                    if (response.error) {
+                        callback?.(false, response.error);
+                    } else {
+                        callback?.(true);
+                    }
+                }
+            );
+        },
+        [socket]
+    );
+
     // =========================
     // 💾 Context Value
     // =========================
@@ -150,6 +186,8 @@ export const SocketProvider: React.FC<{ children: React.ReactNode }> = ({ childr
         joinRoom,
         startGame,
         requestRole,
+        restartGame,
+        returnToLobby,
     };
 
     return <SocketContext.Provider value={value}>{children}</SocketContext.Provider>;

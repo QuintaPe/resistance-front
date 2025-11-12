@@ -1,12 +1,58 @@
-import React from "react";
-import { useNavigate } from "react-router";
+import React, { useState, useEffect } from "react";
+import { useNavigate, useParams } from "react-router";
 import { useSocket } from "../context/SocketContext";
 import MissionTracker from "../components/MissionTracker";
-import { Trophy, Loader2, BarChart3, Drama, Home, UserX, Shield, CheckCircle, XCircle } from "lucide-react";
+import { Trophy, Loader2, BarChart3, Drama, Home, UserX, Shield, CheckCircle, XCircle, RotateCcw, Users } from "lucide-react";
 
 const Reveal: React.FC = () => {
     const navigate = useNavigate();
-    const { roomState, spies, playerId } = useSocket();
+    const { roomCode } = useParams<{ roomCode: string }>();
+    const { roomState, spies, playerId, restartGame, returnToLobby } = useSocket();
+    const [isRestarting, setIsRestarting] = useState(false);
+    const [restartError, setRestartError] = useState<string | null>(null);
+    const [isReturningToLobby, setIsReturningToLobby] = useState(false);
+    const [returnToLobbyError, setReturnToLobbyError] = useState<string | null>(null);
+
+    // Redirigir al lobby cuando se reinicia el juego
+    useEffect(() => {
+        if (roomCode && roomState) {
+            if (roomState.phase === "lobby") {
+                navigate(`/lobby/${roomCode}`);
+            } else if (roomState.phase === "proposeTeam") {
+                navigate(`/game/${roomCode}`);
+            }
+        }
+    }, [roomState?.phase, roomCode, navigate]);
+
+    const handleRestart = () => {
+        if (!roomState?.code) return;
+
+        setIsRestarting(true);
+        setRestartError(null);
+
+        restartGame(roomState.code, (ok, error) => {
+            setIsRestarting(false);
+            if (!ok && error) {
+                setRestartError(error);
+            }
+            // Si todo va bien, el servidor enviará un room:update que actualizará el estado
+        });
+    };
+
+    const handleReturnToLobby = () => {
+        if (!roomState?.code) return;
+
+        setIsReturningToLobby(true);
+        setReturnToLobbyError(null);
+
+        returnToLobby(roomState.code, (ok, error) => {
+            setIsReturningToLobby(false);
+            if (!ok && error) {
+                setReturnToLobbyError(error);
+            }
+            // Si todo va bien, el servidor enviará un room:update que actualizará el estado
+        });
+    };
 
     if (!roomState) {
         return (
@@ -246,19 +292,85 @@ const Reveal: React.FC = () => {
                     </div>
                 </div>
 
-                {/* Botón para volver mejorado */}
-                <div className="text-center pb-6">
-                    <button
-                        onClick={() => navigate("/")}
-                        className="relative group overflow-hidden w-full sm:w-auto"
-                    >
-                        <div className="absolute inset-0 bg-linear-to-r from-blue-600 via-purple-600 to-pink-600 rounded-xl opacity-90 group-hover:opacity-100 transition-opacity duration-200"></div>
-                        <div className="absolute inset-0 bg-linear-to-r from-blue-400/0 via-white/20 to-pink-400/0 translate-x-[-200%] group-hover:translate-x-[200%] transition-transform duration-1000"></div>
-                        <div className="relative px-8 py-4 flex items-center justify-center gap-3 text-white font-bold text-lg sm:text-xl">
-                            <Home className="w-6 h-6 group-hover:scale-110 transition-transform duration-200" />
-                            <span>Volver al Inicio</span>
+                {/* Botones de acción */}
+                <div className="space-y-4 pb-6">
+                    {/* Mensaje de error si hay */}
+                    {restartError && (
+                        <div className="backdrop-blur-xl bg-red-500/10 border border-red-500/40 rounded-xl p-4 text-center animate-fadeIn">
+                            <p className="text-red-400 font-semibold">{restartError}</p>
                         </div>
-                    </button>
+                    )}
+
+                    {returnToLobbyError && (
+                        <div className="backdrop-blur-xl bg-red-500/10 border border-red-500/40 rounded-xl p-4 text-center animate-fadeIn">
+                            <p className="text-red-400 font-semibold">{returnToLobbyError}</p>
+                        </div>
+                    )}
+
+                    {/* Botón de reiniciar */}
+                    <div className="text-center">
+                        <button
+                            onClick={handleRestart}
+                            disabled={isRestarting}
+                            className="relative group overflow-hidden w-full sm:w-auto disabled:opacity-50 disabled:cursor-not-allowed"
+                        >
+                            <div className="absolute inset-0 bg-linear-to-r from-green-600 via-emerald-600 to-teal-600 rounded-xl opacity-90 group-hover:opacity-100 transition-opacity duration-200"></div>
+                            <div className="absolute inset-0 bg-linear-to-r from-green-400/0 via-white/20 to-teal-400/0 translate-x-[-200%] group-hover:translate-x-[200%] transition-transform duration-1000"></div>
+                            <div className="relative px-8 py-4 flex items-center justify-center gap-3 text-white font-bold text-lg sm:text-xl">
+                                {isRestarting ? (
+                                    <>
+                                        <Loader2 className="w-6 h-6 animate-spin" />
+                                        <span>Reiniciando...</span>
+                                    </>
+                                ) : (
+                                    <>
+                                        <RotateCcw className="w-6 h-6 group-hover:rotate-180 transition-transform duration-500" />
+                                        <span>Reiniciar Partida</span>
+                                    </>
+                                )}
+                            </div>
+                        </button>
+                    </div>
+
+                    {/* Botón de volver al lobby */}
+                    <div className="text-center">
+                        <button
+                            onClick={handleReturnToLobby}
+                            disabled={isReturningToLobby}
+                            className="relative group overflow-hidden w-full sm:w-auto disabled:opacity-50 disabled:cursor-not-allowed"
+                        >
+                            <div className="absolute inset-0 bg-linear-to-r from-yellow-600 via-orange-600 to-amber-600 rounded-xl opacity-90 group-hover:opacity-100 transition-opacity duration-200"></div>
+                            <div className="absolute inset-0 bg-linear-to-r from-yellow-400/0 via-white/20 to-amber-400/0 translate-x-[-200%] group-hover:translate-x-[200%] transition-transform duration-1000"></div>
+                            <div className="relative px-8 py-4 flex items-center justify-center gap-3 text-white font-bold text-lg sm:text-xl">
+                                {isReturningToLobby ? (
+                                    <>
+                                        <Loader2 className="w-6 h-6 animate-spin" />
+                                        <span>Volviendo...</span>
+                                    </>
+                                ) : (
+                                    <>
+                                        <Users className="w-6 h-6 group-hover:scale-110 transition-transform duration-200" />
+                                        <span>Volver al Lobby</span>
+                                    </>
+                                )}
+                            </div>
+                        </button>
+                    </div>
+
+                    {/* Botón para volver al inicio */}
+                    <div className="text-center">
+                        <button
+                            onClick={() => navigate("/")}
+                            className="relative group overflow-hidden w-full sm:w-auto"
+                        >
+                            <div className="absolute inset-0 bg-linear-to-r from-blue-600 via-purple-600 to-pink-600 rounded-xl opacity-90 group-hover:opacity-100 transition-opacity duration-200"></div>
+                            <div className="absolute inset-0 bg-linear-to-r from-blue-400/0 via-white/20 to-pink-400/0 translate-x-[-200%] group-hover:translate-x-[200%] transition-transform duration-1000"></div>
+                            <div className="relative px-8 py-4 flex items-center justify-center gap-3 text-white font-bold text-lg sm:text-xl">
+                                <Home className="w-6 h-6 group-hover:scale-110 transition-transform duration-200" />
+                                <span>Volver al Inicio</span>
+                            </div>
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>

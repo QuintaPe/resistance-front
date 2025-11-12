@@ -25,6 +25,11 @@ const Lobby: React.FC = () => {
         }
     };
 
+    // Añade handler para volver al home
+    const handleGoHome = () => {
+        navigate("/");
+    };
+
     if (!roomState) {
         return (
             <div className="relative flex items-center justify-center min-h-screen overflow-hidden">
@@ -47,6 +52,13 @@ const Lobby: React.FC = () => {
                     <div className="mt-4 flex gap-2 justify-center">
                         <Loader2 className="w-6 h-6 text-blue-400 animate-spin" />
                     </div>
+                    {/* Botón para volver a Home */}
+                    <button
+                        onClick={handleGoHome}
+                        className="mt-8 px-4 py-2 rounded-lg bg-slate-700/80 hover:bg-slate-700 text-white font-semibold transition-colors shadow"
+                    >
+                        Volver al inicio
+                    </button>
                 </div>
             </div>
         );
@@ -74,6 +86,14 @@ const Lobby: React.FC = () => {
                 {/* Header con código de sala mejorado */}
                 <div className="relative backdrop-blur-xl bg-white/5 rounded-3xl p-6 sm:p-8 shadow-2xl border border-white/10 text-center hover:shadow-blue-500/10 hover:shadow-3xl transition-all duration-300">
                     <div className="absolute top-0 left-1/2 -translate-x-1/2 w-1/2 h-px bg-linear-to-r from-transparent via-white/20 to-transparent"></div>
+
+                    {/* Botón para volver a Home */}
+                    <button
+                        onClick={handleGoHome}
+                        className="absolute left-6 top-6 px-3 py-1.5 bg-slate-700/80 hover:bg-slate-700 text-white font-semibold rounded-lg transition-colors shadow text-sm z-10"
+                    >
+                        Volver al inicio
+                    </button>
 
                     <h1 className="text-3xl sm:text-4xl font-black mb-4">
                         <span className="bg-linear-to-r from-blue-400 via-purple-400 to-pink-400 bg-clip-text text-transparent animate-gradient">
@@ -109,8 +129,6 @@ const Lobby: React.FC = () => {
                     </p>
                 </div>
 
-
-
                 {/* Lista de jugadores mejorada */}
                 <div className="relative backdrop-blur-xl bg-white/5 rounded-2xl p-5 sm:p-6 shadow-xl border border-white/10">
                     <div className="flex items-center justify-between mb-5">
@@ -138,7 +156,6 @@ const Lobby: React.FC = () => {
                                         ? "bg-linear-to-r from-yellow-500/20 to-orange-500/20 border border-yellow-500/40 hover:border-yellow-500/60"
                                         : "bg-slate-800/40 border border-slate-700/40 hover:border-slate-600/60 hover:bg-slate-800/60"
                                     }
-                                    
                                 `}
                             >
                                 <div className={`w-9 h-9 rounded-xl flex items-center justify-center text-sm font-bold shrink-0 shadow-md ${p.id === leader.id
