@@ -1,5 +1,5 @@
-import React from "react";
-import { Clock, Users, Vote, Target, Trophy, Crown, AlertTriangle, Shield, UserX } from "lucide-react";
+import React, { useState } from "react";
+import { Clock, Users, Vote, Target, Trophy, Crown, AlertTriangle, Shield, UserX, Eye, EyeOff } from "lucide-react";
 
 interface GameStatusProps {
     leader: string;
@@ -10,6 +10,8 @@ interface GameStatusProps {
 }
 
 const GameStatus: React.FC<GameStatusProps> = ({ leader, phase, rejectedTeams, role, otherSpies = [] }) => {
+    const [roleVisible, setRoleVisible] = useState(true);
+
     const phaseConfig = {
         lobby: { label: "Esperando jugadores", Icon: Clock, iconColor: "text-slate-400", textColor: "text-slate-400", bg: "bg-slate-500/15", border: "border-slate-500/30" },
         proposeTeam: { label: "Proponiendo equipo", Icon: Users, iconColor: "text-blue-400", textColor: "text-blue-300", bg: "bg-blue-500/15", border: "border-blue-500/40" },
@@ -104,38 +106,66 @@ const GameStatus: React.FC<GameStatusProps> = ({ leader, phase, rejectedTeams, r
 
             {/* Tu Rol */}
             <div className="relative group">
-                {role && (
+                {role && roleVisible && (
                     <div className={`absolute inset-0 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300 ${role === "spy"
                         ? "bg-linear-to-r from-red-500/0 via-red-500/10 to-red-500/0"
                         : "bg-linear-to-r from-blue-500/0 via-blue-500/10 to-blue-500/0"
                         }`}></div>
                 )}
+                {role && !roleVisible && (
+                    <div className="absolute inset-0 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-linear-to-r from-slate-500/0 via-slate-500/10 to-slate-500/0"></div>
+                )}
 
                 {role ? (
-                    <div className={`relative backdrop-blur-sm rounded-lg p-2.5 border transition-all duration-300 ${role === "spy"
-                        ? "bg-red-500/15 border-red-500/40"
-                        : "bg-blue-500/15 border-blue-500/40"
+                    <div className={`relative backdrop-blur-sm rounded-lg p-2.5 border transition-all duration-300 ${!roleVisible
+                            ? "bg-slate-800/60 border-slate-700/50"
+                            : role === "spy"
+                                ? "bg-red-500/15 border-red-500/40"
+                                : "bg-blue-500/15 border-blue-500/40"
                         }`}>
                         <div className="flex items-center gap-2">
-                            <div className={`w-7 h-7 rounded flex items-center justify-center ${role === "spy"
-                                ? "bg-linear-to-br from-red-500 to-red-600"
-                                : "bg-linear-to-br from-blue-500 to-blue-600"
+                            <div className={`w-7 h-7 rounded flex items-center justify-center ${!roleVisible
+                                    ? "bg-slate-700/70"
+                                    : role === "spy"
+                                        ? "bg-linear-to-br from-red-500 to-red-600"
+                                        : "bg-linear-to-br from-blue-500 to-blue-600"
                                 }`}>
-                                {role === "spy" ? (
-                                    <UserX className="w-4 h-4 text-white" />
+                                {roleVisible ? (
+                                    role === "spy" ? (
+                                        <UserX className="w-4 h-4 text-white" />
+                                    ) : (
+                                        <Shield className="w-4 h-4 text-white" />
+                                    )
                                 ) : (
-                                    <Shield className="w-4 h-4 text-white" />
+                                    <EyeOff className="w-4 h-4 text-white" />
                                 )}
                             </div>
                             <div className="flex-1">
                                 <p className="text-[10px] text-slate-400 uppercase tracking-wide font-semibold">Tu Rol</p>
-                                <p className={`text-sm font-bold ${role === "spy" ? "text-red-300" : "text-blue-300"}`}>
-                                    {role === "spy" ? "Espía" : "Resistencia"}
-                                </p>
+                                {roleVisible ? (
+                                    <p className={`text-sm font-bold ${role === "spy" ? "text-red-300" : "text-blue-300"}`}>
+                                        {role === "spy" ? "Espía" : "Resistencia"}
+                                    </p>
+                                ) : (
+                                    <p className="text-sm font-bold text-slate-400">
+                                        ••••••••
+                                    </p>
+                                )}
                             </div>
+                            <button
+                                onClick={() => setRoleVisible(!roleVisible)}
+                                className="shrink-0 p-1.5 hover:bg-white/10 rounded transition-colors"
+                                title={roleVisible ? "Ocultar rol" : "Mostrar rol"}
+                            >
+                                {roleVisible ? (
+                                    <Eye className="w-4 h-4 text-slate-300" />
+                                ) : (
+                                    <EyeOff className="w-4 h-4 text-slate-300" />
+                                )}
+                            </button>
                         </div>
 
-                        {role === "spy" && otherSpies.length > 0 && (
+                        {roleVisible && role === "spy" && otherSpies.length > 0 && (
                             <div className="mt-2 p-2 bg-red-500/20 border border-red-500/30 rounded">
                                 <div className="flex items-center gap-1.5 text-red-300 font-semibold mb-1 text-[10px]">
                                     <Users className="w-3 h-3" />
