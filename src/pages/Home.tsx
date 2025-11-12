@@ -180,16 +180,6 @@ const Home: React.FC = () => {
                         </div>
                     )}
                 </div>
-
-                {/* Información adicional mejorada */}
-                <div className="mt-8 text-center space-y-3">
-                    <div className="inline-flex items-center gap-2 px-4 py-2 bg-slate-800/30 backdrop-blur-sm rounded-full border border-slate-700/30">
-                        <Lightbulb className="w-4 h-4 text-yellow-400" />
-                        <span className="text-slate-400 text-sm">
-                            Consejo: Invita a tus amigos para más diversión
-                        </span>
-                    </div>
-                </div>
             </div>
 
             {/* Partículas decorativas (opcional) */}

@@ -21,4 +21,6 @@ export type PublicState = {
     proposedTeam: string[];
     results: MissionResult[];
     rejectedTeamsInRow: number;
+    votedPlayers?: string[]; // IDs de jugadores que ya votaron
+    playersActed?: string[]; // IDs de jugadores que ya actuaron en la misión
 };

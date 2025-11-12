@@ -87,16 +87,8 @@ const Lobby: React.FC = () => {
                 <div className="relative backdrop-blur-xl bg-white/5 rounded-3xl p-6 sm:p-8 shadow-2xl border border-white/10 text-center hover:shadow-blue-500/10 hover:shadow-3xl transition-all duration-300">
                     <div className="absolute top-0 left-1/2 -translate-x-1/2 w-1/2 h-px bg-linear-to-r from-transparent via-white/20 to-transparent"></div>
 
-                    {/* Botón para volver a Home */}
-                    <button
-                        onClick={handleGoHome}
-                        className="absolute left-6 top-6 px-3 py-1.5 bg-slate-700/80 hover:bg-slate-700 text-white font-semibold rounded-lg transition-colors shadow text-sm z-10"
-                    >
-                        Volver al inicio
-                    </button>
-
                     <h1 className="text-3xl sm:text-4xl font-black mb-4">
-                        <span className="bg-linear-to-r from-blue-400 via-purple-400 to-pink-400 bg-clip-text text-transparent animate-gradient">
+                        <span className="text-white">
                             Sala de Espera
                         </span>
                     </h1>
