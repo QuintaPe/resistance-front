@@ -123,7 +123,7 @@ const Game: React.FC = () => {
 
     if (!roomState) {
         return (
-            <div className="relative flex items-center justify-center min-h-screen overflow-hidden">
+            <div className="relative flex items-center justify-center min-h-screen overflow-hidden p-4">
                 {/* Fondo animado */}
                 <div className="absolute inset-0 overflow-hidden pointer-events-none">
                     <div className="absolute inset-0 bg-linear-to-br from-slate-900 via-slate-800 to-slate-900"></div>
@@ -131,17 +131,43 @@ const Game: React.FC = () => {
                     <div className="absolute bottom-0 right-0 w-96 h-96 bg-purple-500/20 rounded-full blur-3xl animate-pulse-slow animation-delay-2000"></div>
                 </div>
 
-                {/* Loading */}
-                <div className="relative z-10 text-center animate-fadeIn">
-                    <div className="inline-block mb-6 relative">
-                        <div className="absolute inset-0 bg-linear-to-r from-blue-500 via-purple-500 to-pink-500 rounded-3xl blur-xl opacity-50 animate-pulse-glow"></div>
-                        <div className="relative w-20 h-20 bg-linear-to-br from-blue-500 via-purple-600 to-pink-600 rounded-3xl flex items-center justify-center shadow-2xl">
-                            <Gamepad2 className="w-10 h-10 text-white animate-pulse" />
+                {/* Loading con diseño táctico */}
+                <div className="relative z-10 w-full max-w-md animate-fadeIn">
+                    <div className="relative group">
+                        <div className="absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-linear-to-r from-blue-500/0 via-blue-500/10 to-blue-500/0"></div>
+
+                        <div className="relative backdrop-blur-xl bg-slate-800/40 rounded-2xl p-8 shadow-2xl border border-slate-700/50">
+                            {/* Icono de carga */}
+                            <div className="flex justify-center mb-6">
+                                <div className="relative">
+                                    <div className="absolute inset-0 bg-blue-500/30 rounded-lg blur-xl animate-pulse"></div>
+                                    <div className="relative w-16 h-16 rounded-lg flex items-center justify-center bg-linear-to-br from-blue-500 to-blue-600">
+                                        <Loader2 className="w-8 h-8 text-white animate-spin" />
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* Título con estilo dossier */}
+                            <div className="flex items-center justify-center gap-3 mb-4">
+                                <div className="h-px flex-1 max-w-16 bg-linear-to-r from-transparent to-slate-500/50"></div>
+                                <h2 className="text-lg font-black text-white uppercase tracking-wider">
+                                    Cargando
+                                </h2>
+                                <div className="h-px flex-1 max-w-16 bg-linear-to-l from-transparent to-slate-500/50"></div>
+                            </div>
+
+                            <p className="text-center text-slate-400 text-sm font-medium mb-6">
+                                Preparando la partida...
+                            </p>
+
+                            {/* Botón para volver a Home */}
+                            <button
+                                onClick={() => navigate("/")}
+                                className="w-full px-4 py-2.5 bg-slate-800/60 hover:bg-slate-700/60 border border-slate-700/50 text-white rounded-lg font-semibold text-sm transition-colors"
+                            >
+                                Volver al inicio
+                            </button>
                         </div>
-                    </div>
-                    <div className="text-xl font-semibold text-slate-300">Cargando juego...</div>
-                    <div className="mt-4 flex gap-2 justify-center">
-                        <Loader2 className="w-6 h-6 text-blue-400 animate-spin" />
                     </div>
                 </div>
             </div>
