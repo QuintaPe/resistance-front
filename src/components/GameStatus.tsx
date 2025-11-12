@@ -118,17 +118,17 @@ const GameStatus: React.FC<GameStatusProps> = ({ leader, phase, rejectedTeams, r
 
                 {role ? (
                     <div className={`relative backdrop-blur-sm rounded-lg p-2.5 border transition-all duration-300 ${!roleVisible
-                            ? "bg-slate-800/60 border-slate-700/50"
-                            : role === "spy"
-                                ? "bg-red-500/15 border-red-500/40"
-                                : "bg-blue-500/15 border-blue-500/40"
+                        ? "bg-slate-800/60 border-slate-700/50"
+                        : role === "spy"
+                            ? "bg-red-500/15 border-red-500/40"
+                            : "bg-blue-500/15 border-blue-500/40"
                         }`}>
                         <div className="flex items-center gap-2">
                             <div className={`w-7 h-7 rounded flex items-center justify-center ${!roleVisible
-                                    ? "bg-slate-700/70"
-                                    : role === "spy"
-                                        ? "bg-linear-to-br from-red-500 to-red-600"
-                                        : "bg-linear-to-br from-blue-500 to-blue-600"
+                                ? "bg-slate-700/70"
+                                : role === "spy"
+                                    ? "bg-linear-to-br from-red-500 to-red-600"
+                                    : "bg-linear-to-br from-blue-500 to-blue-600"
                                 }`}>
                                 {roleVisible ? (
                                     role === "spy" ? (
