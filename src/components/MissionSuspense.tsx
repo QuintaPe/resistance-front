@@ -144,25 +144,23 @@ const MissionSuspense: React.FC<MissionSuspenseProps> = ({ missionNumber, result
             votes.push(false); // fallo
         }
 
-        // Crear semilla única usando el código de sala y número de misión
+        // Crear semilla simple y única por sala/misión
         const seedString = `${roomCode}-${missionNumber}`;
-        const seed = seedString.split('').reduce((acc, char) => {
-            return ((acc << 5) - acc) + char.charCodeAt(0);
-        }, 0);
+        let seed = 0;
+        for (let i = 0; i < seedString.length; i++) {
+            seed = (seed * 31 + seedString.charCodeAt(i)) >>> 0;
+        }
 
-        // Generador de números pseudoaleatorios seeded (LCG simple)
-        const seededRandom = (s: number) => {
-            let x = Math.abs(s);
-            return () => {
-                x = (x * 1664525 + 1013904223) % 4294967296;
-                return x / 4294967296;
-            };
+        // Generador de números pseudoaleatorios simple
+        let random = seed;
+        const next = () => {
+            random = (random * 1103515245 + 12345) >>> 0;
+            return (random / 4294967296);
         };
 
-        // Fisher-Yates shuffle con semilla
-        const rng = seededRandom(seed);
+        // Barajar (Fisher-Yates)
         for (let i = votes.length - 1; i > 0; i--) {
-            const j = Math.floor(rng() * (i + 1));
+            const j = Math.floor(next() * (i + 1));
             [votes[i], votes[j]] = [votes[j], votes[i]];
         }
 
