@@ -51,7 +51,6 @@ const Game: React.FC = () => {
     // Solicitar rol si el juego ya comenzó pero no tenemos rol
     useEffect(() => {
         if (roomCode && roomState && phase !== "lobby" && !role) {
-            console.log("⚠ Solicitando rol porque no lo tenemos");
             requestRole(roomCode);
         }
     }, [roomCode, roomState, phase, role, requestRole]);
@@ -210,10 +209,11 @@ const Game: React.FC = () => {
     return (
         <div className="relative min-h-screen p-3 sm:p-6 overflow-hidden">
             {/* Componente de suspenso de misión */}
-            {showSuspense && suspenseResult && (
+            {showSuspense && suspenseResult && roomCode && (
                 <MissionSuspense
                     missionNumber={suspenseResult.missionNumber}
                     result={suspenseResult.result}
+                    roomCode={roomCode}
                     onComplete={handleSuspenseComplete}
                 />
             )}

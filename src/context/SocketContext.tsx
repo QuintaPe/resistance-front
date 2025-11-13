@@ -77,7 +77,6 @@ export const SocketProvider: React.FC<{ children: React.ReactNode }> = ({ childr
 
         // Rol privado del jugador (solo recibido una vez por jugador)
         socket.on("game:role", (data: { role: "spy" | "resistance"; spies?: string[] }) => {
-            console.log("🎭 Rol recibido:", data.role, "Espías:", data.spies);
             setRole(data.role);
             if (data.spies) setSpies(data.spies);
         });

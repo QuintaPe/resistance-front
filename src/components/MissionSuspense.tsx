@@ -7,6 +7,7 @@ interface MissionSuspenseProps {
         fails: number;
         team: string[];
     };
+    roomCode: string;
     onComplete: () => void;
 }
 
@@ -124,12 +125,12 @@ const IndividualCard: React.FC<{ isSuccess: boolean; cardNumber: number; total: 
     );
 };
 
-const MissionSuspense: React.FC<MissionSuspenseProps> = ({ missionNumber, result, onComplete }) => {
+const MissionSuspense: React.FC<MissionSuspenseProps> = ({ missionNumber, result, roomCode, onComplete }) => {
     const [currentCardIndex, setCurrentCardIndex] = useState(0);
     const [showFinalResult, setShowFinalResult] = useState(false);
     const [isExiting, setIsExiting] = useState(false);
 
-    // Generar array de votos individuales y barajarlos
+    // Generar array de votos individuales y barajarlos de forma determinista
     const individualVotes = useMemo(() => {
         const votes: boolean[] = [];
         const teamSize = result.team.length;
@@ -143,9 +144,30 @@ const MissionSuspense: React.FC<MissionSuspenseProps> = ({ missionNumber, result
             votes.push(false); // fallo
         }
 
-        // Barajar aleatoriamente
-        return votes.sort(() => Math.random() - 0.5);
-    }, [result.team.length, result.fails]);
+        // Crear semilla única usando el código de sala y número de misión
+        const seedString = `${roomCode}-${missionNumber}`;
+        const seed = seedString.split('').reduce((acc, char) => {
+            return ((acc << 5) - acc) + char.charCodeAt(0);
+        }, 0);
+
+        // Generador de números pseudoaleatorios seeded (LCG simple)
+        const seededRandom = (s: number) => {
+            let x = Math.abs(s);
+            return () => {
+                x = (x * 1664525 + 1013904223) % 4294967296;
+                return x / 4294967296;
+            };
+        };
+
+        // Fisher-Yates shuffle con semilla
+        const rng = seededRandom(seed);
+        for (let i = votes.length - 1; i > 0; i--) {
+            const j = Math.floor(rng() * (i + 1));
+            [votes[i], votes[j]] = [votes[j], votes[i]];
+        }
+
+        return votes;
+    }, [result.team.length, result.fails, roomCode, missionNumber]);
 
     useEffect(() => {
         if (currentCardIndex < individualVotes.length) {
