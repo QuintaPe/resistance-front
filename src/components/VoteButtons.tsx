@@ -84,7 +84,7 @@ const VoteButtons: React.FC<VoteButtonsProps> = ({ onVote }) => {
                     {/* Contenedor principal */}
                     <div className="relative backdrop-blur-sm bg-green-500/10 border-2 border-green-500/40 rounded-lg p-3 sm:p-3.5 group-hover:border-green-400/60 group-hover:bg-green-500/20 transition-all duration-200">
                         <div className="flex flex-col items-center gap-1.5">
-                            <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-linear-to-br from-green-500 to-green-600 flex items-center justify-center group-hover:scale-110 transition-transform duration-200">
+                            <div className="w-8 h-8 rounded-lg bg-linear-to-br from-green-500 to-green-600 flex items-center justify-center group-hover:scale-110 transition-transform duration-200">
                                 <span className="text-white text-lg sm:text-xl font-bold">✓</span>
                             </div>
                             <span className="text-green-300 font-bold text-sm sm:text-base uppercase tracking-wide">Aprobar</span>
@@ -103,7 +103,7 @@ const VoteButtons: React.FC<VoteButtonsProps> = ({ onVote }) => {
                     {/* Contenedor principal */}
                     <div className="relative backdrop-blur-sm bg-red-500/10 border-2 border-red-500/40 rounded-lg p-3 sm:p-3.5 group-hover:border-red-400/60 group-hover:bg-red-500/20 transition-all duration-200">
                         <div className="flex flex-col items-center gap-1.5">
-                            <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-linear-to-br from-red-500 to-red-600 flex items-center justify-center group-hover:scale-110 transition-transform duration-200">
+                            <div className="w-8 h-8 rounded-lg bg-linear-to-br from-red-500 to-red-600 flex items-center justify-center group-hover:scale-110 transition-transform duration-200">
                                 <span className="text-white text-lg sm:text-xl font-bold">✗</span>
                             </div>
                             <span className="text-red-300 font-bold text-sm sm:text-base uppercase tracking-wide">Rechazar</span>

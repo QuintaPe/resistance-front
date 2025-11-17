@@ -324,15 +324,19 @@ const Game: React.FC = () => {
 
                             {/* Fase: Proponer equipo */}
                             {phase === "proposeTeam" && (
-                                <div className="flex-1 flex flex-col items-center justify-center space-y-5 sm:space-y-6 p-2 sm:p-4">
+                                <div className="flex-1 flex flex-col items-center justify-center space-y-6 p-4">
                                     {isLeader ? (
                                         <>
-                                            <div className="text-center">
-                                                <h2 className="text-2xl sm:text-3xl font-black mb-2 text-white flex items-center justify-center gap-2 sm:gap-3">
-                                                    <Users className="w-6 h-6 sm:w-7 sm:h-7 text-white" />
-                                                    <span>Selecciona tu Equipo</span>
+                                            <div className="text-center space-y-1">
+                                                <div className="flex items-center justify-center gap-2 mb-2">
+                                                    <div className="h-px w-12 bg-slate-600"></div>
+                                                    <Users className="w-5 h-5 text-slate-400" />
+                                                    <div className="h-px w-12 bg-slate-600"></div>
+                                                </div>
+                                                <h2 className="text-2xl sm:text-3xl font-black text-white uppercase tracking-tight">
+                                                    Selecciona tu Equipo
                                                 </h2>
-
+                                                <p className="text-slate-400 text-sm">Requiere {teamSize} agentes</p>
                                             </div>
                                             <TeamSelector
                                                 players={roomState.players}
@@ -342,93 +346,66 @@ const Game: React.FC = () => {
                                             />
                                             <button
                                                 onClick={handlePropose}
-                                                className="relative group overflow-hidden w-full sm:w-auto"
+                                                className={`relative px-8 py-3 rounded-lg font-bold text-sm uppercase tracking-wider transition-all ${selectedTeam.length === teamSize
+                                                    ? "bg-blue-600 hover:bg-blue-500 text-white"
+                                                    : "bg-slate-700/50 text-slate-500 cursor-not-allowed"
+                                                    }`}
                                                 disabled={selectedTeam.length !== teamSize}
                                             >
-                                                <div className={`absolute inset-0 rounded-xl transition-opacity duration-200 ${selectedTeam.length === teamSize
-                                                    ? "bg-linear-to-r from-blue-600 via-blue-500 to-purple-600 opacity-90 group-hover:opacity-100"
-                                                    : "bg-slate-700 opacity-50"
-                                                    }`}></div>
-                                                {selectedTeam.length === teamSize && (
-                                                    <div className="absolute inset-0 bg-linear-to-r from-blue-400/0 via-white/20 to-blue-400/0 translate-x-[-200%] group-hover:translate-x-[200%] transition-transform duration-1000"></div>
-                                                )}
-                                                <div className="relative px-6 py-3.5 flex items-center justify-center gap-2 text-white font-bold text-lg">
-                                                    <span>Proponer Equipo</span>
-                                                    <span className="px-2 py-0.5 bg-white/20 rounded-md text-sm">
-                                                        {selectedTeam.length}/{teamSize}
-                                                    </span>
-                                                </div>
+                                                Proponer Equipo ({selectedTeam.length}/{teamSize})
                                             </button>
                                         </>
                                     ) : (
-                                        <div className="space-y-4">
-                                            <div className="relative group">
-                                                <div className="absolute inset-0 rounded-lg opacity-50 group-hover:opacity-100 transition-opacity duration-300 bg-linear-to-r from-blue-500/0 via-blue-500/10 to-blue-500/0"></div>
-
-                                                <div className="relative backdrop-blur-sm rounded-lg p-6 border bg-blue-500/15 border-blue-500/40">
-                                                    <div className="flex flex-col items-center text-center">
-                                                        <div className="w-14 h-14 rounded-lg flex items-center justify-center bg-linear-to-br from-blue-500 to-blue-600 mb-4">
-                                                            <Clock className="w-7 h-7 text-white animate-pulse" />
-                                                        </div>
-                                                        <h2 className="text-2xl font-bold text-white mb-2">Esperando al Líder</h2>
-                                                        <p className="text-slate-300 text-base">
-                                                            <span className="font-semibold text-blue-300">{roomState.players[roomState.leaderIndex].name}</span> está seleccionando el equipo
-                                                        </p>
-                                                    </div>
-                                                </div>
-                                            </div>
+                                        <div className="text-center space-y-3">
+                                            <Clock className="w-10 h-10 text-slate-400 mx-auto animate-pulse" />
+                                            <h2 className="text-xl font-bold text-white">Esperando al Líder</h2>
+                                            <p className="text-slate-400 text-sm">
+                                                <span className="text-blue-400 font-semibold">{roomState.players[roomState.leaderIndex].name}</span> está seleccionando el equipo
+                                            </p>
                                         </div>
                                     )}
                                 </div>
                             )}
 
-                            {/* Fase: Votar equipo mejorada */}
+                            {/* Fase: Votar equipo */}
                             {phase === "voteTeam" && (
-                                <div className="flex-1 flex flex-col items-center justify-center space-y-5 sm:space-y-6 p-2 sm:p-4">
-                                    <div className="text-center">
-                                        <h2 className="text-2xl sm:text-3xl font-black mb-2 text-white flex items-center justify-center gap-2 sm:gap-3">
-                                            <Vote className="w-6 h-6 sm:w-7 sm:h-7 text-white" />
-                                            <span>Votación de Equipo</span>
+                                <div className="flex-1 flex flex-col items-center justify-center space-y-6 p-4">
+                                    <div className="text-center space-y-1">
+                                        <div className="flex items-center justify-center gap-2 mb-2">
+                                            <div className="h-px w-12 bg-slate-600"></div>
+                                            <Vote className="w-5 h-5 text-slate-400" />
+                                            <div className="h-px w-12 bg-slate-600"></div>
+                                        </div>
+                                        <h2 className="text-2xl sm:text-3xl font-black text-white uppercase tracking-tight">
+                                            Votación de Equipo
                                         </h2>
-                                        <p className="text-slate-300 text-base sm:text-lg mb-4">¿Apruebas este equipo?</p>
+                                        <p className="text-slate-400 text-sm">¿Apruebas este equipo?</p>
                                     </div>
 
-                                    <div className="relative w-full max-w-lg">
-                                        {/* Header estilo dossier */}
-                                        <div className="flex items-center justify-center gap-2 mb-4">
-                                            <div className="h-px flex-1 bg-linear-to-r from-transparent to-blue-500/50"></div>
-                                            <div className="flex items-center gap-2 px-3 py-1 bg-blue-500/10 border border-blue-500/30 rounded">
+                                    {/* Grid de agentes propuestos */}
+                                    <div className="w-full max-w-lg">
+                                        <div className="flex items-center justify-center gap-2 mb-3">
+                                            <div className="h-px flex-1 bg-slate-700"></div>
+                                            <div className="flex items-center gap-1.5">
                                                 <Target className="w-4 h-4 text-blue-400" />
-                                                <span className="text-blue-300 text-xs font-bold uppercase tracking-widest">Equipo de Misión</span>
+                                                <span className="text-blue-300 text-xs font-bold uppercase tracking-wider">Equipo Propuesto</span>
                                             </div>
-                                            <div className="h-px flex-1 bg-linear-to-l from-transparent to-blue-500/50"></div>
+                                            <div className="h-px flex-1 bg-slate-700"></div>
                                         </div>
-
-                                        {/* Grid de agentes */}
-                                        <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                                        <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
                                             {roomState.proposedTeam.map((pid, index) => {
                                                 const player = roomState.players.find((p) => p.id === pid);
                                                 const name = player?.name || pid;
                                                 return (
                                                     <div
                                                         key={pid}
-                                                        className="relative group"
+                                                        className="backdrop-blur-sm bg-slate-800/60 border border-slate-700/50 rounded-lg p-2.5 hover:border-blue-500/50 transition-colors"
                                                     >
-                                                        {/* Efecto de brillo */}
-                                                        <div className="absolute inset-0 bg-linear-to-r from-blue-500/0 via-blue-500/20 to-purple-500/0 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-
-                                                        {/* Card del agente */}
-                                                        <div className="relative backdrop-blur-sm bg-slate-800/60 border border-slate-700/50 rounded-lg p-3 group-hover:border-blue-500/50 transition-all duration-300">
-                                                            <div className="flex items-center gap-2">
-                                                                {/* Número de agente */}
-                                                                <div className="shrink-0 w-6 h-6 rounded bg-linear-to-br from-blue-500 to-purple-600 flex items-center justify-center">
-                                                                    <span className="text-white text-xs font-black">{index + 1}</span>
-                                                                </div>
-                                                                {/* Nombre */}
-                                                                <div className="flex-1 min-w-0">
-                                                                    <p className="text-white font-semibold text-sm truncate">{name}</p>
-                                                                </div>
+                                                        <div className="flex items-center gap-2">
+                                                            <div className="shrink-0 w-5 h-5 rounded bg-linear-to-br from-blue-500 to-purple-600 flex items-center justify-center">
+                                                                <span className="text-white text-xs font-black">{index + 1}</span>
                                                             </div>
+                                                            <p className="text-white font-semibold text-sm truncate">{name}</p>
                                                         </div>
                                                     </div>
                                                 );
@@ -436,30 +413,29 @@ const Game: React.FC = () => {
                                         </div>
                                     </div>
 
-                                    <div className="w-full max-w-md">
+                                    <div className="w-full max-w-xs">
                                         <VoteButtons onVote={handleVote} />
                                     </div>
 
-                                    <div className="relative group">
-                                        <div className="absolute inset-0 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-linear-to-r from-slate-500/0 via-slate-500/10 to-slate-500/0"></div>
-                                        <div className="relative backdrop-blur-sm rounded-lg px-4 py-2 border bg-slate-800/60 border-slate-700/50 flex items-center justify-center gap-2">
-                                            <span className="text-slate-300 text-xs sm:text-sm font-medium">💡 Todos deben votar</span>
-                                        </div>
-                                    </div>
+                                    <p className="text-slate-500 text-xs">Todos los jugadores deben votar</p>
                                 </div>
                             )}
 
-                            {/* Fase: Misión mejorada */}
+                            {/* Fase: Misión */}
                             {phase === "mission" && (
-                                <div className="flex-1 flex flex-col items-center justify-center space-y-5 sm:space-y-6 p-2 sm:p-4">
+                                <div className="flex-1 flex flex-col items-center justify-center space-y-6 p-4">
                                     {isInTeam ? (
                                         <>
-                                            <div className="text-center">
-                                                <h2 className="text-2xl sm:text-3xl font-black mb-2 text-white flex items-center justify-center gap-2 sm:gap-3">
-                                                    <Target className="w-6 h-6 sm:w-7 sm:h-7 text-white" />
-                                                    <span>Misión en Curso</span>
+                                            <div className="text-center space-y-1">
+                                                <div className="flex items-center justify-center gap-2 mb-2">
+                                                    <div className="h-px w-12 bg-slate-600"></div>
+                                                    <Target className="w-5 h-5 text-slate-400" />
+                                                    <div className="h-px w-12 bg-slate-600"></div>
+                                                </div>
+                                                <h2 className="text-2xl sm:text-3xl font-black text-white uppercase tracking-tight">
+                                                    Misión en Curso
                                                 </h2>
-                                                <p className="text-slate-300 text-base sm:text-lg">Elige el resultado de tu acción</p>
+                                                <p className="text-slate-400 text-sm">Elige el resultado de tu acción</p>
                                             </div>
                                             <MissionAction
                                                 canFail={role === "spy"}
@@ -467,22 +443,10 @@ const Game: React.FC = () => {
                                             />
                                         </>
                                     ) : (
-                                        <div className="space-y-5">
-                                            <div className="relative group">
-                                                <div className="absolute inset-0 rounded-lg opacity-50 group-hover:opacity-100 transition-opacity duration-300 bg-linear-to-r from-green-500/0 via-green-500/10 to-green-500/0"></div>
-
-                                                <div className="relative backdrop-blur-sm rounded-lg p-6 border bg-green-500/15 border-green-500/40">
-                                                    <div className="flex flex-col items-center text-center">
-                                                        <div className="w-14 h-14 rounded-lg flex items-center justify-center bg-linear-to-br from-green-500 to-green-600 mb-4">
-                                                            <Clock className="w-7 h-7 text-white animate-pulse" />
-                                                        </div>
-                                                        <h2 className="text-2xl font-bold text-white mb-2">Misión en Progreso</h2>
-                                                        <p className="text-slate-300 text-base">
-                                                            El equipo está completando la misión
-                                                        </p>
-                                                    </div>
-                                                </div>
-                                            </div>
+                                        <div className="text-center space-y-3">
+                                            <Clock className="w-10 h-10 text-slate-400 mx-auto animate-pulse" />
+                                            <h2 className="text-xl font-bold text-white">Misión en Progreso</h2>
+                                            <p className="text-slate-400 text-sm">El equipo está completando la misión</p>
                                         </div>
                                     )}
                                 </div>
