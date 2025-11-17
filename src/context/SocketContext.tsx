@@ -142,7 +142,12 @@ export const SocketProvider: React.FC<{ children: React.ReactNode }> = ({ childr
 
         // Estado público del juego
         socket.on("room:update", (state: PublicState) => {
-            console.log("📡 room:update recibido:", { phase: state.phase, playersCount: state.players.length });
+            console.log("📡 room:update recibido:", { 
+                phase: state.phase, 
+                playersCount: state.players.length,
+                playerIds: state.players.map(p => ({ id: p.id, name: p.name })),
+                timestamp: new Date().toISOString()
+            });
             setRoomState(state);
             // Si volvemos al lobby, limpiar roles
             if (state.phase === "lobby") {
@@ -164,29 +169,43 @@ export const SocketProvider: React.FC<{ children: React.ReactNode }> = ({ childr
 
         // 📢 Notificación cuando un jugador se desconecta
         socket.on("player:disconnected", (data: { playerId: string; message: string; isTemporary?: boolean }) => {
-            console.log("⚠️ Jugador desconectado:", data.message, "Temporal:", data.isTemporary);
-
+            console.log("⚠️ Jugador desconectado:", {
+                playerId: data.playerId,
+                message: data.message,
+                isTemporary: data.isTemporary,
+                timestamp: new Date().toISOString()
+            });
+            
             // Si es una desconexión temporal, agregar a la lista de desconectados
             if (data.isTemporary) {
                 setDisconnectedPlayers(prev => {
-                    if (!prev.includes(data.playerId)) {
-                        return [...prev, data.playerId];
-                    }
-                    return prev;
+                    const newList = prev.includes(data.playerId) ? prev : [...prev, data.playerId];
+                    console.log("📋 Lista de desconectados actualizada:", newList);
+                    return newList;
                 });
+            } else {
+                console.log("⚠️ Desconexión permanente - jugador puede ser eliminado");
             }
-
+            
             setNotification(data.message);
             setTimeout(() => setNotification(null), 5000);
         });
 
         // 📢 Notificación cuando un jugador se reconecta
         socket.on("player:reconnected", (data: { playerId: string; message: string }) => {
-            console.log("✅ Jugador reconectado:", data.message);
-
+            console.log("✅ Jugador reconectado:", {
+                playerId: data.playerId,
+                message: data.message,
+                timestamp: new Date().toISOString()
+            });
+            
             // Remover de la lista de desconectados
-            setDisconnectedPlayers(prev => prev.filter(id => id !== data.playerId));
-
+            setDisconnectedPlayers(prev => {
+                const newList = prev.filter(id => id !== data.playerId);
+                console.log("📋 Lista de desconectados actualizada (reconexión):", newList);
+                return newList;
+            });
+            
             setNotification(data.message);
             setTimeout(() => setNotification(null), 3000);
         });

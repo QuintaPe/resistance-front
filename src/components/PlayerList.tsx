@@ -41,6 +41,14 @@ const PlayerList: React.FC<PlayerListProps> = ({
     const { showConfirm } = useModal();
     const leaderName = players.find(p => p.id === leaderId)?.name || "Desconocido";
 
+    // 🐛 Debug: Ver lista de jugadores y desconectados
+    console.log("👥 PlayerList render:", {
+        totalPlayers: players.length,
+        playerIds: players.map(p => p.id),
+        disconnectedPlayers,
+        timestamp: new Date().toISOString()
+    });
+
     // Convertir IDs de espías a nombres usando la lista actual de jugadores
     const otherSpiesNames = otherSpies
         .map(spyId => players.find(p => p.id === spyId)?.name)
@@ -114,7 +122,7 @@ const PlayerList: React.FC<PlayerListProps> = ({
                         <div className={`
                             relative backdrop-blur-sm rounded-lg p-2.5 transition-all duration-300
                             ${isDisconnected
-                                ? "bg-orange-500/10 border border-orange-500/40 opacity-60"
+                                ? "bg-slate-700/30 border border-slate-600/30 opacity-50"
                                 : isActive
                                     ? "bg-green-500/10 border border-green-500/40 group-hover:border-green-500/60"
                                     : "bg-slate-800/60 border border-slate-700/50 group-hover:border-slate-600/60"
@@ -126,14 +134,14 @@ const PlayerList: React.FC<PlayerListProps> = ({
                                 <div className={`
                                     shrink-0 w-5 h-5 rounded flex items-center justify-center
                                     ${isDisconnected
-                                        ? "bg-linear-to-br from-orange-500 to-orange-600"
+                                        ? "bg-linear-to-br from-slate-500 to-slate-600"
                                         : isActive
                                             ? "bg-linear-to-br from-green-500 to-green-600"
                                             : "bg-linear-to-br from-blue-500 to-purple-600"
                                     }
                                 `}>
                                     {isDisconnected ? (
-                                        <WifiOff className="w-3 h-3 text-white animate-pulse" />
+                                        <WifiOff className="w-3 h-3 text-slate-300 animate-pulse" />
                                     ) : showMissionIcons ? (
                                         isActive ? (
                                             <Check className="w-3 h-3 text-white" />
@@ -155,14 +163,14 @@ const PlayerList: React.FC<PlayerListProps> = ({
                                 {/* Nombre */}
                                 <div className="flex-1 min-w-0">
                                     <p className={`text-xs font-semibold truncate ${isDisconnected
-                                            ? "text-orange-300"
-                                            : isActive
-                                                ? "text-green-300"
-                                                : "text-slate-300"
+                                        ? "text-slate-400"
+                                        : isActive
+                                            ? "text-green-300"
+                                            : "text-slate-300"
                                         }`}>
                                         {p.name}
                                         {isYou && <span className="text-blue-400"> •</span>}
-                                        {isDisconnected && <span className="text-orange-400 text-[10px] ml-1">(desconectado)</span>}
+                                        {isDisconnected && <span className="text-slate-500 text-[10px] ml-1">(desconectado)</span>}
                                     </p>
                                 </div>
                                 {/* Botón de expulsar (solo visible para el creador) */}
