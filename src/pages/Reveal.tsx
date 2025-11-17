@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router";
 import { useSocket } from "../context/SocketContext";
+import { useModal } from "../context/ModalContext";
 import MissionTracker from "../components/MissionTracker";
 import { Trophy, Loader2, BarChart3, Drama, Home, UserX, Shield, CheckCircle, XCircle, RotateCcw, Users } from "lucide-react";
 
@@ -8,6 +9,7 @@ const Reveal: React.FC = () => {
     const navigate = useNavigate();
     const { roomCode } = useParams<{ roomCode: string }>();
     const { roomState, spies, playerId, restartGame, returnToLobby, kickPlayer, socket } = useSocket();
+    const { showAlert, showConfirm } = useModal();
     const [isRestarting, setIsRestarting] = useState(false);
     const [restartError, setRestartError] = useState<string | null>(null);
     const [isReturningToLobby, setIsReturningToLobby] = useState(false);
@@ -19,13 +21,18 @@ const Reveal: React.FC = () => {
     // Handler para expulsar jugador
     const handleKickPlayer = (targetPlayerId: string, playerName: string) => {
         if (!roomCode) return;
-        if (window.confirm(`¿Expulsar a ${playerName}?`)) {
-            kickPlayer(roomCode, targetPlayerId, (ok, error) => {
-                if (!ok && error) {
-                    alert(error);
-                }
-            });
-        }
+        showConfirm(
+            `¿Estás seguro de expulsar a ${playerName}?`,
+            () => {
+                kickPlayer(roomCode, targetPlayerId, (ok, error) => {
+                    if (!ok && error) {
+                        showAlert(error, "error", "Error al expulsar");
+                    }
+                });
+            },
+            "Expulsar jugador",
+            "Expulsar"
+        );
     };
 
     // Redirigir al lobby cuando se reinicia el juego

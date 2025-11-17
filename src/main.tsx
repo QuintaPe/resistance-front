@@ -3,6 +3,7 @@ import { createRoot } from "react-dom/client";
 import { BrowserRouter } from "react-router";
 import App from "./App";
 import { SocketProvider } from "./context/SocketContext";
+import { ModalProvider } from "./context/ModalContext";
 import "./index.css";
 
 const container = document.getElementById("root");
@@ -12,7 +13,9 @@ createRoot(container).render(
     <React.StrictMode>
         <BrowserRouter>
             <SocketProvider>
-                <App />
+                <ModalProvider>
+                    <App />
+                </ModalProvider>
             </SocketProvider>
         </BrowserRouter>
     </React.StrictMode>

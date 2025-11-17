@@ -1,12 +1,14 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router";
 import { useSocket } from "../context/SocketContext";
+import { useModal } from "../context/ModalContext";
 import { Loader2, Clipboard, Check, Crown, Users, Rocket, Clock, Lightbulb, LogOut, UserX, ChevronUp } from "lucide-react";
 
 const Lobby: React.FC = () => {
     const { roomCode } = useParams<{ roomCode: string }>();
     const navigate = useNavigate();
     const { roomState, playerId, startGame, leaveRoom, kickPlayer, changeLeader, socket } = useSocket();
+    const { showAlert, showConfirm } = useModal();
     const [copied, setCopied] = useState(false);
     const [kickingPlayer, setKickingPlayer] = useState<string | null>(null);
     const [changingLeader, setChangingLeader] = useState(false);
@@ -55,15 +57,20 @@ const Lobby: React.FC = () => {
     const handleKickPlayer = (targetPlayerId: string, playerName: string) => {
         if (!roomCode || !roomState) return;
 
-        if (window.confirm(`¿Estás seguro de expulsar a ${playerName}?`)) {
-            setKickingPlayer(targetPlayerId);
-            kickPlayer(roomCode, targetPlayerId, (ok, error) => {
-                setKickingPlayer(null);
-                if (!ok && error) {
-                    alert(error);
-                }
-            });
-        }
+        showConfirm(
+            `¿Estás seguro de expulsar a ${playerName}?`,
+            () => {
+                setKickingPlayer(targetPlayerId);
+                kickPlayer(roomCode, targetPlayerId, (ok, error) => {
+                    setKickingPlayer(null);
+                    if (!ok && error) {
+                        showAlert(error, "error", "Error al expulsar");
+                    }
+                });
+            },
+            "Expulsar jugador",
+            "Expulsar"
+        );
     };
 
     // Handler para cambiar líder
@@ -77,7 +84,7 @@ const Lobby: React.FC = () => {
             setChangingLeader(false);
             if (!ok && error) {
                 console.error('❌ Error al cambiar líder:', error);
-                alert(`Error: ${error}`);
+                showAlert(error, "error", "Error al cambiar líder");
             } else {
                 console.log('✅ Líder cambiado exitosamente');
             }

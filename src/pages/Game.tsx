@@ -2,6 +2,7 @@ import React, { useState, useMemo, useEffect, useRef } from "react";
 import { useParams, useNavigate } from "react-router";
 import { useGame } from "../hooks/useGame";
 import { useSocket } from "../context/SocketContext";
+import { useModal } from "../context/ModalContext";
 import TeamSelector from "../components/TeamSelector";
 import VoteButtons from "../components/VoteButtons";
 import MissionAction from "../components/MissionAction";
@@ -29,6 +30,7 @@ const Game: React.FC = () => {
     } = useGame();
 
     const { role, spies, playerId, requestRole, leaveRoom, restartGame, returnToLobby, kickPlayer, socket } = useSocket();
+    const { showAlert, showConfirm } = useModal();
     const [selectedTeam, setSelectedTeam] = useState<string[]>([]);
 
     // Estado para el componente de suspenso
@@ -234,25 +236,35 @@ const Game: React.FC = () => {
     // Handler para reiniciar partida (creador puede en cualquier momento)
     const handleRestartGame = () => {
         if (!roomCode) return;
-        if (window.confirm("¿Reiniciar la partida con nuevos roles?")) {
-            restartGame(roomCode, (ok, error) => {
-                if (!ok && error) {
-                    alert(error);
-                }
-            });
-        }
+        showConfirm(
+            "¿Reiniciar la partida con nuevos roles?",
+            () => {
+                restartGame(roomCode, (ok, error) => {
+                    if (!ok && error) {
+                        showAlert(error, "error", "Error al reiniciar");
+                    }
+                });
+            },
+            "Reiniciar partida",
+            "Reiniciar"
+        );
     };
 
     // Handler para volver al lobby (creador puede en cualquier momento)
     const handleReturnToLobby = () => {
         if (!roomCode) return;
-        if (window.confirm("¿Volver al lobby? Se cancelará la partida actual.")) {
-            returnToLobby(roomCode, (ok, error) => {
-                if (!ok && error) {
-                    alert(error);
-                }
-            });
-        }
+        showConfirm(
+            "¿Volver al lobby? Se cancelará la partida actual.",
+            () => {
+                returnToLobby(roomCode, (ok, error) => {
+                    if (!ok && error) {
+                        showAlert(error, "error", "Error al volver al lobby");
+                    }
+                });
+            },
+            "Volver al lobby",
+            "Volver"
+        );
     };
 
     // Detectar si soy el creador
@@ -261,11 +273,23 @@ const Game: React.FC = () => {
     // Handler para expulsar jugador (creador puede en cualquier momento)
     const handleKickPlayer = (targetPlayerId: string) => {
         if (!roomCode) return;
-        kickPlayer(roomCode, targetPlayerId, (ok, error) => {
-            if (!ok && error) {
-                alert(error);
-            }
-        });
+        
+        // Buscar el nombre del jugador
+        const player = roomState?.players.find(p => p.id === targetPlayerId);
+        const playerName = player?.name || "este jugador";
+        
+        showConfirm(
+            `¿Estás seguro de expulsar a ${playerName}?`,
+            () => {
+                kickPlayer(roomCode, targetPlayerId, (ok, error) => {
+                    if (!ok && error) {
+                        showAlert(error, "error", "Error al expulsar");
+                    }
+                });
+            },
+            "Expulsar jugador",
+            "Expulsar"
+        );
     };
 
     return (
