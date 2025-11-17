@@ -9,6 +9,7 @@ const Lobby: React.FC = () => {
     const { roomState, playerId, startGame, leaveRoom, kickPlayer, changeLeader, socket } = useSocket();
     const [copied, setCopied] = useState(false);
     const [kickingPlayer, setKickingPlayer] = useState<string | null>(null);
+    const [changingLeader, setChangingLeader] = useState(false);
 
     // Navegar automáticamente cuando el juego comience
     useEffect(() => {
@@ -66,12 +67,19 @@ const Lobby: React.FC = () => {
     };
 
     // Handler para cambiar líder
-    const handleChangeLeader = (newLeaderIndex: number) => {
+    const handleChangeLeader = (newLeaderIndex: number, playerName: string) => {
         if (!roomCode || !roomState) return;
 
+        console.log('🔄 Intentando cambiar líder a:', playerName, 'índice:', newLeaderIndex);
+        setChangingLeader(true);
+
         changeLeader(roomCode, newLeaderIndex, (ok, error) => {
+            setChangingLeader(false);
             if (!ok && error) {
-                alert(error);
+                console.error('❌ Error al cambiar líder:', error);
+                alert(`Error: ${error}`);
+            } else {
+                console.log('✅ Líder cambiado exitosamente');
             }
         });
     };
@@ -269,11 +277,12 @@ const Lobby: React.FC = () => {
                                                 )}
                                                 {canPromoteToLeader && (
                                                     <button
-                                                        onClick={() => handleChangeLeader(index)}
-                                                        className="p-1 rounded hover:bg-yellow-500/20 transition-colors group/promote"
+                                                        onClick={() => handleChangeLeader(index, p.name)}
+                                                        disabled={changingLeader}
+                                                        className="p-1 rounded hover:bg-yellow-500/20 transition-colors group/promote disabled:opacity-50"
                                                         title={`Hacer líder a ${p.name}`}
                                                     >
-                                                        <ChevronUp className="w-4 h-4 text-slate-500 group-hover/promote:text-yellow-400" />
+                                                        <ChevronUp className={`w-4 h-4 ${changingLeader ? 'text-slate-600 animate-pulse' : 'text-slate-500 group-hover/promote:text-yellow-400'}`} />
                                                     </button>
                                                 )}
                                                 {canKickThisPlayer && (

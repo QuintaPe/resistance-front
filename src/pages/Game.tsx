@@ -28,7 +28,7 @@ const Game: React.FC = () => {
         missionAct,
     } = useGame();
 
-    const { role, spies, playerId, requestRole, leaveRoom, restartGame, returnToLobby, socket } = useSocket();
+    const { role, spies, playerId, requestRole, leaveRoom, restartGame, returnToLobby, kickPlayer, socket } = useSocket();
     const [selectedTeam, setSelectedTeam] = useState<string[]>([]);
 
     // Estado para el componente de suspenso
@@ -84,6 +84,7 @@ const Game: React.FC = () => {
     // Si el juego vuelve al lobby, limpiar y redirigir
     useEffect(() => {
         if (phase === "lobby" && roomCode) {
+            console.log("🏠 Detectado cambio a fase lobby - navegando al lobby");
             // Limpiar el rol cuando volvemos al lobby
             // El backend ya habrá reseteado el estado
             navigate(`/lobby/${roomCode}`);
@@ -257,6 +258,16 @@ const Game: React.FC = () => {
     // Detectar si soy el creador
     const isCreator = roomState?.creatorId === playerId;
 
+    // Handler para expulsar jugador (creador puede en cualquier momento)
+    const handleKickPlayer = (targetPlayerId: string) => {
+        if (!roomCode) return;
+        kickPlayer(roomCode, targetPlayerId, (ok, error) => {
+            if (!ok && error) {
+                alert(error);
+            }
+        });
+    };
+
     return (
         <div className="relative min-h-screen p-3 sm:p-6 overflow-hidden">
             {/* Componente de suspenso de misión */}
@@ -361,6 +372,8 @@ const Game: React.FC = () => {
                             votedPlayers={roomState.votedPlayers || []}
                             proposedTeam={roomState.proposedTeam || []}
                             playersActed={roomState.playersActed || []}
+                            isCreator={isCreator}
+                            onKickPlayer={handleKickPlayer}
                         />
                     </div>
 

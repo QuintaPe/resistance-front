@@ -7,11 +7,26 @@ import { Trophy, Loader2, BarChart3, Drama, Home, UserX, Shield, CheckCircle, XC
 const Reveal: React.FC = () => {
     const navigate = useNavigate();
     const { roomCode } = useParams<{ roomCode: string }>();
-    const { roomState, spies, playerId, restartGame, returnToLobby, socket } = useSocket();
+    const { roomState, spies, playerId, restartGame, returnToLobby, kickPlayer, socket } = useSocket();
     const [isRestarting, setIsRestarting] = useState(false);
     const [restartError, setRestartError] = useState<string | null>(null);
     const [isReturningToLobby, setIsReturningToLobby] = useState(false);
     const [returnToLobbyError, setReturnToLobbyError] = useState<string | null>(null);
+
+    // Detectar si soy el creador
+    const isCreator = roomState?.creatorId === playerId;
+
+    // Handler para expulsar jugador
+    const handleKickPlayer = (targetPlayerId: string, playerName: string) => {
+        if (!roomCode) return;
+        if (window.confirm(`¿Expulsar a ${playerName}?`)) {
+            kickPlayer(roomCode, targetPlayerId, (ok, error) => {
+                if (!ok && error) {
+                    alert(error);
+                }
+            });
+        }
+    };
 
     // Redirigir al lobby cuando se reinicia el juego
     useEffect(() => {
@@ -284,6 +299,7 @@ const Reveal: React.FC = () => {
                         {roomState.players.map((p) => {
                             const isSpy = spies.includes(p.id);
                             const isCurrentPlayer = p.id === playerId;
+                            const canKick = isCreator && !isCurrentPlayer;
                             return (
                                 <div
                                     key={p.id}
@@ -322,6 +338,16 @@ const Reveal: React.FC = () => {
                                                 {isSpy ? "Espía" : "Resistencia"}
                                             </div>
                                         </div>
+                                        {/* Botón de expulsar (solo visible para el creador) */}
+                                        {canKick && (
+                                            <button
+                                                onClick={() => handleKickPlayer(p.id, p.name)}
+                                                className="shrink-0 w-8 h-8 rounded bg-red-500/20 hover:bg-red-500/40 border border-red-500/40 hover:border-red-500/60 flex items-center justify-center transition-all opacity-0 group-hover/player:opacity-100"
+                                                title={`Expulsar a ${p.name}`}
+                                            >
+                                                <UserX className="w-4 h-4 text-red-400" />
+                                            </button>
+                                        )}
                                     </div>
                                 </div>
                             );

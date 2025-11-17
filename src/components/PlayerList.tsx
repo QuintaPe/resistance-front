@@ -15,6 +15,9 @@ interface PlayerListProps {
     // Progreso de misión
     proposedTeam?: string[];
     playersActed?: string[];
+    // Funcionalidades del creador
+    isCreator?: boolean;
+    onKickPlayer?: (playerId: string) => void;
 }
 
 const PlayerList: React.FC<PlayerListProps> = ({
@@ -27,7 +30,9 @@ const PlayerList: React.FC<PlayerListProps> = ({
     otherSpies = [],
     votedPlayers = [],
     proposedTeam = [],
-    playersActed = []
+    playersActed = [],
+    isCreator = false,
+    onKickPlayer
 }) => {
     const [roleVisible, setRoleVisible] = useState(true);
     const leaderName = players.find(p => p.id === leaderId)?.name || "Desconocido";
@@ -82,6 +87,7 @@ const PlayerList: React.FC<PlayerListProps> = ({
             {playersToRender.map((p) => {
                 const isLeader = p.id === leaderId;
                 const isYou = p.id === currentPlayerId;
+                const canKick = isCreator && !isYou && onKickPlayer; // El creador puede expulsar a otros
 
                 // Estado según la fase
                 const hasVoted = phase === "voteTeam" && votedPlayers.includes(p.id);
@@ -142,6 +148,21 @@ const PlayerList: React.FC<PlayerListProps> = ({
                                         {isYou && <span className="text-blue-400"> •</span>}
                                     </p>
                                 </div>
+                                {/* Botón de expulsar (solo visible para el creador) */}
+                                {canKick && (
+                                    <button
+                                        onClick={(e) => {
+                                            e.stopPropagation();
+                                            if (window.confirm(`¿Expulsar a ${p.name}?`)) {
+                                                onKickPlayer(p.id);
+                                            }
+                                        }}
+                                        className="shrink-0 w-5 h-5 rounded bg-red-500/20 hover:bg-red-500/40 border border-red-500/40 hover:border-red-500/60 flex items-center justify-center transition-all opacity-0 group-hover:opacity-100"
+                                        title={`Expulsar a ${p.name}`}
+                                    >
+                                        <UserX className="w-3 h-3 text-red-400" />
+                                    </button>
+                                )}
                             </div>
                         </div>
                     </div>

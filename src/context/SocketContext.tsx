@@ -134,9 +134,11 @@ export const SocketProvider: React.FC<{ children: React.ReactNode }> = ({ childr
 
         // Estado público del juego
         socket.on("room:update", (state: PublicState) => {
+            console.log("📡 room:update recibido:", { phase: state.phase, playersCount: state.players.length });
             setRoomState(state);
             // Si volvemos al lobby, limpiar roles
             if (state.phase === "lobby") {
+                console.log("🏠 Fase cambiada a lobby - limpiando roles");
                 setRole(null);
                 setSpies([]);
             }
@@ -333,10 +335,12 @@ export const SocketProvider: React.FC<{ children: React.ReactNode }> = ({ childr
 
     const changeLeader = useCallback(
         (roomCode: string, newLeaderIndex: number, callback?: (ok: boolean, error?: string) => void) => {
+            console.log('📡 Emitiendo room:changeLeader:', { roomCode, newLeaderIndex });
             socket.emit(
                 "room:changeLeader",
                 { roomCode, newLeaderIndex },
                 (response: { success?: boolean; error?: string }) => {
+                    console.log('📡 Respuesta de room:changeLeader:', response);
                     if (response.error) {
                         callback?.(false, response.error);
                     } else {
