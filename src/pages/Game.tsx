@@ -13,7 +13,7 @@ import VotingStatus from "../components/VotingStatus";
 import MissionStatus from "../components/MissionStatus";
 import MissionDetailModal from "../components/MissionDetailModal";
 import type { MissionResult } from "../types";
-import { Gamepad2, Loader2, Target, Users, Clock, Swords, Vote } from "lucide-react";
+import { Gamepad2, Loader2, Target, Users, Clock, Swords, Vote, LogOut } from "lucide-react";
 
 const Game: React.FC = () => {
     const { roomCode } = useParams<{ roomCode: string }>();
@@ -30,7 +30,7 @@ const Game: React.FC = () => {
         missionAct,
     } = useGame();
 
-    const { role, spies, playerId, requestRole } = useSocket();
+    const { role, spies, playerId, requestRole, leaveRoom } = useSocket();
     const [selectedTeam, setSelectedTeam] = useState<string[]>([]);
 
     // Estado para el componente de suspenso
@@ -204,6 +204,12 @@ const Game: React.FC = () => {
 
     const handleCloseMissionModal = () => {
         setSelectedMission(null);
+    };
+
+    // Handler para salir de la sala
+    const handleLeaveRoom = () => {
+        leaveRoom();
+        navigate("/");
     };
 
     return (
@@ -537,6 +543,20 @@ const Game: React.FC = () => {
                             )}
                         </div>
                     </div>
+                </div>
+
+                {/* Botón para salir de la sala */}
+                <div className="relative group mt-6">
+                    <button
+                        onClick={handleLeaveRoom}
+                        className="relative w-full group/btn overflow-hidden rounded-lg"
+                    >
+                        <div className="absolute inset-0 bg-linear-to-r from-red-600 to-red-700 opacity-80 group-hover/btn:opacity-100 transition-opacity"></div>
+                        <div className="relative px-4 py-3 flex items-center justify-center gap-2">
+                            <LogOut className="w-5 h-5 text-white" />
+                            <span className="text-white font-semibold">Salir de la sala</span>
+                        </div>
+                    </button>
                 </div>
             </div>
         </div>

@@ -1,15 +1,40 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router";
 import { useSocket } from "../context/SocketContext";
+import { getSessionData } from "../utils/sessionStorage";
 import { User, Key, AlertTriangle, Gamepad2, Users } from "lucide-react";
 
 const Home: React.FC = () => {
-    const { createRoom, joinRoom } = useSocket();
+    const { createRoom, joinRoom, roomState } = useSocket();
     const navigate = useNavigate();
 
     const [name, setName] = useState("");
     const [roomCode, setRoomCode] = useState("");
     const [error, setError] = useState("");
+
+    // 🔄 Redirección automática si ya hay una sesión activa
+    useEffect(() => {
+        // Esperar un momento para que la reconexión automática se complete
+        const timer = setTimeout(() => {
+            const sessionData = getSessionData();
+            
+            // Si hay sesión guardada Y roomState se ha cargado, redirigir
+            if (sessionData.sessionId && sessionData.roomCode && roomState) {
+                console.log("✅ Sesión detectada, redirigiendo a:", sessionData.roomCode);
+                
+                // Redirigir según la fase
+                if (roomState.phase === "lobby") {
+                    navigate(`/lobby/${sessionData.roomCode}`);
+                } else if (roomState.phase === "reveal") {
+                    navigate(`/reveal/${sessionData.roomCode}`);
+                } else {
+                    navigate(`/game/${sessionData.roomCode}`);
+                }
+            }
+        }, 1000); // Esperar 1 segundo para que la reconexión se complete
+
+        return () => clearTimeout(timer);
+    }, [roomState, navigate]);
 
     // Crear sala
     const handleCreateRoom = () => {

@@ -6,6 +6,8 @@ import Game from "./pages/Game";
 import Reveal from "./pages/Reveal";
 import { useSocket } from "./context/SocketContext";
 import { UserSearch, Loader2 } from "lucide-react";
+import ReconnectionNotification from "./components/ReconnectionNotification";
+import ConnectionStatus from "./components/ConnectionStatus";
 
 /**
  * Componente principal que define las rutas del juego.
@@ -28,7 +30,7 @@ const App: React.FC = () => {
                 <div className="relative z-10 w-full max-w-md animate-fadeIn">
                     <div className="relative group">
                         <div className="absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-linear-to-r from-blue-500/0 via-blue-500/10 to-blue-500/0"></div>
-                        
+
                         <div className="relative backdrop-blur-xl bg-slate-800/40 rounded-2xl p-8 shadow-2xl border border-slate-700/50">
                             {/* Icono de carga */}
                             <div className="flex justify-center mb-6">
@@ -67,6 +69,12 @@ const App: React.FC = () => {
 
     return (
         <div className="min-h-screen bg-slate-900">
+            {/* Notificaciones de reconexión */}
+            <ReconnectionNotification />
+
+            {/* Indicador de estado de conexión */}
+            <ConnectionStatus />
+
             <Routes>
                 {/* Pantalla inicial: Crear o unirse a sala */}
                 <Route path="/" element={<Home />} />

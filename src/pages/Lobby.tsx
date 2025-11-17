@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router";
 import { useSocket } from "../context/SocketContext";
-import { Loader2, Clipboard, Check, Crown, Users, Rocket, Clock, Lightbulb } from "lucide-react";
+import { Loader2, Clipboard, Check, Crown, Users, Rocket, Clock, Lightbulb, LogOut } from "lucide-react";
 
 const Lobby: React.FC = () => {
     const { roomCode } = useParams<{ roomCode: string }>();
     const navigate = useNavigate();
-    const { roomState, playerId, startGame } = useSocket();
+    const { roomState, playerId, startGame, leaveRoom } = useSocket();
     const [copied, setCopied] = useState(false);
 
     // Navegar automáticamente cuando el juego comience
@@ -27,6 +27,12 @@ const Lobby: React.FC = () => {
 
     // Añade handler para volver al home
     const handleGoHome = () => {
+        navigate("/");
+    };
+
+    // Handler para salir de la sala
+    const handleLeaveRoom = () => {
+        leaveRoom();
         navigate("/");
     };
 
@@ -291,6 +297,18 @@ const Lobby: React.FC = () => {
                         </span>
                     </div>
                 </div>
+
+                {/* Botón para salir de la sala */}
+                <button
+                    onClick={handleLeaveRoom}
+                    className="relative w-full group overflow-hidden rounded-lg mt-4"
+                >
+                    <div className="absolute inset-0 bg-linear-to-r from-red-600 to-red-700 opacity-80 group-hover:opacity-100 transition-opacity"></div>
+                    <div className="relative px-4 py-3 flex items-center justify-center gap-2">
+                        <LogOut className="w-5 h-5 text-white" />
+                        <span className="text-white font-semibold">Salir de la sala</span>
+                    </div>
+                </button>
             </div>
 
             {/* Partículas decorativas */}
