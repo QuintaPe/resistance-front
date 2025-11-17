@@ -12,9 +12,6 @@ const Reveal: React.FC = () => {
     const [restartError, setRestartError] = useState<string | null>(null);
     const [isReturningToLobby, setIsReturningToLobby] = useState(false);
     const [returnToLobbyError, setReturnToLobbyError] = useState<string | null>(null);
-    
-    // Detectar si soy el creador
-    const isCreator = roomState?.creatorId === playerId;
 
     // Redirigir al lobby cuando se reinicia el juego
     useEffect(() => {
