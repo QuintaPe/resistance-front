@@ -188,3 +188,4 @@ const VoteButtons: React.FC<VoteButtonsProps> = ({ onVote }) => {
 };
 
 export default VoteButtons;
+

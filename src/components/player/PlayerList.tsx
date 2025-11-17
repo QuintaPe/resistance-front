@@ -1,7 +1,8 @@
 import React, { useState } from "react";
 import { Users, Crown, Clock, Vote, AlertTriangle, Shield, UserX, EyeOff, Check, Swords, WifiOff } from "lucide-react";
-import type { Player } from "../types";
-import { useModal } from "../context/ModalContext";
+import type { Player } from "../../types";
+import { useModal } from "../../context/ModalContext";
+
 interface PlayerListProps {
     players: Player[];
     leaderId: string;
@@ -40,14 +41,6 @@ const PlayerList: React.FC<PlayerListProps> = ({
     const [roleVisible, setRoleVisible] = useState(true);
     const { showConfirm } = useModal();
     const leaderName = players.find(p => p.id === leaderId)?.name || "Desconocido";
-
-    // 🐛 Debug: Ver lista de jugadores y desconectados
-    console.log("👥 PlayerList render:", {
-        totalPlayers: players.length,
-        playerIds: players.map(p => p.id),
-        disconnectedPlayers,
-        timestamp: new Date().toISOString()
-    });
 
     // Convertir IDs de espías a nombres usando la lista actual de jugadores
     const otherSpiesNames = otherSpies

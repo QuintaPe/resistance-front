@@ -1,6 +1,6 @@
 import React from "react";
 import { Users } from "lucide-react";
-import type { Player } from "../types";
+import type { Player } from "../../types";
 
 interface TeamSelectorProps {
     players: Player[];
@@ -56,13 +56,12 @@ const TeamSelector: React.FC<TeamSelectorProps> = ({
                             className="relative group"
                         >
                             {/* Efecto de brillo */}
-                            <div className={`absolute inset-0 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300 ${
-                                isSelected 
+                            <div className={`absolute inset-0 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300 ${isSelected
                                     ? "bg-gradient-to-r from-blue-500/0 via-blue-500/30 to-purple-500/0"
-                                    : canSelect 
+                                    : canSelect
                                         ? "bg-gradient-to-r from-slate-500/0 via-slate-500/10 to-slate-500/0"
                                         : ""
-                            }`}></div>
+                                }`}></div>
 
                             {/* Card del agente */}
                             <div className={`
@@ -95,13 +94,12 @@ const TeamSelector: React.FC<TeamSelectorProps> = ({
                                     </div>
                                     {/* Nombre */}
                                     <div className="flex-1 min-w-0">
-                                        <p className={`text-sm font-semibold truncate ${
-                                            isSelected 
-                                                ? "text-white" 
-                                                : canSelect 
-                                                    ? "text-slate-300" 
+                                        <p className={`text-sm font-semibold truncate ${isSelected
+                                                ? "text-white"
+                                                : canSelect
+                                                    ? "text-slate-300"
                                                     : "text-slate-600"
-                                        }`}>
+                                            }`}>
                                             {player.name}
                                         </p>
                                     </div>
@@ -116,3 +114,4 @@ const TeamSelector: React.FC<TeamSelectorProps> = ({
 };
 
 export default TeamSelector;
+

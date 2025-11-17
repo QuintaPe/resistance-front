@@ -1,7 +1,7 @@
 import React from "react";
 import { createPortal } from "react-dom";
 import { X, Target, Users, AlertTriangle } from "lucide-react";
-import type { MissionResult, Player } from "../types";
+import type { MissionResult, Player } from "../../types";
 
 interface MissionDetailModalProps {
     missionNumber: number;
@@ -31,28 +31,25 @@ const MissionDetailModal: React.FC<MissionDetailModalProps> = ({
             >
                 {/* Efecto de brillo */}
                 <div
-                    className={`absolute inset-0 rounded-xl opacity-50 blur-2xl ${
-                        result.passed ? "bg-green-500/30" : "bg-red-500/30"
-                    }`}
+                    className={`absolute inset-0 rounded-xl opacity-50 blur-2xl ${result.passed ? "bg-green-500/30" : "bg-red-500/30"
+                        }`}
                 ></div>
 
                 <div
-                    className={`relative backdrop-blur-xl rounded-xl shadow-2xl border-2 transition-all duration-300 ${
-                        result.passed
+                    className={`relative backdrop-blur-xl rounded-xl shadow-2xl border-2 transition-all duration-300 ${result.passed
                             ? "bg-green-500/15 border-green-500/40"
                             : "bg-red-500/15 border-red-500/40"
-                    }`}
+                        }`}
                 >
                     {/* Header */}
                     <div className="p-5 border-b border-white/10">
                         <div className="flex items-center justify-between">
                             <div className="flex items-center gap-3">
                                 <div
-                                    className={`w-12 h-12 rounded-lg flex items-center justify-center ${
-                                        result.passed
+                                    className={`w-12 h-12 rounded-lg flex items-center justify-center ${result.passed
                                             ? "bg-linear-to-br from-green-500 to-green-600"
                                             : "bg-linear-to-br from-red-500 to-red-600"
-                                    }`}
+                                        }`}
                                 >
                                     <Target className="w-6 h-6 text-white" />
                                 </div>
@@ -61,9 +58,8 @@ const MissionDetailModal: React.FC<MissionDetailModalProps> = ({
                                         Misión {missionNumber}
                                     </p>
                                     <h2
-                                        className={`text-2xl font-bold ${
-                                            result.passed ? "text-green-300" : "text-red-300"
-                                        }`}
+                                        className={`text-2xl font-bold ${result.passed ? "text-green-300" : "text-red-300"
+                                            }`}
                                     >
                                         {result.passed ? "Éxito" : "Fracaso"}
                                     </h2>

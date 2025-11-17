@@ -3,8 +3,7 @@ import { useParams, useNavigate } from "react-router";
 import { useSocket } from "../context/SocketContext";
 import { useModal } from "../context/ModalContext";
 import { MIN_PLAYERS, TIMINGS } from "../constants";
-import LoadingScreen from "../components/common/LoadingScreen";
-import AnimatedBackground from "../components/common/AnimatedBackground";
+import { LoadingScreen, AnimatedBackground } from "../components/common";
 import { Clipboard, Check, Crown, Users, Rocket, Clock, Lightbulb, LogOut, UserX, ChevronUp, WifiOff } from "lucide-react";
 
 const Lobby: React.FC = () => {
@@ -77,7 +76,7 @@ const Lobby: React.FC = () => {
     };
 
     // Handler para cambiar líder
-    const handleChangeLeader = (newLeaderIndex: number, playerName: string) => {
+    const handleChangeLeader = (newLeaderIndex: number) => {
         if (!roomCode || !roomState) return;
 
         setChangingLeader(true);
@@ -244,7 +243,7 @@ const Lobby: React.FC = () => {
                                                 )}
                                                 {canPromoteToLeader && !isDisconnected && (
                                                     <button
-                                                        onClick={() => handleChangeLeader(index, p.name)}
+                                                        onClick={() => handleChangeLeader(index)}
                                                         disabled={changingLeader}
                                                         className="p-1 rounded hover:bg-yellow-500/20 transition-colors group/promote disabled:opacity-50"
                                                         title={`Hacer líder a ${p.name}`}

@@ -3,7 +3,7 @@ import { useNavigate } from "react-router";
 import { useSocket } from "../context/SocketContext";
 import { getSessionData } from "../utils";
 import { TEXT_LIMITS, TIMINGS } from "../constants";
-import AnimatedBackground from "../components/common/AnimatedBackground";
+import { AnimatedBackground } from "../components/common";
 import { User, Key, AlertTriangle, Gamepad2, Users } from "lucide-react";
 
 const Home: React.FC = () => {
@@ -19,7 +19,7 @@ const Home: React.FC = () => {
         // Esperar un momento para que la reconexión automática se complete
         const timer = setTimeout(() => {
             const sessionData = getSessionData();
-            
+
             // Si hay sesión guardada Y roomState se ha cargado, redirigir
             if (sessionData.sessionId && sessionData.roomCode && roomState) {
                 // Redirigir según la fase

@@ -5,8 +5,8 @@ import Lobby from "./pages/Lobby";
 import Game from "./pages/Game";
 import Reveal from "./pages/Reveal";
 import { useSocket } from "./context/SocketContext";
-import LoadingScreen from "./components/common/LoadingScreen";
-import ReconnectionNotification from "./components/ReconnectionNotification";
+import { LoadingScreen } from "./components/common";
+import { ReconnectionNotification } from "./components/layout";
 import { UserSearch } from "lucide-react";
 
 /**

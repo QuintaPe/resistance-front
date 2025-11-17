@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router";
 import { useSocket } from "../context/SocketContext";
 import { useModal } from "../context/ModalContext";
-import MissionTracker from "../components/MissionTracker";
+import { MissionTracker } from "../components/mission";
 import { Trophy, Loader2, BarChart3, Drama, Home, UserX, Shield, CheckCircle, XCircle, RotateCcw, Users } from "lucide-react";
 
 const Reveal: React.FC = () => {

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useSocket } from "../context/SocketContext";
+import { useSocket } from "../../context/SocketContext";
 import { AlertCircle, CheckCircle, RefreshCw, Info } from "lucide-react";
 
 /**

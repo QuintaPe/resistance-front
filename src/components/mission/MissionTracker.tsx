@@ -1,5 +1,5 @@
 import React from "react";
-import type { MissionResult } from "../types";
+import type { MissionResult } from "../../types";
 
 interface MissionTrackerProps {
     total: number;
@@ -25,8 +25,8 @@ const MissionTracker: React.FC<MissionTrackerProps> = ({ total, results, failsRe
                         {/* Efecto de brillo sutil */}
                         {isCompleted && (
                             <div className={`absolute inset-0 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300 ${result.passed
-                                    ? "bg-linear-to-r from-green-500/0 via-green-500/20 to-green-500/0"
-                                    : "bg-linear-to-r from-red-500/0 via-red-500/20 to-red-500/0"
+                                ? "bg-linear-to-r from-green-500/0 via-green-500/20 to-green-500/0"
+                                : "bg-linear-to-r from-red-500/0 via-red-500/20 to-red-500/0"
                                 }`}></div>
                         )}
 
@@ -46,10 +46,10 @@ const MissionTracker: React.FC<MissionTrackerProps> = ({ total, results, failsRe
                             <div className="flex flex-col items-center gap-1 sm:gap-1.5">
                                 {/* Icono/Número */}
                                 <div className={`w-8 h-8 sm:w-10 sm:h-10 rounded flex items-center justify-center ${isCompleted
-                                        ? result.passed
-                                            ? "bg-linear-to-br from-green-500 to-green-600"
-                                            : "bg-linear-to-br from-red-500 to-red-600"
-                                        : "bg-slate-700/70"
+                                    ? result.passed
+                                        ? "bg-linear-to-br from-green-500 to-green-600"
+                                        : "bg-linear-to-br from-red-500 to-red-600"
+                                    : "bg-slate-700/70"
                                     }`}>
                                     {isCompleted ? (
                                         <span className="text-white text-lg sm:text-2xl font-black">
@@ -62,8 +62,8 @@ const MissionTracker: React.FC<MissionTrackerProps> = ({ total, results, failsRe
 
                                 {/* Etiqueta */}
                                 <span className={`text-[10px] sm:text-xs font-semibold uppercase tracking-wide ${isCompleted
-                                        ? result.passed ? "text-green-300" : "text-red-300"
-                                        : "text-slate-500"
+                                    ? result.passed ? "text-green-300" : "text-red-300"
+                                    : "text-slate-500"
                                     }`}>
                                     <span className="sm:hidden">M{idx + 1}</span>
                                     <span className="hidden sm:inline">Misión {idx + 1}</span>
@@ -92,3 +92,4 @@ const MissionTracker: React.FC<MissionTrackerProps> = ({ total, results, failsRe
 };
 
 export default MissionTracker;
+
