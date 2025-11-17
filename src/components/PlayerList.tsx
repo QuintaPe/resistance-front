@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Users, Crown, Clock, Vote, AlertTriangle, Shield, UserX, EyeOff, Check, Swords } from "lucide-react";
 import type { Player } from "../types";
+import { useModal } from "../context/ModalContext";
 
 interface PlayerListProps {
     players: Player[];
@@ -35,6 +36,7 @@ const PlayerList: React.FC<PlayerListProps> = ({
     onKickPlayer
 }) => {
     const [roleVisible, setRoleVisible] = useState(true);
+    const { showConfirm } = useModal();
     const leaderName = players.find(p => p.id === leaderId)?.name || "Desconocido";
 
     // Convertir IDs de espías a nombres usando la lista actual de jugadores
@@ -153,11 +155,14 @@ const PlayerList: React.FC<PlayerListProps> = ({
                                     <button
                                         onClick={(e) => {
                                             e.stopPropagation();
-                                            if (window.confirm(`¿Expulsar a ${p.name}?`)) {
-                                                onKickPlayer(p.id);
-                                            }
+                                            showConfirm(
+                                                `¿Estás seguro de que quieres expulsar a ${p.name} de la partida?`,
+                                                () => onKickPlayer(p.id),
+                                                "Expulsar jugador",
+                                                "Expulsar"
+                                            );
                                         }}
-                                        className="shrink-0 w-5 h-5 rounded bg-red-500/20 hover:bg-red-500/40 border border-red-500/40 hover:border-red-500/60 flex items-center justify-center transition-all opacity-0 group-hover:opacity-100"
+                                        className="shrink-0 w-5 h-5 rounded hover:bg-red-500/40 border-red-500/40 hover:border-red-500/60 flex items-center justify-center transition-all"
                                         title={`Expulsar a ${p.name}`}
                                     >
                                         <UserX className="w-3 h-3 text-red-400" />
