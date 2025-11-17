@@ -9,7 +9,7 @@ interface PlayerListProps {
     phase: "lobby" | "proposeTeam" | "voteTeam" | "mission" | "reveal";
     rejectedTeams: number;
     role?: "spy" | "resistance" | null;
-    otherSpies?: string[];
+    otherSpies?: string[]; // IDs de otros espías
     // Progreso de votación
     votedPlayers?: string[];
     // Progreso de misión
@@ -31,6 +31,11 @@ const PlayerList: React.FC<PlayerListProps> = ({
 }) => {
     const [roleVisible, setRoleVisible] = useState(true);
     const leaderName = players.find(p => p.id === leaderId)?.name || "Desconocido";
+
+    // Convertir IDs de espías a nombres usando la lista actual de jugadores
+    const otherSpiesNames = otherSpies
+        .map(spyId => players.find(p => p.id === spyId)?.name)
+        .filter((name): name is string => name !== undefined);
 
     // Separar jugadores según la fase de misión
     const missionPlayers = phase === "mission" && proposedTeam.length > 0
@@ -347,7 +352,7 @@ const PlayerList: React.FC<PlayerListProps> = ({
                     </button>
 
                     {/* Info de espías si aplica */}
-                    {roleVisible && role === "spy" && otherSpies.length > 0 && (
+                    {roleVisible && role === "spy" && otherSpiesNames.length > 0 && (
                         <div className="border-t border-slate-700/50 bg-red-500/5">
                             <div className="p-3">
                                 <div className="flex items-center gap-2 mb-2">
@@ -355,7 +360,7 @@ const PlayerList: React.FC<PlayerListProps> = ({
                                     <span className="text-red-300 text-xs font-bold uppercase tracking-wider">Compañeros espías</span>
                                 </div>
                                 <div className="flex flex-wrap gap-1.5">
-                                    {otherSpies.map((spyName, index) => (
+                                    {otherSpiesNames.map((spyName, index) => (
                                         <div key={index} className="px-2.5 py-1 bg-red-500/20 border border-red-500/30 rounded-md">
                                             <span className="text-red-200 text-xs font-semibold">{spyName}</span>
                                         </div>

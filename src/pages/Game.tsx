@@ -11,7 +11,7 @@ import RulesButton from "../components/RulesButton";
 import MissionSuspense from "../components/MissionSuspense";
 import MissionDetailModal from "../components/MissionDetailModal";
 import type { MissionResult } from "../types";
-import { Gamepad2, Loader2, Target, Users, Clock, Vote, LogOut } from "lucide-react";
+import { Gamepad2, Loader2, Target, Users, Clock, Vote, LogOut, RotateCcw, Home } from "lucide-react";
 
 const Game: React.FC = () => {
     const { roomCode } = useParams<{ roomCode: string }>();
@@ -28,7 +28,7 @@ const Game: React.FC = () => {
         missionAct,
     } = useGame();
 
-    const { role, spies, playerId, requestRole, leaveRoom } = useSocket();
+    const { role, spies, playerId, requestRole, leaveRoom, restartGame, returnToLobby, socket } = useSocket();
     const [selectedTeam, setSelectedTeam] = useState<string[]>([]);
 
     // Estado para el componente de suspenso
@@ -81,6 +81,15 @@ const Game: React.FC = () => {
         }
     }, [roomState]);
 
+    // Si el juego vuelve al lobby, limpiar y redirigir
+    useEffect(() => {
+        if (phase === "lobby" && roomCode) {
+            // Limpiar el rol cuando volvemos al lobby
+            // El backend ya habrá reseteado el estado
+            navigate(`/lobby/${roomCode}`);
+        }
+    }, [phase, roomCode, navigate]);
+
     // Si el juego terminó, redirigir a la pantalla Reveal (solo después del suspense)
     useEffect(() => {
         if (phase === "reveal" && roomCode) {
@@ -94,6 +103,19 @@ const Game: React.FC = () => {
             }
         }
     }, [phase, roomCode, navigate, showSuspense, roomState]);
+
+    // Escuchar cuando nos expulsan
+    useEffect(() => {
+        const handleKicked = () => {
+            navigate("/");
+        };
+
+        socket.on("player:kicked", handleKicked);
+
+        return () => {
+            socket.off("player:kicked", handleKicked);
+        };
+    }, [socket, navigate]);
 
     // Calcular resultados a mostrar en el tracker (ocultar el último si hay suspense o resultado nuevo)
     const visibleResults = useMemo(() => {
@@ -110,13 +132,11 @@ const Game: React.FC = () => {
         return roomState.results;
     }, [roomState?.results, showSuspense]);
 
-    // Lista de nombres de otros espías (si eres espía)
-    const otherSpiesNames = useMemo(() => {
-        if (!roomState || role !== "spy" || !spies || spies.length === 0) return [];
-        return spies
-            .filter((id) => id !== playerId)
-            .map((id) => roomState.players.find((p) => p.id === id)?.name || id);
-    }, [role, spies, playerId, roomState]);
+    // Lista de IDs de otros espías (si eres espía)
+    const otherSpiesIds = useMemo(() => {
+        if (role !== "spy" || !spies || spies.length === 0) return [];
+        return spies.filter((id) => id !== playerId);
+    }, [role, spies, playerId]);
 
     if (!roomState) {
         return (
@@ -209,6 +229,33 @@ const Game: React.FC = () => {
         leaveRoom();
         navigate("/");
     };
+
+    // Handler para reiniciar partida (creador puede en cualquier momento)
+    const handleRestartGame = () => {
+        if (!roomCode) return;
+        if (window.confirm("¿Reiniciar la partida con nuevos roles?")) {
+            restartGame(roomCode, (ok, error) => {
+                if (!ok && error) {
+                    alert(error);
+                }
+            });
+        }
+    };
+
+    // Handler para volver al lobby (creador puede en cualquier momento)
+    const handleReturnToLobby = () => {
+        if (!roomCode) return;
+        if (window.confirm("¿Volver al lobby? Se cancelará la partida actual.")) {
+            returnToLobby(roomCode, (ok, error) => {
+                if (!ok && error) {
+                    alert(error);
+                }
+            });
+        }
+    };
+
+    // Detectar si soy el creador
+    const isCreator = roomState?.creatorId === playerId;
 
     return (
         <div className="relative min-h-screen p-3 sm:p-6 overflow-hidden">
@@ -305,12 +352,12 @@ const Game: React.FC = () => {
                         {/* Lista de jugadores con toda la información del juego */}
                         <PlayerList
                             players={roomState.players}
-                            leaderId={roomState.players[roomState.leaderIndex].id}
+                            leaderId={roomState.players[roomState.leaderIndex]?.id}
                             currentPlayerId={playerId || ""}
                             phase={phase}
                             rejectedTeams={roomState.rejectedTeamsInRow}
                             role={role}
-                            otherSpies={otherSpiesNames}
+                            otherSpies={otherSpiesIds}
                             votedPlayers={roomState.votedPlayers || []}
                             proposedTeam={roomState.proposedTeam || []}
                             playersActed={roomState.playersActed || []}
@@ -455,8 +502,36 @@ const Game: React.FC = () => {
                     </div>
                 </div>
 
+                {/* Botones del creador (si aplica) */}
+                {isCreator && phase !== "lobby" && (
+                    <div className="grid grid-cols-2 gap-3 mt-4">
+                        {/* Botón Reiniciar */}
+                        <button
+                            onClick={handleRestartGame}
+                            className="relative group/btn overflow-hidden rounded-lg"
+                        >
+                            <div className="absolute inset-0 bg-linear-to-r from-blue-600 to-blue-700 opacity-80 group-hover/btn:opacity-100 transition-opacity"></div>
+                            <div className="relative px-3 py-2.5 flex items-center justify-center gap-1.5">
+                                <RotateCcw className="w-4 h-4 text-white" />
+                                <span className="text-white font-semibold text-xs sm:text-sm">Reiniciar</span>
+                            </div>
+                        </button>
+                        {/* Botón Volver al Lobby */}
+                        <button
+                            onClick={handleReturnToLobby}
+                            className="relative group/btn overflow-hidden rounded-lg"
+                        >
+                            <div className="absolute inset-0 bg-linear-to-r from-slate-600 to-slate-700 opacity-80 group-hover/btn:opacity-100 transition-opacity"></div>
+                            <div className="relative px-3 py-2.5 flex items-center justify-center gap-1.5">
+                                <Home className="w-4 h-4 text-white" />
+                                <span className="text-white font-semibold text-xs sm:text-sm">Al Lobby</span>
+                            </div>
+                        </button>
+                    </div>
+                )}
+
                 {/* Botón para salir de la sala */}
-                <div className="relative group mt-6">
+                <div className="relative group mt-4">
                     <button
                         onClick={handleLeaveRoom}
                         className="relative w-full group/btn overflow-hidden rounded-lg"

@@ -7,11 +7,14 @@ import { Trophy, Loader2, BarChart3, Drama, Home, UserX, Shield, CheckCircle, XC
 const Reveal: React.FC = () => {
     const navigate = useNavigate();
     const { roomCode } = useParams<{ roomCode: string }>();
-    const { roomState, spies, playerId, restartGame, returnToLobby } = useSocket();
+    const { roomState, spies, playerId, restartGame, returnToLobby, socket } = useSocket();
     const [isRestarting, setIsRestarting] = useState(false);
     const [restartError, setRestartError] = useState<string | null>(null);
     const [isReturningToLobby, setIsReturningToLobby] = useState(false);
     const [returnToLobbyError, setReturnToLobbyError] = useState<string | null>(null);
+    
+    // Detectar si soy el creador
+    const isCreator = roomState?.creatorId === playerId;
 
     // Redirigir al lobby cuando se reinicia el juego
     useEffect(() => {
@@ -23,6 +26,19 @@ const Reveal: React.FC = () => {
             }
         }
     }, [roomState?.phase, roomCode, navigate]);
+
+    // Escuchar cuando nos expulsan
+    useEffect(() => {
+        const handleKicked = () => {
+            navigate("/");
+        };
+
+        socket.on("player:kicked", handleKicked);
+
+        return () => {
+            socket.off("player:kicked", handleKicked);
+        };
+    }, [socket, navigate]);
 
     const handleRestart = () => {
         if (!roomState?.code) return;

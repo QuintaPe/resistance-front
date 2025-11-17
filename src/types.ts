@@ -13,6 +13,7 @@ export type MissionResult = {
 export type PublicState = {
     code: string;
     players: Player[];
+    creatorId: string; // ID del creador de la sala (tiene permisos especiales)
     phase: "lobby" | "proposeTeam" | "voteTeam" | "mission" | "reveal";
     leaderIndex: number;
     currentMission: number;

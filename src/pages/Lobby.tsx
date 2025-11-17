@@ -1,13 +1,14 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router";
 import { useSocket } from "../context/SocketContext";
-import { Loader2, Clipboard, Check, Crown, Users, Rocket, Clock, Lightbulb, LogOut } from "lucide-react";
+import { Loader2, Clipboard, Check, Crown, Users, Rocket, Clock, Lightbulb, LogOut, UserX, ChevronUp } from "lucide-react";
 
 const Lobby: React.FC = () => {
     const { roomCode } = useParams<{ roomCode: string }>();
     const navigate = useNavigate();
-    const { roomState, playerId, startGame, leaveRoom } = useSocket();
+    const { roomState, playerId, startGame, leaveRoom, kickPlayer, changeLeader, socket } = useSocket();
     const [copied, setCopied] = useState(false);
+    const [kickingPlayer, setKickingPlayer] = useState<string | null>(null);
 
     // Navegar automáticamente cuando el juego comience
     useEffect(() => {
@@ -16,6 +17,19 @@ const Lobby: React.FC = () => {
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [roomState?.phase, roomCode, navigate]);
+
+    // Escuchar cuando nos expulsan
+    useEffect(() => {
+        const handleKicked = () => {
+            navigate("/");
+        };
+
+        socket.on("player:kicked", handleKicked);
+
+        return () => {
+            socket.off("player:kicked", handleKicked);
+        };
+    }, [socket, navigate]);
 
     const handleCopyCode = () => {
         if (roomState?.code) {
@@ -35,6 +49,35 @@ const Lobby: React.FC = () => {
         leaveRoom();
         navigate("/");
     };
+
+    // Handler para expulsar jugador
+    const handleKickPlayer = (targetPlayerId: string, playerName: string) => {
+        if (!roomCode || !roomState) return;
+
+        if (window.confirm(`¿Estás seguro de expulsar a ${playerName}?`)) {
+            setKickingPlayer(targetPlayerId);
+            kickPlayer(roomCode, targetPlayerId, (ok, error) => {
+                setKickingPlayer(null);
+                if (!ok && error) {
+                    alert(error);
+                }
+            });
+        }
+    };
+
+    // Handler para cambiar líder
+    const handleChangeLeader = (newLeaderIndex: number) => {
+        if (!roomCode || !roomState) return;
+
+        changeLeader(roomCode, newLeaderIndex, (ok, error) => {
+            if (!ok && error) {
+                alert(error);
+            }
+        });
+    };
+
+    // Detectar si soy el creador
+    const isCreator = roomState?.creatorId === playerId;
 
     if (!roomState) {
         return (
@@ -183,43 +226,71 @@ const Lobby: React.FC = () => {
                         </div>
 
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 max-h-80 overflow-y-auto custom-scrollbar">
-                            {roomState.players.map((p, index) => (
-                                <div
-                                    key={p.id}
-                                    className="group/player relative"
-                                >
-                                    <div className={`absolute inset-0 rounded-lg opacity-0 group-hover/player:opacity-100 transition-opacity duration-300 ${p.id === leader.id
-                                        ? "bg-linear-to-r from-yellow-500/0 via-yellow-500/10 to-yellow-500/0"
-                                        : "bg-linear-to-r from-blue-500/0 via-blue-500/5 to-blue-500/0"
-                                        }`}></div>
+                            {roomState.players.map((p, index) => {
+                                const isPlayerCreator = p.id === roomState.creatorId;
+                                const isPlayerLeader = p.id === leader.id;
+                                const canKickThisPlayer = isCreator && p.id !== playerId;
+                                const canPromoteToLeader = isCreator && !isPlayerLeader;
+                                const isKicking = kickingPlayer === p.id;
 
-                                    <div className={`
-                                        relative p-3 rounded-lg flex items-center gap-3 transition-all duration-200
-                                        ${p.id === leader.id
-                                            ? "bg-yellow-500/15 border border-yellow-500/40"
-                                            : "bg-slate-700/40 border border-slate-600/40"
-                                        }
-                                    `}>
-                                        <div className={`w-8 h-8 rounded flex items-center justify-center text-sm font-bold shrink-0 ${p.id === leader.id
-                                            ? "bg-linear-to-br from-yellow-500 to-orange-500 text-white"
-                                            : "bg-linear-to-br from-blue-500 to-purple-500 text-white"
-                                            }`}>
-                                            {index + 1}
-                                        </div>
-                                        <div className="flex-1 min-w-0">
-                                            <div className="font-semibold truncate text-sm text-white">
-                                                {p.name}
-                                                {p.id === playerId && <span className="text-blue-400 ml-1.5 text-xs font-bold">(Tú)</span>}
+                                return (
+                                    <div
+                                        key={p.id}
+                                        className="group/player relative"
+                                    >
+                                        <div className={`absolute inset-0 rounded-lg opacity-0 group-hover/player:opacity-100 transition-opacity duration-300 ${isPlayerLeader
+                                            ? "bg-linear-to-r from-yellow-500/0 via-yellow-500/10 to-yellow-500/0"
+                                            : "bg-linear-to-r from-blue-500/0 via-blue-500/5 to-blue-500/0"
+                                            }`}></div>
+
+                                        <div className={`
+                                            relative p-3 rounded-lg flex items-center gap-3 transition-all duration-200
+                                            ${isPlayerLeader
+                                                ? "bg-yellow-500/15 border border-yellow-500/40"
+                                                : "bg-slate-700/40 border border-slate-600/40"
+                                            }
+                                        `}>
+                                            <div className={`w-8 h-8 rounded flex items-center justify-center text-sm font-bold shrink-0 ${isPlayerLeader
+                                                ? "bg-linear-to-br from-yellow-500 to-orange-500 text-white"
+                                                : "bg-linear-to-br from-blue-500 to-purple-500 text-white"
+                                                }`}>
+                                                {index + 1}
+                                            </div>
+                                            <div className="flex-1 min-w-0">
+                                                <div className="font-semibold truncate text-sm text-white flex items-center gap-1.5">
+                                                    {p.name}
+                                                    {p.id === playerId && <span className="text-blue-400 text-xs font-bold">(Tú)</span>}
+                                                    {isPlayerCreator && <span className="text-xs" title="Creador de la sala">👑</span>}
+                                                </div>
+                                            </div>
+                                            <div className="flex items-center gap-1.5">
+                                                {isPlayerLeader && (
+                                                    <Crown className="w-4 h-4 text-yellow-400 shrink-0 animate-pulse" />
+                                                )}
+                                                {canPromoteToLeader && (
+                                                    <button
+                                                        onClick={() => handleChangeLeader(index)}
+                                                        className="p-1 rounded hover:bg-yellow-500/20 transition-colors group/promote"
+                                                        title={`Hacer líder a ${p.name}`}
+                                                    >
+                                                        <ChevronUp className="w-4 h-4 text-slate-500 group-hover/promote:text-yellow-400" />
+                                                    </button>
+                                                )}
+                                                {canKickThisPlayer && (
+                                                    <button
+                                                        onClick={() => handleKickPlayer(p.id, p.name)}
+                                                        disabled={isKicking}
+                                                        className="p-1 rounded hover:bg-red-500/20 transition-colors group/kick"
+                                                        title={`Expulsar a ${p.name}`}
+                                                    >
+                                                        <UserX className={`w-4 h-4 ${isKicking ? 'text-slate-600 animate-pulse' : 'text-slate-500 group-hover/kick:text-red-400'}`} />
+                                                    </button>
+                                                )}
                                             </div>
                                         </div>
-                                        {p.id === leader.id && (
-                                            <div className="flex items-center gap-1">
-                                                <Crown className="w-4 h-4 text-yellow-400 shrink-0 animate-pulse" />
-                                            </div>
-                                        )}
                                     </div>
-                                </div>
-                            ))}
+                                );
+                            })}
                         </div>
                     </div>
                 </div>

@@ -31,6 +31,8 @@ interface SocketContextValue {
     restartGame: (roomCode: string, callback?: (ok: boolean, error?: string) => void) => void;
     returnToLobby: (roomCode: string, callback?: (ok: boolean, error?: string) => void) => void;
     leaveRoom: () => void; // Salir voluntariamente
+    kickPlayer: (roomCode: string, targetPlayerId: string, callback?: (ok: boolean, error?: string) => void) => void; // Expulsar jugador (solo creador)
+    changeLeader: (roomCode: string, newLeaderIndex: number, callback?: (ok: boolean, error?: string) => void) => void; // Cambiar líder (solo creador en lobby)
 }
 
 const SocketContext = createContext<SocketContextValue | undefined>(undefined);
@@ -133,6 +135,11 @@ export const SocketProvider: React.FC<{ children: React.ReactNode }> = ({ childr
         // Estado público del juego
         socket.on("room:update", (state: PublicState) => {
             setRoomState(state);
+            // Si volvemos al lobby, limpiar roles
+            if (state.phase === "lobby") {
+                setRole(null);
+                setSpies([]);
+            }
         });
 
         socket.on("game:update", (state: PublicState) => {
@@ -159,6 +166,25 @@ export const SocketProvider: React.FC<{ children: React.ReactNode }> = ({ childr
             setTimeout(() => setNotification(null), 3000);
         });
 
+        // 👢 Cuando te expulsan de la sala
+        socket.on("player:kicked", (data: { message: string }) => {
+            console.log("❌ Expulsado de la sala:", data.message);
+            setNotification(data.message);
+            // Limpiar datos de sesión
+            clearSessionData();
+            setRole(null);
+            setSpies([]);
+            setRoomState(null);
+            // La navegación al home la manejará el componente que escuche esto
+        });
+
+        // 👑 Cuando cambia el creador
+        socket.on("creator:changed", (data: { message: string }) => {
+            console.log("👑 Cambio de creador:", data.message);
+            setNotification(data.message);
+            setTimeout(() => setNotification(null), 4000);
+        });
+
         return () => {
             socket.off("connect");
             socket.off("disconnect");
@@ -167,6 +193,8 @@ export const SocketProvider: React.FC<{ children: React.ReactNode }> = ({ childr
             socket.off("game:role");
             socket.off("player:disconnected");
             socket.off("player:reconnected");
+            socket.off("player:kicked");
+            socket.off("creator:changed");
         };
     }, [socket]);
 
@@ -286,6 +314,40 @@ export const SocketProvider: React.FC<{ children: React.ReactNode }> = ({ childr
         socket.connect();
     }, [socket]);
 
+    const kickPlayer = useCallback(
+        (roomCode: string, targetPlayerId: string, callback?: (ok: boolean, error?: string) => void) => {
+            socket.emit(
+                "player:kick",
+                { roomCode, targetPlayerId },
+                (response: { success?: boolean; error?: string }) => {
+                    if (response.error) {
+                        callback?.(false, response.error);
+                    } else {
+                        callback?.(true);
+                    }
+                }
+            );
+        },
+        [socket]
+    );
+
+    const changeLeader = useCallback(
+        (roomCode: string, newLeaderIndex: number, callback?: (ok: boolean, error?: string) => void) => {
+            socket.emit(
+                "room:changeLeader",
+                { roomCode, newLeaderIndex },
+                (response: { success?: boolean; error?: string }) => {
+                    if (response.error) {
+                        callback?.(false, response.error);
+                    } else {
+                        callback?.(true);
+                    }
+                }
+            );
+        },
+        [socket]
+    );
+
     // =========================
     // 💾 Context Value
     // =========================
@@ -306,6 +368,8 @@ export const SocketProvider: React.FC<{ children: React.ReactNode }> = ({ childr
         restartGame,
         returnToLobby,
         leaveRoom,
+        kickPlayer,
+        changeLeader,
     };
 
     return <SocketContext.Provider value={value}>{children}</SocketContext.Provider>;
