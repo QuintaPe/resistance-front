@@ -6,14 +6,12 @@ import TeamSelector from "../components/TeamSelector";
 import VoteButtons from "../components/VoteButtons";
 import MissionAction from "../components/MissionAction";
 import MissionTracker from "../components/MissionTracker";
-import GameStatus from "../components/GameStatus";
+import PlayerList from "../components/PlayerList";
 import RulesButton from "../components/RulesButton";
 import MissionSuspense from "../components/MissionSuspense";
-import VotingStatus from "../components/VotingStatus";
-import MissionStatus from "../components/MissionStatus";
 import MissionDetailModal from "../components/MissionDetailModal";
 import type { MissionResult } from "../types";
-import { Gamepad2, Loader2, Target, Users, Clock, Swords, Vote, LogOut } from "lucide-react";
+import { Gamepad2, Loader2, Target, Users, Clock, Vote, LogOut } from "lucide-react";
 
 const Game: React.FC = () => {
     const { roomCode } = useParams<{ roomCode: string }>();
@@ -304,13 +302,18 @@ const Game: React.FC = () => {
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-2 sm:gap-6">
                     {/* Columna izquierda: Estado e información */}
                     <div className="lg:col-span-1 space-y-2 sm:space-y-4 order-2 lg:order-1">
-                        {/* Estado del juego y rol */}
-                        <GameStatus
-                            leader={roomState.players[roomState.leaderIndex].name}
+                        {/* Lista de jugadores con toda la información del juego */}
+                        <PlayerList
+                            players={roomState.players}
+                            leaderId={roomState.players[roomState.leaderIndex].id}
+                            currentPlayerId={playerId || ""}
                             phase={phase}
                             rejectedTeams={roomState.rejectedTeamsInRow}
                             role={role}
                             otherSpies={otherSpiesNames}
+                            votedPlayers={roomState.votedPlayers || []}
+                            proposedTeam={roomState.proposedTeam || []}
+                            playersActed={roomState.playersActed || []}
                         />
                     </div>
 
@@ -434,22 +437,8 @@ const Game: React.FC = () => {
                                     </div>
 
                                     <div className="w-full max-w-md">
-                                        <VoteButtons
-                                            onVote={handleVote}
-                                            players={roomState.players}
-                                            votedPlayers={roomState.votedPlayers || []}
-                                            currentPlayerId={playerId || ""}
-                                        />
+                                        <VoteButtons onVote={handleVote} />
                                     </div>
-
-                                    {/* Mostrar estado de votación solo si el jugador NO ha votado */}
-                                    {roomState.votedPlayers && playerId && !roomState.votedPlayers.includes(playerId) && (
-                                        <VotingStatus
-                                            players={roomState.players}
-                                            votedPlayers={roomState.votedPlayers}
-                                            currentPlayerId={playerId}
-                                        />
-                                    )}
 
                                     <div className="relative group">
                                         <div className="absolute inset-0 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-linear-to-r from-slate-500/0 via-slate-500/10 to-slate-500/0"></div>
@@ -476,16 +465,6 @@ const Game: React.FC = () => {
                                                 canFail={role === "spy"}
                                                 onAction={handleMission}
                                             />
-
-                                            {/* Mostrar estado de misión si tenemos la información */}
-                                            {roomState.playersActed && playerId && roomState.playersActed.includes(playerId) && (
-                                                <MissionStatus
-                                                    teamMembers={roomState.proposedTeam}
-                                                    players={roomState.players}
-                                                    playersActed={roomState.playersActed}
-                                                    currentPlayerId={playerId}
-                                                />
-                                            )}
                                         </>
                                     ) : (
                                         <div className="space-y-5">
@@ -504,39 +483,6 @@ const Game: React.FC = () => {
                                                     </div>
                                                 </div>
                                             </div>
-
-                                            {/* Mostrar estado de misión */}
-                                            {roomState.playersActed && playerId ? (
-                                                <MissionStatus
-                                                    teamMembers={roomState.proposedTeam}
-                                                    players={roomState.players}
-                                                    playersActed={roomState.playersActed}
-                                                    currentPlayerId={playerId}
-                                                />
-                                            ) : (
-                                                <div className="relative group">
-                                                    <div className="absolute inset-0 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-linear-to-r from-slate-500/0 via-slate-500/10 to-slate-500/0"></div>
-
-                                                    <div className="relative backdrop-blur-sm rounded-lg p-4 border bg-slate-800/60 border-slate-700/50">
-                                                        <div className="flex items-center gap-2 justify-center mb-3">
-                                                            <div className="w-7 h-7 rounded flex items-center justify-center bg-linear-to-br from-slate-600 to-slate-700">
-                                                                <Swords className="w-4 h-4 text-white" />
-                                                            </div>
-                                                            <h3 className="font-bold text-white text-sm uppercase tracking-wide">Equipo en Misión</h3>
-                                                        </div>
-                                                        <div className="flex flex-wrap gap-2 justify-center">
-                                                            {roomState.proposedTeam.map((pid) => {
-                                                                const player = roomState.players.find((p) => p.id === pid);
-                                                                return (
-                                                                    <div key={pid} className="px-3 py-1.5 bg-slate-700/70 border border-slate-600/50 rounded text-sm font-medium text-white">
-                                                                        {player?.name || pid}
-                                                                    </div>
-                                                                );
-                                                            })}
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            )}
                                         </div>
                                     )}
                                 </div>

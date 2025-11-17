@@ -1,88 +1,398 @@
-import React from "react";
-import { Users, Crown } from "lucide-react";
+import React, { useState } from "react";
+import { Users, Crown, Clock, Vote, AlertTriangle, Shield, UserX, EyeOff, Check, Swords } from "lucide-react";
 import type { Player } from "../types";
 
 interface PlayerListProps {
     players: Player[];
     leaderId: string;
     currentPlayerId: string;
+    phase: "lobby" | "proposeTeam" | "voteTeam" | "mission" | "reveal";
+    rejectedTeams: number;
+    role?: "spy" | "resistance" | null;
+    otherSpies?: string[];
+    // Progreso de votación
+    votedPlayers?: string[];
+    // Progreso de misión
+    proposedTeam?: string[];
+    playersActed?: string[];
 }
 
-const PlayerList: React.FC<PlayerListProps> = ({ players, leaderId, currentPlayerId }) => {
-    return (
-        <div className="w-full max-w-lg">
-            {/* Header estilo dossier */}
-            <div className="flex items-center justify-center gap-2 mb-4">
-                <div className="h-px flex-1 bg-gradient-to-r from-transparent to-slate-500/50"></div>
-                <div className="flex items-center gap-2 px-3 py-1 bg-slate-800/60 border border-slate-700/40 rounded">
-                    <Users className="w-4 h-4 text-slate-400" />
-                    <span className="text-slate-300 text-xs font-bold uppercase tracking-widest">Jugadores</span>
-                    <div className="ml-2 px-2 py-0.5 bg-slate-700/60 rounded">
-                        <span className="text-xs font-bold text-blue-400">{players.length}</span>
-                    </div>
-                </div>
-                <div className="h-px flex-1 bg-gradient-to-l from-transparent to-slate-500/50"></div>
-            </div>
+const PlayerList: React.FC<PlayerListProps> = ({
+    players,
+    leaderId,
+    currentPlayerId,
+    phase,
+    rejectedTeams,
+    role,
+    otherSpies = [],
+    votedPlayers = [],
+    proposedTeam = [],
+    playersActed = []
+}) => {
+    const [roleVisible, setRoleVisible] = useState(true);
+    const leaderName = players.find(p => p.id === leaderId)?.name || "Desconocido";
 
-            {/* Grid de jugadores compacto */}
-            <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
-                {players.map((p, index) => {
-                    const isLeader = p.id === leaderId;
-                    const isYou = p.id === currentPlayerId;
-                    
-                    return (
-                        <div
-                            key={p.id}
-                            className="relative group"
-                        >
-                            {/* Efecto de brillo */}
-                            <div className={`absolute inset-0 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300 ${
-                                isLeader 
-                                    ? "bg-gradient-to-r from-yellow-500/0 via-yellow-500/20 to-yellow-500/0"
-                                    : "bg-gradient-to-r from-slate-500/0 via-slate-500/10 to-slate-500/0"
+    // Separar jugadores según la fase de misión
+    const missionPlayers = phase === "mission" && proposedTeam.length > 0
+        ? players.filter(p => proposedTeam.includes(p.id))
+        : [];
+
+    const otherPlayers = phase === "mission" && proposedTeam.length > 0
+        ? players.filter(p => !proposedTeam.includes(p.id))
+        : [];
+
+    // Determinar qué jugadores mostrar según la fase
+    const displayPlayers = phase === "mission" && proposedTeam.length > 0
+        ? missionPlayers
+        : players;
+
+    // Calcular progreso según la fase
+    const getProgress = () => {
+        if (phase === "voteTeam" && votedPlayers.length > 0) {
+            return {
+                current: votedPlayers.length,
+                total: players.length,
+                label: "Votación",
+                icon: Vote,
+                waiting: players.length - votedPlayers.length
+            };
+        }
+        if (phase === "mission" && proposedTeam.length > 0) {
+            return {
+                current: playersActed.length,
+                total: proposedTeam.length,
+                label: "Misión",
+                icon: Swords,
+                waiting: proposedTeam.length - playersActed.length
+            };
+        }
+        return null;
+    };
+
+    const progress = getProgress();
+
+    // Función para renderizar un grid de jugadores
+    const renderPlayerGrid = (playersToRender: Player[], showMissionIcons: boolean = false) => (
+        <div className="grid grid-cols-2 gap-2">
+            {playersToRender.map((p) => {
+                const isLeader = p.id === leaderId;
+                const isYou = p.id === currentPlayerId;
+
+                // Estado según la fase
+                const hasVoted = phase === "voteTeam" && votedPlayers.includes(p.id);
+                const hasActed = phase === "mission" && playersActed.includes(p.id);
+                const isActive = hasVoted || hasActed;
+
+                return (
+                    <div
+                        key={p.id}
+                        className="relative group"
+                    >
+                        {/* Efecto de brillo */}
+                        <div className={`absolute inset-0 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300 ${isActive
+                                ? "bg-linear-to-r from-green-500/0 via-green-500/20 to-green-500/0"
+                                : isLeader
+                                    ? "bg-linear-to-r from-yellow-500/0 via-yellow-500/20 to-yellow-500/0"
+                                    : "bg-linear-to-r from-slate-500/0 via-slate-500/10 to-slate-500/0"
                             }`}></div>
-                            
-                            {/* Card del jugador */}
-                            <div className={`
-                                relative backdrop-blur-sm rounded-lg p-2.5 transition-all duration-300
-                                ${isLeader
+
+                        {/* Card del jugador */}
+                        <div className={`
+                            relative backdrop-blur-sm rounded-lg p-2.5 transition-all duration-300
+                            ${isActive
+                                ? "bg-green-500/10 border border-green-500/40 group-hover:border-green-500/60"
+                                : isLeader
                                     ? "bg-yellow-500/10 border border-yellow-500/40 group-hover:border-yellow-500/60"
                                     : "bg-slate-800/60 border border-slate-700/50 group-hover:border-slate-600/60"
-                                }
-                                ${isYou ? "ring-1 ring-blue-500/40" : ""}
-                            `}>
-                                <div className="flex items-center gap-2">
-                                    {/* Número/Corona */}
-                                    <div className={`
-                                        flex-shrink-0 w-5 h-5 rounded flex items-center justify-center
-                                        ${isLeader
-                                            ? "bg-gradient-to-br from-yellow-500 to-orange-500"
-                                            : "bg-gradient-to-br from-blue-500 to-purple-600"
-                                        }
-                                    `}>
-                                        {isLeader ? (
-                                            <Crown className="w-3 h-3 text-white" />
+                            }
+                            ${isYou ? "ring-1 ring-blue-500/40" : ""}
+                        `}>
+                            <div className="flex items-center gap-2">
+                                {/* Icono dinámico según fase y estado */}
+                                <div className={`
+                                    shrink-0 w-5 h-5 rounded flex items-center justify-center
+                                    ${isActive
+                                        ? "bg-linear-to-br from-green-500 to-green-600"
+                                        : isLeader
+                                            ? "bg-linear-to-br from-yellow-500 to-orange-500"
+                                            : "bg-linear-to-br from-blue-500 to-purple-600"
+                                    }
+                                `}>
+                                    {showMissionIcons ? (
+                                        isActive ? (
+                                            <Check className="w-3 h-3 text-white" />
                                         ) : (
-                                            <span className="text-white text-[10px] font-black">{index + 1}</span>
-                                        )}
-                                    </div>
-                                    {/* Nombre */}
-                                    <div className="flex-1 min-w-0">
-                                        <p className={`text-xs font-semibold truncate ${
-                                            isLeader ? "text-yellow-300" : "text-slate-300"
+                                            <Clock className="w-3 h-3 text-white" />
+                                        )
+                                    ) : phase === "voteTeam" ? (
+                                        isActive ? (
+                                            <Check className="w-3 h-3 text-white" />
+                                        ) : (
+                                            <Clock className="w-3 h-3 text-white" />
+                                        )
+                                    ) : isLeader ? (
+                                        <Crown className="w-3 h-3 text-white" />
+                                    ) : (
+                                        <span className="text-white text-[10px] font-black">{players.indexOf(p) + 1}</span>
+                                    )}
+                                </div>
+                                {/* Nombre */}
+                                <div className="flex-1 min-w-0">
+                                    <p className={`text-xs font-semibold truncate ${isActive ? "text-green-300" : isLeader ? "text-yellow-300" : "text-slate-300"
                                         }`}>
-                                            {p.name}
-                                            {isYou && <span className="text-blue-400"> •</span>}
-                                        </p>
-                                    </div>
+                                        {p.name}
+                                        {isYou && <span className="text-blue-400"> •</span>}
+                                    </p>
                                 </div>
                             </div>
                         </div>
-                    );
-                })}
-            </div>
+                    </div>
+                );
+            })}
+        </div>
+    );
+
+    return (
+        <div className="space-y-3">
+            {/* Sección de Jugadores - Layout dinámico según fase */}
+            {phase === "mission" && missionPlayers.length > 0 ? (
+                <>
+                    {/* Sección: Equipo en Misión */}
+                    <div className="backdrop-blur-sm rounded-lg p-3 border bg-green-500/10 border-green-500/30">
+                        {/* Header con información del juego */}
+                        <div className="flex items-center justify-between mb-3 pb-2 border-b border-green-500/20">
+                            <div className="flex items-center gap-2">
+                                <Swords className="w-4 h-4 text-green-400" />
+                                <span className="text-green-300 text-xs font-bold uppercase tracking-widest">En Misión</span>
+                                <div className="px-2 py-0.5 bg-green-600/40 rounded">
+                                    <span className="text-xs font-bold">
+                                        <span className="text-green-300">{playersActed.length}</span>
+                                        <span className="text-green-500">/</span>
+                                        <span className="text-green-200">{missionPlayers.length}</span>
+                                    </span>
+                                </div>
+                            </div>
+                            <div className="flex items-center gap-2">
+                                {/* Rol */}
+                                {role && (
+                                    <button
+                                        onClick={() => setRoleVisible(!roleVisible)}
+                                        className="flex items-center gap-1 px-2 py-1 bg-slate-800/60 hover:bg-slate-700/60 rounded transition-colors"
+                                        title={roleVisible ? "Ocultar rol" : "Mostrar rol"}
+                                    >
+                                        {roleVisible ? (
+                                            role === "spy" ? (
+                                                <>
+                                                    <UserX className="w-3 h-3 text-red-400" />
+                                                    <span className="text-red-300 text-[10px] font-bold">Espía</span>
+                                                </>
+                                            ) : (
+                                                <>
+                                                    <Shield className="w-3 h-3 text-blue-400" />
+                                                    <span className="text-blue-300 text-[10px] font-bold">Resistencia</span>
+                                                </>
+                                            )
+                                        ) : (
+                                            <>
+                                                <EyeOff className="w-3 h-3 text-slate-400" />
+                                                <span className="text-slate-400 text-[10px] font-bold">••••</span>
+                                            </>
+                                        )}
+                                    </button>
+                                )}
+                                {/* Rechazos */}
+                                {rejectedTeams > 0 && (
+                                    <div className={`px-2 py-1 rounded flex items-center gap-1 ${rejectedTeams >= 3 ? "bg-red-500/20" : "bg-yellow-500/20"}`}>
+                                        <AlertTriangle className={`w-3 h-3 ${rejectedTeams >= 3 ? "text-red-400" : "text-yellow-400"}`} />
+                                        <span className={`text-[10px] font-bold ${rejectedTeams >= 3 ? "text-red-300" : "text-yellow-300"}`}>{rejectedTeams}/5</span>
+                                    </div>
+                                )}
+                            </div>
+                        </div>
+                        
+                        {/* Info de espías si aplica */}
+                        {roleVisible && role === "spy" && otherSpies.length > 0 && (
+                            <div className="mb-3 p-2 bg-red-500/20 border border-red-500/30 rounded">
+                                <div className="flex items-center gap-1.5">
+                                    <Users className="w-3 h-3 text-red-300" />
+                                    <span className="text-red-200 text-[10px] font-medium">{otherSpies.join(", ")}</span>
+                                </div>
+                            </div>
+                        )}
+
+                        {/* Barra de progreso de misión */}
+                        {playersActed.length < missionPlayers.length && (
+                            <div className="mb-3">
+                                <div className="w-full h-1.5 bg-slate-800/60 rounded-full overflow-hidden">
+                                    <div
+                                        className="h-full transition-all duration-500 ease-out bg-linear-to-r from-green-500 via-emerald-500 to-green-600"
+                                        style={{ width: `${(playersActed.length / missionPlayers.length) * 100}%` }}
+                                    ></div>
+                                </div>
+                            </div>
+                        )}
+
+                        {/* Grid de jugadores en misión */}
+                        {renderPlayerGrid(missionPlayers, true)}
+
+                        {/* Mensaje de estado de misión */}
+                        {playersActed.length < missionPlayers.length && (
+                            <div className="mt-3 flex items-center justify-center gap-2 px-3 py-2 bg-slate-800/40 backdrop-blur-sm rounded-lg border border-slate-700/40">
+                                <Clock className="w-4 h-4 text-amber-400 animate-pulse" />
+                                <p className="text-slate-300 text-xs font-medium">
+                                    Esperando <span className="font-bold text-amber-400">{missionPlayers.length - playersActed.length}</span> acción{missionPlayers.length - playersActed.length !== 1 ? "es" : ""}
+                                </p>
+                            </div>
+                        )}
+                    </div>
+
+                    {/* Sección: Resto de Jugadores */}
+                    {otherPlayers.length > 0 && (
+                        <div className="backdrop-blur-sm rounded-lg p-3 border bg-slate-800/60 border-slate-700/50">
+                            {/* Header simple */}
+                            <div className="flex items-center justify-between mb-3 pb-2 border-b border-slate-700/30">
+                                <div className="flex items-center gap-2">
+                                    <Users className="w-4 h-4 text-slate-400" />
+                                    <span className="text-slate-300 text-xs font-bold uppercase tracking-widest">Otros</span>
+                                    <div className="px-2 py-0.5 bg-slate-700/60 rounded">
+                                        <span className="text-xs font-bold text-blue-400">{otherPlayers.length}</span>
+                                    </div>
+                                </div>
+                                <div className="flex items-center gap-1 text-[10px] text-slate-400">
+                                    <Crown className="w-3 h-3 text-yellow-400" />
+                                    <span className="text-yellow-300 font-bold">{leaderName}</span>
+                                </div>
+                            </div>
+
+                            {/* Grid de otros jugadores */}
+                            {renderPlayerGrid(otherPlayers, false)}
+                        </div>
+                    )}
+                </>
+            ) : (
+                <div className={`backdrop-blur-sm rounded-lg p-3 border ${
+                    phase === "voteTeam" 
+                        ? "bg-purple-500/10 border-purple-500/30" 
+                        : "bg-slate-800/60 border-slate-700/50"
+                }`}>
+                    {/* Header consolidado con toda la información */}
+                    <div className="flex items-center justify-between mb-3 pb-2 border-b border-slate-700/30">
+                        <div className="flex items-center gap-2">
+                            {progress ? (
+                                <>
+                                    <progress.icon className={`w-4 h-4 ${
+                                        phase === "voteTeam" ? "text-purple-400" : "text-slate-400"
+                                    }`} />
+                                    <span className={`text-xs font-bold uppercase tracking-widest ${
+                                        phase === "voteTeam" ? "text-purple-300" : "text-slate-300"
+                                    }`}>
+                                        {progress.label}
+                                    </span>
+                                    <div className={`px-2 py-0.5 rounded ${
+                                        phase === "voteTeam" ? "bg-purple-600/40" : "bg-slate-700/60"
+                                    }`}>
+                                        <span className="text-xs font-bold">
+                                            <span className="text-green-400">{progress.current}</span>
+                                            <span className="text-slate-500">/</span>
+                                            <span className="text-blue-400">{progress.total}</span>
+                                        </span>
+                                    </div>
+                                </>
+                            ) : (
+                                <>
+                                    <Users className="w-4 h-4 text-slate-400" />
+                                    <span className="text-slate-300 text-xs font-bold uppercase tracking-widest">Jugadores</span>
+                                    <div className="px-2 py-0.5 bg-slate-700/60 rounded">
+                                        <span className="text-xs font-bold text-blue-400">{players.length}</span>
+                                    </div>
+                                </>
+                            )}
+                        </div>
+                        <div className="flex items-center gap-2">
+                            {/* Líder */}
+                            <div className="flex items-center gap-1 px-2 py-1 bg-yellow-500/20 rounded">
+                                <Crown className="w-3 h-3 text-yellow-400" />
+                                <span className="text-yellow-300 text-[10px] font-bold">{leaderName}</span>
+                            </div>
+                            {/* Rol */}
+                            {role && (
+                                <button
+                                    onClick={() => setRoleVisible(!roleVisible)}
+                                    className="flex items-center gap-1 px-2 py-1 bg-slate-800/60 hover:bg-slate-700/60 rounded transition-colors"
+                                    title={roleVisible ? "Ocultar rol" : "Mostrar rol"}
+                                >
+                                    {roleVisible ? (
+                                        role === "spy" ? (
+                                            <>
+                                                <UserX className="w-3 h-3 text-red-400" />
+                                                <span className="text-red-300 text-[10px] font-bold">Espía</span>
+                                            </>
+                                        ) : (
+                                            <>
+                                                <Shield className="w-3 h-3 text-blue-400" />
+                                                <span className="text-blue-300 text-[10px] font-bold">Resistencia</span>
+                                            </>
+                                        )
+                                    ) : (
+                                        <>
+                                            <EyeOff className="w-3 h-3 text-slate-400" />
+                                            <span className="text-slate-400 text-[10px] font-bold">••••</span>
+                                        </>
+                                    )}
+                                </button>
+                            )}
+                            {/* Rechazos */}
+                            {rejectedTeams > 0 && (
+                                <div className={`px-2 py-1 rounded flex items-center gap-1 ${rejectedTeams >= 3 ? "bg-red-500/20" : "bg-yellow-500/20"}`}>
+                                    <AlertTriangle className={`w-3 h-3 ${rejectedTeams >= 3 ? "text-red-400" : "text-yellow-400"}`} />
+                                    <span className={`text-[10px] font-bold ${rejectedTeams >= 3 ? "text-red-300" : "text-yellow-300"}`}>{rejectedTeams}/5</span>
+                                </div>
+                            )}
+                        </div>
+                    </div>
+
+                    {/* Info de espías si aplica */}
+                    {roleVisible && role === "spy" && otherSpies.length > 0 && (
+                        <div className="mb-3 p-2 bg-red-500/20 border border-red-500/30 rounded">
+                            <div className="flex items-center gap-1.5">
+                                <Users className="w-3 h-3 text-red-300" />
+                                <span className="text-red-200 text-[10px] font-medium">{otherSpies.join(", ")}</span>
+                            </div>
+                        </div>
+                    )}
+
+                    {/* Barra de progreso */}
+                    {progress && progress.current < progress.total && (
+                        <div className="mb-3">
+                            <div className="w-full h-1.5 bg-slate-800/60 rounded-full overflow-hidden">
+                                <div
+                                    className={`h-full transition-all duration-500 ease-out ${phase === "voteTeam"
+                                            ? "bg-linear-to-r from-blue-500 via-purple-500 to-green-500"
+                                            : "bg-linear-to-r from-green-500 via-emerald-500 to-green-600"
+                                        }`}
+                                    style={{ width: `${(progress.current / progress.total) * 100}%` }}
+                                ></div>
+                            </div>
+                        </div>
+                    )}
+
+                    {/* Grid de jugadores compacto con estado dinámico */}
+                    {renderPlayerGrid(displayPlayers, false)}
+
+                    {/* Mensaje de estado según progreso */}
+                    {progress && progress.waiting > 0 && (
+                        <div className="mt-3 flex items-center justify-center gap-2 px-3 py-2 bg-slate-800/40 backdrop-blur-sm rounded-lg border border-slate-700/40">
+                            <Clock className="w-4 h-4 text-amber-400 animate-pulse" />
+                            <p className="text-slate-300 text-xs font-medium">
+                                Esperando <span className="font-bold text-amber-400">{progress.waiting}</span> {phase === "voteTeam" ? "voto" : "acción"}{progress.waiting !== 1 ? "s" : ""}
+                            </p>
+                        </div>
+                    )}
+                </div>
+            )}
         </div>
     );
 };
 
 export default PlayerList;
+

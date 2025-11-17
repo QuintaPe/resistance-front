@@ -1,22 +1,12 @@
 import React, { useState } from "react";
 import { createPortal } from "react-dom";
 import { Check } from "lucide-react";
-import type { Player } from "../types";
-import VotingStatus from "./VotingStatus";
 
 interface VoteButtonsProps {
     onVote: (vote: "approve" | "reject") => void;
-    players?: Player[];
-    votedPlayers?: string[];
-    currentPlayerId?: string;
 }
 
-const VoteButtons: React.FC<VoteButtonsProps> = ({
-    onVote,
-    players,
-    votedPlayers,
-    currentPlayerId
-}) => {
+const VoteButtons: React.FC<VoteButtonsProps> = ({ onVote }) => {
     const [showModal, setShowModal] = useState(false);
     const [selectedVote, setSelectedVote] = useState<"approve" | "reject" | null>(null);
     const [hasVoted, setHasVoted] = useState(false);
@@ -39,10 +29,10 @@ const VoteButtons: React.FC<VoteButtonsProps> = ({
         setSelectedVote(null);
     };
 
-    // Si ya votó, mostrar estado de votación
+    // Si ya votó, mostrar indicador de confirmación
     if (hasVoted) {
         return (
-            <div className="w-full space-y-5 animate-fadeIn">
+            <div className="w-full animate-fadeIn">
                 {/* Indicador de voto confirmado */}
                 <div className="relative group">
                     {/* Efecto de brillo sutil */}
@@ -76,15 +66,6 @@ const VoteButtons: React.FC<VoteButtonsProps> = ({
                         </div>
                     </div>
                 </div>
-
-                {/* Estado de votación de todos los jugadores */}
-                {players && votedPlayers && currentPlayerId && (
-                    <VotingStatus
-                        players={players}
-                        votedPlayers={votedPlayers}
-                        currentPlayerId={currentPlayerId}
-                    />
-                )}
             </div>
         );
     }
