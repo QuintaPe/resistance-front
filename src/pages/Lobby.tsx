@@ -2,12 +2,15 @@ import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router";
 import { useSocket } from "../context/SocketContext";
 import { useModal } from "../context/ModalContext";
-import { Loader2, Clipboard, Check, Crown, Users, Rocket, Clock, Lightbulb, LogOut, UserX, ChevronUp } from "lucide-react";
+import { MIN_PLAYERS, TIMINGS } from "../constants";
+import LoadingScreen from "../components/common/LoadingScreen";
+import AnimatedBackground from "../components/common/AnimatedBackground";
+import { Clipboard, Check, Crown, Users, Rocket, Clock, Lightbulb, LogOut, UserX, ChevronUp, WifiOff } from "lucide-react";
 
 const Lobby: React.FC = () => {
     const { roomCode } = useParams<{ roomCode: string }>();
     const navigate = useNavigate();
-    const { roomState, playerId, startGame, leaveRoom, kickPlayer, changeLeader, socket } = useSocket();
+    const { roomState, playerId, startGame, leaveRoom, kickPlayer, changeLeader, socket, disconnectedPlayers } = useSocket();
     const { showAlert, showConfirm } = useModal();
     const [copied, setCopied] = useState(false);
     const [kickingPlayer, setKickingPlayer] = useState<string | null>(null);
@@ -38,7 +41,7 @@ const Lobby: React.FC = () => {
         if (roomState?.code) {
             navigator.clipboard.writeText(roomState.code);
             setCopied(true);
-            setTimeout(() => setCopied(false), 2000);
+            setTimeout(() => setCopied(false), TIMINGS.COPY_FEEDBACK);
         }
     };
 
@@ -77,16 +80,12 @@ const Lobby: React.FC = () => {
     const handleChangeLeader = (newLeaderIndex: number, playerName: string) => {
         if (!roomCode || !roomState) return;
 
-        console.log('🔄 Intentando cambiar líder a:', playerName, 'índice:', newLeaderIndex);
         setChangingLeader(true);
 
         changeLeader(roomCode, newLeaderIndex, (ok, error) => {
             setChangingLeader(false);
             if (!ok && error) {
-                console.error('❌ Error al cambiar líder:', error);
                 showAlert(error, "error", "Error al cambiar líder");
-            } else {
-                console.log('✅ Líder cambiado exitosamente');
             }
         });
     };
@@ -96,67 +95,17 @@ const Lobby: React.FC = () => {
 
     if (!roomState) {
         return (
-            <div className="relative flex items-center justify-center min-h-screen overflow-hidden p-4">
-                {/* Fondo animado */}
-                <div className="absolute inset-0 overflow-hidden pointer-events-none">
-                    <div className="absolute inset-0 bg-linear-to-br from-slate-900 via-slate-800 to-slate-900"></div>
-                    <div className="absolute top-0 left-0 w-96 h-96 bg-blue-500/20 rounded-full blur-3xl animate-pulse-slow"></div>
-                    <div className="absolute bottom-0 right-0 w-96 h-96 bg-purple-500/20 rounded-full blur-3xl animate-pulse-slow animation-delay-2000"></div>
-                </div>
-
-                {/* Loading con diseño táctico */}
-                <div className="relative z-10 w-full max-w-md animate-fadeIn">
-                    <div className="relative group">
-                        <div className="absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-linear-to-r from-blue-500/0 via-blue-500/10 to-blue-500/0"></div>
-
-                        <div className="relative backdrop-blur-xl bg-slate-800/40 rounded-2xl p-8 shadow-2xl border border-slate-700/50">
-                            {/* Icono de carga */}
-                            <div className="flex justify-center mb-6">
-                                <div className="relative">
-                                    <div className="absolute inset-0 bg-blue-500/30 rounded-lg blur-xl animate-pulse"></div>
-                                    <div className="relative w-16 h-16 rounded-lg flex items-center justify-center bg-linear-to-br from-blue-500 to-blue-600">
-                                        <Loader2 className="w-8 h-8 text-white animate-spin" />
-                                    </div>
-                                </div>
-                            </div>
-
-                            {/* Título con estilo dossier */}
-                            <div className="flex items-center justify-center gap-3 mb-4">
-                                <div className="h-px flex-1 max-w-16 bg-linear-to-r from-transparent to-slate-500/50"></div>
-                                <h2 className="text-lg font-black text-white uppercase tracking-wider">
-                                    Cargando
-                                </h2>
-                                <div className="h-px flex-1 max-w-16 bg-linear-to-l from-transparent to-slate-500/50"></div>
-                            </div>
-
-                            <p className="text-center text-slate-400 text-sm font-medium mb-6">
-                                Conectando con la sala...
-                            </p>
-
-                            {/* Botón para volver a Home con estilo táctico */}
-                            <button
-                                onClick={handleGoHome}
-                                className="w-full px-4 py-2.5 bg-slate-800/60 hover:bg-slate-700/60 border border-slate-700/50 text-white rounded-lg font-semibold text-sm transition-colors"
-                            >
-                                Volver al inicio
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </div>
+            <LoadingScreen
+                title="Cargando"
+                message="Conectando con la sala..."
+                showBackButton={true}
+                onBackClick={handleGoHome}
+            />
         );
     }
 
     const leader = roomState.players[roomState.leaderIndex];
-    const canStart = roomState.players.length >= 5 && playerId === leader.id;
-
-    // 🐛 Debug: Ver IDs para solucionar problema de inicio
-    console.log("🔍 Debug Lobby:", {
-        playerId,
-        leaderId: leader?.id,
-        canStart,
-        allPlayerIds: roomState.players.map(p => p.id)
-    });
+    const canStart = roomState.players.length >= MIN_PLAYERS && playerId === leader.id;
 
     const handleStart = () => {
         if (roomCode) startGame(roomCode);
@@ -164,14 +113,7 @@ const Lobby: React.FC = () => {
 
     return (
         <div className="relative flex flex-col items-center justify-center min-h-screen p-4 sm:p-6 overflow-hidden">
-            {/* Fondo animado mejorado */}
-            <div className="absolute inset-0 overflow-hidden pointer-events-none">
-                <div className="absolute inset-0 bg-linear-to-br from-slate-900 via-slate-800 to-slate-900"></div>
-                <div className="absolute top-0 -right-20 w-96 h-96 bg-blue-500/20 rounded-full blur-3xl animate-pulse-slow"></div>
-                <div className="absolute bottom-0 -left-20 w-96 h-96 bg-purple-500/20 rounded-full blur-3xl animate-pulse-slow animation-delay-2000"></div>
-                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-cyan-500/15 rounded-full blur-3xl animate-pulse-slow animation-delay-4000"></div>
-                <div className="absolute inset-0 bg-[linear-gradient(rgba(148,163,184,0.05)_1px,transparent_1px),linear-gradient(90deg,rgba(148,163,184,0.05)_1px,transparent_1px)] bg-size-[50px_50px]"></div>
-            </div>
+            <AnimatedBackground />
 
             <div className="relative z-10 w-full max-w-2xl space-y-5 sm:space-y-6 px-4 sm:px-0 animate-fadeIn">
                 {/* Header con código de sala - estilo táctico */}
@@ -239,7 +181,7 @@ const Lobby: React.FC = () => {
                                 <Users className="w-4 h-4 text-purple-400" />
                                 <span className="text-purple-300 text-xs font-bold uppercase tracking-widest">Jugadores</span>
                                 <div className="ml-2 px-2 py-0.5 bg-slate-800/60 rounded text-xs font-bold">
-                                    <span className={roomState.players.length >= 5 ? "text-green-400" : "text-yellow-400"}>
+                                    <span className={roomState.players.length >= MIN_PLAYERS ? "text-green-400" : "text-yellow-400"}>
                                         {roomState.players.length}
                                     </span>
                                     <span className="text-slate-500">/12</span>
@@ -255,6 +197,7 @@ const Lobby: React.FC = () => {
                                 const canKickThisPlayer = isCreator && p.id !== playerId;
                                 const canPromoteToLeader = isCreator && !isPlayerLeader;
                                 const isKicking = kickingPlayer === p.id;
+                                const isDisconnected = disconnectedPlayers.includes(p.id);
 
                                 return (
                                     <div
@@ -268,29 +211,38 @@ const Lobby: React.FC = () => {
 
                                         <div className={`
                                             relative p-3 rounded-lg flex items-center gap-3 transition-all duration-200
-                                            ${isPlayerLeader
-                                                ? "bg-yellow-500/15 border border-yellow-500/40"
-                                                : "bg-slate-700/40 border border-slate-600/40"
+                                            ${isDisconnected
+                                                ? "bg-slate-700/30 border border-slate-600/30 opacity-50"
+                                                : isPlayerLeader
+                                                    ? "bg-yellow-500/15 border border-yellow-500/40"
+                                                    : "bg-slate-700/40 border border-slate-600/40"
                                             }
                                         `}>
-                                            <div className={`w-8 h-8 rounded flex items-center justify-center text-sm font-bold shrink-0 ${isPlayerLeader
-                                                ? "bg-linear-to-br from-yellow-500 to-orange-500 text-white"
-                                                : "bg-linear-to-br from-blue-500 to-purple-500 text-white"
+                                            <div className={`w-8 h-8 rounded flex items-center justify-center text-sm font-bold shrink-0 ${isDisconnected
+                                                ? "bg-linear-to-br from-slate-500 to-slate-600"
+                                                : isPlayerLeader
+                                                    ? "bg-linear-to-br from-yellow-500 to-orange-500 text-white"
+                                                    : "bg-linear-to-br from-blue-500 to-purple-500 text-white"
                                                 }`}>
-                                                {index + 1}
+                                                {isDisconnected ? (
+                                                    <WifiOff className="w-4 h-4 text-slate-300 animate-pulse" />
+                                                ) : (
+                                                    <span className="text-white">{index + 1}</span>
+                                                )}
                                             </div>
                                             <div className="flex-1 min-w-0">
-                                                <div className="font-semibold truncate text-sm text-white flex items-center gap-1.5">
+                                                <div className={`font-semibold truncate text-sm flex items-center gap-1.5 ${isDisconnected ? "text-slate-400" : "text-white"}`}>
                                                     {p.name}
                                                     {p.id === playerId && <span className="text-blue-400 text-xs font-bold">(Tú)</span>}
                                                     {isPlayerCreator && <span className="text-xs" title="Creador de la sala">👑</span>}
+                                                    {isDisconnected && <span className="text-slate-500 text-[10px]">(desconectado)</span>}
                                                 </div>
                                             </div>
                                             <div className="flex items-center gap-1.5">
                                                 {isPlayerLeader && (
                                                     <Crown className="w-4 h-4 text-yellow-400 shrink-0 animate-pulse" />
                                                 )}
-                                                {canPromoteToLeader && (
+                                                {canPromoteToLeader && !isDisconnected && (
                                                     <button
                                                         onClick={() => handleChangeLeader(index, p.name)}
                                                         disabled={changingLeader}
@@ -320,7 +272,7 @@ const Lobby: React.FC = () => {
                 </div>
 
                 {/* Mensaje de estado / Botón de inicio - estilo táctico */}
-                {roomState.players.length < 5 ? (
+                {roomState.players.length < MIN_PLAYERS ? (
                     <div className="relative group">
                         <div className="absolute inset-0 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-linear-to-r from-yellow-500/0 via-yellow-500/10 to-yellow-500/0"></div>
 
@@ -335,7 +287,7 @@ const Lobby: React.FC = () => {
                                 </div>
                             </div>
                             <p className="text-slate-300 text-sm">
-                                Se necesitan al menos <span className="font-bold text-yellow-300">{5 - roomState.players.length}</span> jugador{5 - roomState.players.length > 1 ? 'es' : ''} más
+                                Se necesitan al menos <span className="font-bold text-yellow-300">{MIN_PLAYERS - roomState.players.length}</span> jugador{MIN_PLAYERS - roomState.players.length > 1 ? 'es' : ''} más
                             </p>
                         </div>
                     </div>
@@ -380,7 +332,7 @@ const Lobby: React.FC = () => {
                             <Lightbulb className="w-3 h-3 text-white" />
                         </div>
                         <span className="text-slate-300 text-xs font-semibold">
-                            Mínimo 5 jugadores
+                            Mínimo {MIN_PLAYERS} jugadores
                         </span>
                     </div>
                     <div className="hidden sm:flex items-center gap-2 px-3 py-1.5 bg-slate-800/40 backdrop-blur-sm rounded border border-slate-700/40">

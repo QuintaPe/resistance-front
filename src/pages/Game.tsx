@@ -3,6 +3,9 @@ import { useParams, useNavigate } from "react-router";
 import { useGame } from "../hooks/useGame";
 import { useSocket } from "../context/SocketContext";
 import { useModal } from "../context/ModalContext";
+import { isPlayerCreator } from "../utils";
+import LoadingScreen from "../components/common/LoadingScreen";
+import AnimatedBackground from "../components/common/AnimatedBackground";
 import TeamSelector from "../components/TeamSelector";
 import VoteButtons from "../components/VoteButtons";
 import MissionAction from "../components/MissionAction";
@@ -12,7 +15,7 @@ import RulesButton from "../components/RulesButton";
 import MissionSuspense from "../components/MissionSuspense";
 import MissionDetailModal from "../components/MissionDetailModal";
 import type { MissionResult } from "../types";
-import { Gamepad2, Loader2, Target, Users, Clock, Vote, LogOut, RotateCcw, Home } from "lucide-react";
+import { Gamepad2, Target, Users, Clock, Vote, LogOut, RotateCcw, Home } from "lucide-react";
 
 const Game: React.FC = () => {
     const { roomCode } = useParams<{ roomCode: string }>();
@@ -86,7 +89,6 @@ const Game: React.FC = () => {
     // Si el juego vuelve al lobby, limpiar y redirigir
     useEffect(() => {
         if (phase === "lobby" && roomCode) {
-            console.log("🏠 Detectado cambio a fase lobby - navegando al lobby");
             // Limpiar el rol cuando volvemos al lobby
             // El backend ya habrá reseteado el estado
             navigate(`/lobby/${roomCode}`);
@@ -143,54 +145,12 @@ const Game: React.FC = () => {
 
     if (!roomState) {
         return (
-            <div className="relative flex items-center justify-center min-h-screen overflow-hidden p-4">
-                {/* Fondo animado */}
-                <div className="absolute inset-0 overflow-hidden pointer-events-none">
-                    <div className="absolute inset-0 bg-linear-to-br from-slate-900 via-slate-800 to-slate-900"></div>
-                    <div className="absolute top-0 left-0 w-96 h-96 bg-blue-500/20 rounded-full blur-3xl animate-pulse-slow"></div>
-                    <div className="absolute bottom-0 right-0 w-96 h-96 bg-purple-500/20 rounded-full blur-3xl animate-pulse-slow animation-delay-2000"></div>
-                </div>
-
-                {/* Loading con diseño táctico */}
-                <div className="relative z-10 w-full max-w-md animate-fadeIn">
-                    <div className="relative group">
-                        <div className="absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-linear-to-r from-blue-500/0 via-blue-500/10 to-blue-500/0"></div>
-
-                        <div className="relative backdrop-blur-xl bg-slate-800/40 rounded-2xl p-8 shadow-2xl border border-slate-700/50">
-                            {/* Icono de carga */}
-                            <div className="flex justify-center mb-6">
-                                <div className="relative">
-                                    <div className="absolute inset-0 bg-blue-500/30 rounded-lg blur-xl animate-pulse"></div>
-                                    <div className="relative w-16 h-16 rounded-lg flex items-center justify-center bg-linear-to-br from-blue-500 to-blue-600">
-                                        <Loader2 className="w-8 h-8 text-white animate-spin" />
-                                    </div>
-                                </div>
-                            </div>
-
-                            {/* Título con estilo dossier */}
-                            <div className="flex items-center justify-center gap-3 mb-4">
-                                <div className="h-px flex-1 max-w-16 bg-linear-to-r from-transparent to-slate-500/50"></div>
-                                <h2 className="text-lg font-black text-white uppercase tracking-wider">
-                                    Cargando
-                                </h2>
-                                <div className="h-px flex-1 max-w-16 bg-linear-to-l from-transparent to-slate-500/50"></div>
-                            </div>
-
-                            <p className="text-center text-slate-400 text-sm font-medium mb-6">
-                                Preparando la partida...
-                            </p>
-
-                            {/* Botón para volver a Home */}
-                            <button
-                                onClick={() => navigate("/")}
-                                className="w-full px-4 py-2.5 bg-slate-800/60 hover:bg-slate-700/60 border border-slate-700/50 text-white rounded-lg font-semibold text-sm transition-colors"
-                            >
-                                Volver al inicio
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </div>
+            <LoadingScreen
+                title="Cargando"
+                message="Preparando la partida..."
+                showBackButton={true}
+                onBackClick={() => navigate("/")}
+            />
         );
     }
 
@@ -268,7 +228,7 @@ const Game: React.FC = () => {
     };
 
     // Detectar si soy el creador
-    const isCreator = roomState?.creatorId === playerId;
+    const isCreator = isPlayerCreator(roomState, playerId);
 
     // Handler para expulsar jugador (creador puede en cualquier momento)
     const handleKickPlayer = (targetPlayerId: string) => {
@@ -294,6 +254,8 @@ const Game: React.FC = () => {
 
     return (
         <div className="relative min-h-screen p-3 sm:p-6 overflow-hidden">
+            <AnimatedBackground />
+
             {/* Componente de suspenso de misión */}
             {showSuspense && suspenseResult && roomCode && (
                 <MissionSuspense
@@ -313,22 +275,6 @@ const Game: React.FC = () => {
                     onClose={handleCloseMissionModal}
                 />
             )}
-
-            {/* Fondo animado mejorado */}
-            <div className="absolute inset-0 overflow-hidden pointer-events-none">
-                <div className="absolute inset-0 bg-linear-to-br from-slate-900 via-slate-800 to-slate-900"></div>
-                <div className="absolute top-0 -left-20 w-96 h-96 bg-blue-500/20 rounded-full blur-3xl animate-pulse-slow"></div>
-                <div className="absolute bottom-0 -right-20 w-96 h-96 bg-purple-500/20 rounded-full blur-3xl animate-pulse-slow animation-delay-2000"></div>
-                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-cyan-500/15 rounded-full blur-3xl animate-pulse-slow animation-delay-4000"></div>
-                <div className="absolute inset-0 bg-[linear-gradient(rgba(148,163,184,0.05)_1px,transparent_1px),linear-gradient(90deg,rgba(148,163,184,0.05)_1px,transparent_1px)] bg-size-[50px_50px]"></div>
-            </div>
-
-            {/* Partículas decorativas */}
-            <div className="absolute inset-0 pointer-events-none overflow-hidden">
-                <div className="absolute top-1/4 left-1/4 w-2 h-2 bg-blue-400/30 rounded-full animate-float"></div>
-                <div className="absolute top-2/3 right-1/4 w-1.5 h-1.5 bg-purple-400/30 rounded-full animate-float animation-delay-2000"></div>
-                <div className="absolute top-1/3 right-1/3 w-2 h-2 bg-pink-400/30 rounded-full animate-float animation-delay-4000"></div>
-            </div>
 
             <div className="relative z-10 max-w-6xl mx-auto space-y-4 sm:space-y-6 animate-fadeIn">
                 {/* Header con código de sala */}

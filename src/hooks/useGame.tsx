@@ -1,5 +1,14 @@
 import { useCallback } from "react";
 import { useSocket } from "../context/SocketContext";
+import { SOCKET_EVENTS } from "../constants";
+import {
+    determineWinner,
+    isGameEnded,
+    getCurrentTeamSize,
+    getMissionProgress,
+    isPlayerLeader,
+    isPlayerInTeam,
+} from "../utils";
 
 /**
  * Hook principal para gestionar las acciones del juego
@@ -16,7 +25,7 @@ export const useGame = () => {
     const proposeTeam = useCallback(
         (roomCode: string, teamIds: string[]) => {
             if (!roomCode || !teamIds.length) return;
-            socket.emit("team:propose", { roomCode, teamIds });
+            socket.emit(SOCKET_EVENTS.TEAM_PROPOSE, { roomCode, teamIds });
         },
         [socket]
     );
@@ -25,7 +34,7 @@ export const useGame = () => {
     const voteTeam = useCallback(
         (roomCode: string, vote: "approve" | "reject") => {
             if (!roomCode) return;
-            socket.emit("team:vote", { roomCode, vote });
+            socket.emit(SOCKET_EVENTS.TEAM_VOTE, { roomCode, vote });
         },
         [socket]
     );
@@ -34,7 +43,7 @@ export const useGame = () => {
     const missionAct = useCallback(
         (roomCode: string, action: "success" | "fail") => {
             if (!roomCode) return;
-            socket.emit("mission:act", { roomCode, action });
+            socket.emit(SOCKET_EVENTS.MISSION_ACT, { roomCode, action });
         },
         [socket]
     );
@@ -44,36 +53,25 @@ export const useGame = () => {
     // =========================
 
     /** Jugador actual es el líder */
-    const isLeader = roomState
-        ? roomState.players[roomState.leaderIndex]?.id === playerId
-        : false;
+    const isLeader = isPlayerLeader(roomState, playerId);
 
     /** Jugador actual está en el equipo propuesto */
-    const isInTeam = roomState?.proposedTeam?.includes(playerId || "") ?? false;
+    const isInTeam = isPlayerInTeam(roomState, playerId);
 
     /** Fase actual del juego */
     const phase = roomState?.phase ?? "lobby";
 
     /** Tamaño del equipo requerido para la misión actual */
-    const teamSize =
-        roomState?.teamSizePerMission?.[roomState.currentMission || 0] ?? 0;
+    const teamSize = getCurrentTeamSize(roomState);
 
     /** Progreso de misiones (para barra de estado o visual) */
-    const missionProgress = roomState?.results?.length ?? 0;
+    const missionProgress = getMissionProgress(roomState);
 
     /** Verifica si el juego ha terminado */
-    const gameEnded = phase === "reveal";
+    const gameEnded = isGameEnded(phase);
 
     /** Determina quién ganó */
-    const winner = (() => {
-        if (!roomState) return null;
-        const passed = roomState.results.filter((r) => r.passed).length;
-        const failed = roomState.results.filter((r) => !r.passed).length;
-        if (roomState.rejectedTeamsInRow >= 5) return "spies";
-        if (passed >= 3) return "resistance";
-        if (failed >= 3) return "spies";
-        return null;
-    })();
+    const winner = determineWinner(roomState);
 
     // =========================
     // 🚀 API del Hook

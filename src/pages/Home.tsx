@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router";
 import { useSocket } from "../context/SocketContext";
-import { getSessionData } from "../utils/sessionStorage";
+import { getSessionData } from "../utils";
+import { TEXT_LIMITS, TIMINGS } from "../constants";
+import AnimatedBackground from "../components/common/AnimatedBackground";
 import { User, Key, AlertTriangle, Gamepad2, Users } from "lucide-react";
 
 const Home: React.FC = () => {
@@ -20,8 +22,6 @@ const Home: React.FC = () => {
             
             // Si hay sesión guardada Y roomState se ha cargado, redirigir
             if (sessionData.sessionId && sessionData.roomCode && roomState) {
-                console.log("✅ Sesión detectada, redirigiendo a:", sessionData.roomCode);
-                
                 // Redirigir según la fase
                 if (roomState.phase === "lobby") {
                     navigate(`/lobby/${sessionData.roomCode}`);
@@ -31,7 +31,7 @@ const Home: React.FC = () => {
                     navigate(`/game/${sessionData.roomCode}`);
                 }
             }
-        }, 1000); // Esperar 1 segundo para que la reconexión se complete
+        }, TIMINGS.REDIRECT_DELAY);
 
         return () => clearTimeout(timer);
     }, [roomState, navigate]);
@@ -57,19 +57,7 @@ const Home: React.FC = () => {
 
     return (
         <div className="relative flex flex-col items-center justify-center min-h-screen p-4 sm:p-6 overflow-hidden">
-            {/* Fondo animado mejorado */}
-            <div className="absolute inset-0 overflow-hidden pointer-events-none">
-                {/* Gradiente base */}
-                <div className="absolute inset-0 bg-linear-to-br from-slate-900 via-slate-800 to-slate-900"></div>
-
-                {/* Orbes de luz animados */}
-                <div className="absolute top-0 -left-20 w-96 h-96 bg-blue-500/20 rounded-full blur-3xl animate-pulse-slow"></div>
-                <div className="absolute top-1/4 right-0 w-80 h-80 bg-purple-500/20 rounded-full blur-3xl animate-pulse-slow animation-delay-2000"></div>
-                <div className="absolute bottom-0 left-1/3 w-96 h-96 bg-cyan-500/15 rounded-full blur-3xl animate-pulse-slow animation-delay-4000"></div>
-
-                {/* Grid decorativo */}
-                <div className="absolute inset-0 bg-[linear-gradient(rgba(148,163,184,0.05)_1px,transparent_1px),linear-gradient(90deg,rgba(148,163,184,0.05)_1px,transparent_1px)] bg-size-[50px_50px]"></div>
-            </div>
+            <AnimatedBackground />
 
             {/* Contenido principal */}
             <div className="relative z-10 w-full max-w-md px-4 sm:px-0 animate-fadeIn">
@@ -122,7 +110,7 @@ const Home: React.FC = () => {
                                         value={name}
                                         onChange={(e) => setName(e.target.value)}
                                         className="w-full px-4 py-3 bg-slate-700/60 border border-slate-600/50 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 transition-all duration-200 hover:bg-slate-700/80 font-medium"
-                                        maxLength={20}
+                                        maxLength={TEXT_LIMITS.PLAYER_NAME}
                                     />
                                 </div>
                             </div>
@@ -148,7 +136,7 @@ const Home: React.FC = () => {
                                         onChange={(e) => setRoomCode(e.target.value.toUpperCase())}
                                         onKeyDown={(e) => e.key === "Enter" && handleJoinRoom()}
                                         className="w-full px-4 py-4 bg-slate-700/60 border border-slate-600/50 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-purple-500/50 transition-all duration-200 hover:bg-slate-700/80 uppercase tracking-[0.3em] text-center text-2xl font-black"
-                                        maxLength={5}
+                                        maxLength={TEXT_LIMITS.ROOM_CODE}
                                     />
                                 </div>
                             </div>
@@ -208,13 +196,6 @@ const Home: React.FC = () => {
                         </button>
                     </div>
                 </div>
-            </div>
-
-            {/* Partículas decorativas (opcional) */}
-            <div className="absolute inset-0 pointer-events-none overflow-hidden">
-                <div className="absolute top-1/4 left-1/4 w-2 h-2 bg-blue-400/30 rounded-full animate-float"></div>
-                <div className="absolute top-3/4 right-1/4 w-1.5 h-1.5 bg-purple-400/30 rounded-full animate-float animation-delay-2000"></div>
-                <div className="absolute top-1/2 right-1/3 w-2 h-2 bg-pink-400/30 rounded-full animate-float animation-delay-4000"></div>
             </div>
         </div>
     );
