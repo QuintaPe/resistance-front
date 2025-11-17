@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router";
-import { useSocket, useModal } from "../context";
+import { useSocket } from "../context";
 import { useKickedListener, useIsCreator, useKickPlayer } from "../hooks";
 import { MissionTracker } from "../components/mission";
 import { Trophy, Loader2, BarChart3, Drama, Home, UserX, Shield, CheckCircle, XCircle, RotateCcw, Users } from "lucide-react";
