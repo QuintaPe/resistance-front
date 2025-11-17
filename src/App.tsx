@@ -7,7 +7,6 @@ import Reveal from "./pages/Reveal";
 import { useSocket } from "./context/SocketContext";
 import { UserSearch, Loader2 } from "lucide-react";
 import ReconnectionNotification from "./components/ReconnectionNotification";
-import ConnectionStatus from "./components/ConnectionStatus";
 
 /**
  * Componente principal que define las rutas del juego.
@@ -71,9 +70,6 @@ const App: React.FC = () => {
         <div className="min-h-screen bg-slate-900">
             {/* Notificaciones de reconexión */}
             <ReconnectionNotification />
-
-            {/* Indicador de estado de conexión */}
-            <ConnectionStatus />
 
             <Routes>
                 {/* Pantalla inicial: Crear o unirse a sala */}
