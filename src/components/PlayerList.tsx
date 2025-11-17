@@ -1,8 +1,7 @@
 import React, { useState } from "react";
-import { Users, Crown, Clock, Vote, AlertTriangle, Shield, UserX, EyeOff, Check, Swords } from "lucide-react";
+import { Users, Crown, Clock, Vote, AlertTriangle, Shield, UserX, EyeOff, Check, Swords, WifiOff } from "lucide-react";
 import type { Player } from "../types";
 import { useModal } from "../context/ModalContext";
-
 interface PlayerListProps {
     players: Player[];
     leaderId: string;
@@ -19,6 +18,8 @@ interface PlayerListProps {
     // Funcionalidades del creador
     isCreator?: boolean;
     onKickPlayer?: (playerId: string) => void;
+    // Jugadores desconectados temporalmente
+    disconnectedPlayers?: string[];
 }
 
 const PlayerList: React.FC<PlayerListProps> = ({
@@ -33,7 +34,8 @@ const PlayerList: React.FC<PlayerListProps> = ({
     proposedTeam = [],
     playersActed = [],
     isCreator = false,
-    onKickPlayer
+    onKickPlayer,
+    disconnectedPlayers = []
 }) => {
     const [roleVisible, setRoleVisible] = useState(true);
     const { showConfirm } = useModal();
@@ -90,6 +92,7 @@ const PlayerList: React.FC<PlayerListProps> = ({
                 const isLeader = p.id === leaderId;
                 const isYou = p.id === currentPlayerId;
                 const canKick = isCreator && !isYou && onKickPlayer; // El creador puede expulsar a otros
+                const isDisconnected = disconnectedPlayers.includes(p.id); // Jugador desconectado temporalmente
 
                 // Estado según la fase
                 const hasVoted = phase === "voteTeam" && votedPlayers.includes(p.id);
@@ -110,9 +113,11 @@ const PlayerList: React.FC<PlayerListProps> = ({
                         {/* Card del jugador */}
                         <div className={`
                             relative backdrop-blur-sm rounded-lg p-2.5 transition-all duration-300
-                            ${isActive
-                                ? "bg-green-500/10 border border-green-500/40 group-hover:border-green-500/60"
-                                : "bg-slate-800/60 border border-slate-700/50 group-hover:border-slate-600/60"
+                            ${isDisconnected
+                                ? "bg-orange-500/10 border border-orange-500/40 opacity-60"
+                                : isActive
+                                    ? "bg-green-500/10 border border-green-500/40 group-hover:border-green-500/60"
+                                    : "bg-slate-800/60 border border-slate-700/50 group-hover:border-slate-600/60"
                             }
                             ${isYou ? "ring-1 ring-blue-500/40" : ""}
                         `}>
@@ -120,12 +125,16 @@ const PlayerList: React.FC<PlayerListProps> = ({
                                 {/* Icono dinámico según fase y estado */}
                                 <div className={`
                                     shrink-0 w-5 h-5 rounded flex items-center justify-center
-                                    ${isActive
-                                        ? "bg-linear-to-br from-green-500 to-green-600"
-                                        : "bg-linear-to-br from-blue-500 to-purple-600"
+                                    ${isDisconnected
+                                        ? "bg-linear-to-br from-orange-500 to-orange-600"
+                                        : isActive
+                                            ? "bg-linear-to-br from-green-500 to-green-600"
+                                            : "bg-linear-to-br from-blue-500 to-purple-600"
                                     }
                                 `}>
-                                    {showMissionIcons ? (
+                                    {isDisconnected ? (
+                                        <WifiOff className="w-3 h-3 text-white animate-pulse" />
+                                    ) : showMissionIcons ? (
                                         isActive ? (
                                             <Check className="w-3 h-3 text-white" />
                                         ) : (
@@ -145,9 +154,15 @@ const PlayerList: React.FC<PlayerListProps> = ({
                                 </div>
                                 {/* Nombre */}
                                 <div className="flex-1 min-w-0">
-                                    <p className={`text-xs font-semibold truncate ${isActive ? "text-green-300" : "text-slate-300"}`}>
+                                    <p className={`text-xs font-semibold truncate ${isDisconnected
+                                            ? "text-orange-300"
+                                            : isActive
+                                                ? "text-green-300"
+                                                : "text-slate-300"
+                                        }`}>
                                         {p.name}
                                         {isYou && <span className="text-blue-400"> •</span>}
+                                        {isDisconnected && <span className="text-orange-400 text-[10px] ml-1">(desconectado)</span>}
                                     </p>
                                 </div>
                                 {/* Botón de expulsar (solo visible para el creador) */}

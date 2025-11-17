@@ -150,6 +150,14 @@ const Lobby: React.FC = () => {
     const leader = roomState.players[roomState.leaderIndex];
     const canStart = roomState.players.length >= 5 && playerId === leader.id;
 
+    // 🐛 Debug: Ver IDs para solucionar problema de inicio
+    console.log("🔍 Debug Lobby:", {
+        playerId,
+        leaderId: leader?.id,
+        canStart,
+        allPlayerIds: roomState.players.map(p => p.id)
+    });
+
     const handleStart = () => {
         if (roomCode) startGame(roomCode);
     };

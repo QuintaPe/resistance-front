@@ -22,6 +22,7 @@ interface SocketContextValue {
     setRoomState: React.Dispatch<React.SetStateAction<PublicState | null>>;
     isReconnecting: boolean; // Estado de reconexión
     notification: string | null; // Notificación actual
+    disconnectedPlayers: string[]; // IDs de jugadores temporalmente desconectados
 
     // Métodos principales
     createRoom: (name: string, callback?: (roomCode: string) => void) => void;
@@ -70,6 +71,7 @@ export const SocketProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     const [spies, setSpies] = useState<string[]>([]);
     const [isReconnecting, setIsReconnecting] = useState(false);
     const [notification, setNotification] = useState<string | null>(null);
+    const [disconnectedPlayers, setDisconnectedPlayers] = useState<string[]>([]); // Jugadores temporalmente desconectados
 
     // =========================
     // 📡 Conexión inicial y reconexión automática
@@ -78,7 +80,6 @@ export const SocketProvider: React.FC<{ children: React.ReactNode }> = ({ childr
         socket.on("connect", () => {
             console.log("🔌 Socket conectado:", socket.id);
             setConnected(true);
-            setPlayerId(socket.id || null);
 
             // 🔄 Intentar reconexión automática
             const { sessionId, roomCode, playerName } = getSessionData();
@@ -86,6 +87,9 @@ export const SocketProvider: React.FC<{ children: React.ReactNode }> = ({ childr
             if (sessionId && roomCode && playerName) {
                 console.log("🔄 Intentando reconexión automática...");
                 setIsReconnecting(true);
+
+                // 🔑 Usar el sessionId como playerId durante la reconexión
+                setPlayerId(sessionId);
 
                 socket.emit(
                     "room:join",
@@ -103,15 +107,19 @@ export const SocketProvider: React.FC<{ children: React.ReactNode }> = ({ childr
                             console.error("❌ Error de reconexión:", response.error);
                             // Limpiar datos si la reconexión falló
                             clearSessionData();
+                            setPlayerId(null);
                             setNotification("No se pudo reconectar. Vuelve a unirte a la sala.");
                             setTimeout(() => setNotification(null), 5000);
                         } else if (response.reconnected) {
                             console.log("✅ Reconexión exitosa!");
+                            // 🔑 El playerId debe ser el sessionId, no el socket.id
+                            setPlayerId(response.playerId || sessionId);
                             setNotification("✅ Reconectado exitosamente");
                             setTimeout(() => setNotification(null), 3000);
                             // El servidor enviará automáticamente game:role y game:update
                         } else {
                             // Reconexión normal sin error pero no es una reconexión de sesión previa
+                            setPlayerId(response.playerId || null);
                             setNotification(null);
                         }
                     }
@@ -155,8 +163,19 @@ export const SocketProvider: React.FC<{ children: React.ReactNode }> = ({ childr
         });
 
         // 📢 Notificación cuando un jugador se desconecta
-        socket.on("player:disconnected", (data: { playerId: string; message: string }) => {
-            console.log("⚠️ Jugador desconectado:", data.message);
+        socket.on("player:disconnected", (data: { playerId: string; message: string; isTemporary?: boolean }) => {
+            console.log("⚠️ Jugador desconectado:", data.message, "Temporal:", data.isTemporary);
+
+            // Si es una desconexión temporal, agregar a la lista de desconectados
+            if (data.isTemporary) {
+                setDisconnectedPlayers(prev => {
+                    if (!prev.includes(data.playerId)) {
+                        return [...prev, data.playerId];
+                    }
+                    return prev;
+                });
+            }
+
             setNotification(data.message);
             setTimeout(() => setNotification(null), 5000);
         });
@@ -164,6 +183,10 @@ export const SocketProvider: React.FC<{ children: React.ReactNode }> = ({ childr
         // 📢 Notificación cuando un jugador se reconecta
         socket.on("player:reconnected", (data: { playerId: string; message: string }) => {
             console.log("✅ Jugador reconectado:", data.message);
+
+            // Remover de la lista de desconectados
+            setDisconnectedPlayers(prev => prev.filter(id => id !== data.playerId));
+
             setNotification(data.message);
             setTimeout(() => setNotification(null), 3000);
         });
@@ -210,12 +233,14 @@ export const SocketProvider: React.FC<{ children: React.ReactNode }> = ({ childr
                 "room:create",
                 { name },
                 (response: { roomCode: string; playerId: string; sessionId: string }) => {
-                    setPlayerId(response.playerId);
+                    // 🔑 El playerId debe ser el sessionId para mantener consistencia
+                    setPlayerId(response.sessionId);
                     // 💾 Guardar sessionId para reconexión
                     saveSessionData(response.sessionId, response.roomCode, name);
                     console.log("💾 Sesión guardada:", {
                         sessionId: response.sessionId,
                         roomCode: response.roomCode,
+                        playerId: response.sessionId,
                     });
                     if (callback) callback(response.roomCode);
                 }
@@ -238,13 +263,15 @@ export const SocketProvider: React.FC<{ children: React.ReactNode }> = ({ childr
                     if (response.error) {
                         callback?.(false, response.error);
                     } else {
-                        setPlayerId(response.playerId || null);
+                        // 🔑 El playerId debe ser el sessionId para mantener consistencia
+                        setPlayerId(response.sessionId || null);
                         // 💾 Guardar sessionId para reconexión
                         if (response.sessionId) {
                             saveSessionData(response.sessionId, roomCode, name);
                             console.log("💾 Sesión guardada:", {
                                 sessionId: response.sessionId,
                                 roomCode: roomCode,
+                                playerId: response.sessionId,
                             });
                         }
                         callback?.(true);
@@ -311,6 +338,7 @@ export const SocketProvider: React.FC<{ children: React.ReactNode }> = ({ childr
         setRole(null);
         setSpies([]);
         setRoomState(null);
+        setDisconnectedPlayers([]); // Limpiar lista de desconectados
         // Desconectar y reconectar para limpiar el socket
         socket.disconnect();
         socket.connect();
@@ -335,12 +363,10 @@ export const SocketProvider: React.FC<{ children: React.ReactNode }> = ({ childr
 
     const changeLeader = useCallback(
         (roomCode: string, newLeaderIndex: number, callback?: (ok: boolean, error?: string) => void) => {
-            console.log('📡 Emitiendo room:changeLeader:', { roomCode, newLeaderIndex });
             socket.emit(
                 "room:changeLeader",
                 { roomCode, newLeaderIndex },
                 (response: { success?: boolean; error?: string }) => {
-                    console.log('📡 Respuesta de room:changeLeader:', response);
                     if (response.error) {
                         callback?.(false, response.error);
                     } else {
@@ -365,6 +391,7 @@ export const SocketProvider: React.FC<{ children: React.ReactNode }> = ({ childr
         setRoomState,
         isReconnecting,
         notification,
+        disconnectedPlayers,
         createRoom,
         joinRoom,
         startGame,

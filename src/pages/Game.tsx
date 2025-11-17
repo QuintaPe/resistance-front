@@ -29,7 +29,7 @@ const Game: React.FC = () => {
         missionAct,
     } = useGame();
 
-    const { role, spies, playerId, requestRole, leaveRoom, restartGame, returnToLobby, kickPlayer, socket } = useSocket();
+    const { role, spies, playerId, requestRole, leaveRoom, restartGame, returnToLobby, kickPlayer, socket, disconnectedPlayers } = useSocket();
     const { showAlert, showConfirm } = useModal();
     const [selectedTeam, setSelectedTeam] = useState<string[]>([]);
 
@@ -273,11 +273,11 @@ const Game: React.FC = () => {
     // Handler para expulsar jugador (creador puede en cualquier momento)
     const handleKickPlayer = (targetPlayerId: string) => {
         if (!roomCode) return;
-        
+
         // Buscar el nombre del jugador
         const player = roomState?.players.find(p => p.id === targetPlayerId);
         const playerName = player?.name || "este jugador";
-        
+
         showConfirm(
             `¿Estás seguro de expulsar a ${playerName}?`,
             () => {
@@ -398,6 +398,7 @@ const Game: React.FC = () => {
                             playersActed={roomState.playersActed || []}
                             isCreator={isCreator}
                             onKickPlayer={handleKickPlayer}
+                            disconnectedPlayers={disconnectedPlayers}
                         />
                     </div>
 
