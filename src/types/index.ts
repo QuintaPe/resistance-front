@@ -22,3 +22,12 @@ export type {
 // Tipos de notificación
 export type { NotificationType, PlayerNotification } from "./notification";
 
+// Tipos de modal
+export type {
+    ModalAlertType,
+    ModalContextType,
+    ModalState,
+    AlertModalProps,
+    ConfirmModalProps
+} from "./modal";
+

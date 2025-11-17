@@ -1,9 +1,7 @@
 import React, { useState, useMemo, useEffect, useRef } from "react";
 import { useParams, useNavigate } from "react-router";
-import { useGame } from "../hooks/useGame";
-import { useSocket } from "../context/SocketContext";
-import { useModal } from "../context/ModalContext";
-import { isPlayerCreator } from "../utils";
+import { useGame, useKickedListener, useIsCreator, useKickPlayer } from "../hooks";
+import { useSocket, useModal } from "../context";
 import { LoadingScreen, AnimatedBackground } from "../components/common";
 import { TeamSelector, VoteButtons } from "../components/game";
 import { MissionAction, MissionTracker, MissionSuspense, MissionDetailModal } from "../components/mission";
@@ -27,9 +25,14 @@ const Game: React.FC = () => {
         missionAct,
     } = useGame();
 
-    const { role, spies, playerId, requestRole, leaveRoom, restartGame, returnToLobby, kickPlayer, socket, disconnectedPlayers } = useSocket();
+    const { role, spies, playerId, requestRole, leaveRoom, restartGame, returnToLobby, disconnectedPlayers } = useSocket();
     const { showAlert, showConfirm } = useModal();
     const [selectedTeam, setSelectedTeam] = useState<string[]>([]);
+
+    // Hooks de lógica compartida
+    useKickedListener();
+    const isCreator = useIsCreator();
+    const handleKickPlayerAction = useKickPlayer();
 
     // Estado para el componente de suspenso
     const [showSuspense, setShowSuspense] = useState(false);
@@ -103,19 +106,6 @@ const Game: React.FC = () => {
             }
         }
     }, [phase, roomCode, navigate, showSuspense, roomState]);
-
-    // Escuchar cuando nos expulsan
-    useEffect(() => {
-        const handleKicked = () => {
-            navigate("/");
-        };
-
-        socket.on("player:kicked", handleKicked);
-
-        return () => {
-            socket.off("player:kicked", handleKicked);
-        };
-    }, [socket, navigate]);
 
     // Calcular resultados a mostrar en el tracker (ocultar el último si hay suspense o resultado nuevo)
     const visibleResults = useMemo(() => {
@@ -222,31 +212,6 @@ const Game: React.FC = () => {
         );
     };
 
-    // Detectar si soy el creador
-    const isCreator = isPlayerCreator(roomState, playerId);
-
-    // Handler para expulsar jugador (creador puede en cualquier momento)
-    const handleKickPlayer = (targetPlayerId: string) => {
-        if (!roomCode) return;
-
-        // Buscar el nombre del jugador
-        const player = roomState?.players.find(p => p.id === targetPlayerId);
-        const playerName = player?.name || "este jugador";
-
-        showConfirm(
-            `¿Estás seguro de expulsar a ${playerName}?`,
-            () => {
-                kickPlayer(roomCode, targetPlayerId, (ok, error) => {
-                    if (!ok && error) {
-                        showAlert(error, "error", "Error al expulsar");
-                    }
-                });
-            },
-            "Expulsar jugador",
-            "Expulsar"
-        );
-    };
-
     return (
         <div className="relative min-h-screen p-3 sm:p-6 overflow-hidden">
             <AnimatedBackground />
@@ -338,7 +303,12 @@ const Game: React.FC = () => {
                             proposedTeam={roomState.proposedTeam || []}
                             playersActed={roomState.playersActed || []}
                             isCreator={isCreator}
-                            onKickPlayer={handleKickPlayer}
+                            onKickPlayer={(targetPlayerId: string) => {
+                                if (!roomCode) return;
+                                const player = roomState?.players.find(p => p.id === targetPlayerId);
+                                const playerName = player?.name || "este jugador";
+                                handleKickPlayerAction(roomCode, targetPlayerId, playerName);
+                            }}
                             disconnectedPlayers={disconnectedPlayers}
                         />
                     </div>

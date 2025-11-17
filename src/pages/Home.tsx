@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router";
-import { useSocket } from "../context/SocketContext";
+import { useSocket } from "../context";
 import { getSessionData } from "../utils";
 import { TEXT_LIMITS, TIMINGS } from "../constants";
 import { AnimatedBackground } from "../components/common";

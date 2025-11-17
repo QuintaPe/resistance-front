@@ -37,8 +37,8 @@ const MissionDetailModal: React.FC<MissionDetailModalProps> = ({
 
                 <div
                     className={`relative backdrop-blur-xl rounded-xl shadow-2xl border-2 transition-all duration-300 ${result.passed
-                            ? "bg-green-500/15 border-green-500/40"
-                            : "bg-red-500/15 border-red-500/40"
+                        ? "bg-green-500/15 border-green-500/40"
+                        : "bg-red-500/15 border-red-500/40"
                         }`}
                 >
                     {/* Header */}
@@ -47,8 +47,8 @@ const MissionDetailModal: React.FC<MissionDetailModalProps> = ({
                             <div className="flex items-center gap-3">
                                 <div
                                     className={`w-12 h-12 rounded-lg flex items-center justify-center ${result.passed
-                                            ? "bg-linear-to-br from-green-500 to-green-600"
-                                            : "bg-linear-to-br from-red-500 to-red-600"
+                                        ? "bg-linear-to-br from-green-500 to-green-600"
+                                        : "bg-linear-to-br from-red-500 to-red-600"
                                         }`}
                                 >
                                     <Target className="w-6 h-6 text-white" />

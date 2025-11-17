@@ -29,7 +29,7 @@ const TeamSelector: React.FC<TeamSelectorProps> = ({
         <div className="w-full max-w-lg">
             {/* Header estilo dossier */}
             <div className="flex items-center justify-center gap-2 mb-4">
-                <div className="h-px flex-1 bg-gradient-to-r from-transparent to-blue-500/50"></div>
+                <div className="h-px flex-1 bg-linear-to-r from-transparent to-blue-500/50"></div>
                 <div className="flex items-center gap-2 px-3 py-1 bg-blue-500/10 border border-blue-500/30 rounded">
                     <Users className="w-4 h-4 text-blue-400" />
                     <span className="text-blue-300 text-xs font-bold uppercase tracking-widest">Seleccionar Agentes</span>
@@ -39,7 +39,7 @@ const TeamSelector: React.FC<TeamSelectorProps> = ({
                         </span>
                     </div>
                 </div>
-                <div className="h-px flex-1 bg-gradient-to-l from-transparent to-blue-500/50"></div>
+                <div className="h-px flex-1 bg-linear-to-l from-transparent to-blue-500/50"></div>
             </div>
 
             {/* Grid de jugadores */}
@@ -57,17 +57,17 @@ const TeamSelector: React.FC<TeamSelectorProps> = ({
                         >
                             {/* Efecto de brillo */}
                             <div className={`absolute inset-0 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300 ${isSelected
-                                    ? "bg-gradient-to-r from-blue-500/0 via-blue-500/30 to-purple-500/0"
-                                    : canSelect
-                                        ? "bg-gradient-to-r from-slate-500/0 via-slate-500/10 to-slate-500/0"
-                                        : ""
+                                ? "bg-linear-to-r from-blue-500/0 via-blue-500/30 to-purple-500/0"
+                                : canSelect
+                                    ? "bg-linear-to-r from-slate-500/0 via-slate-500/10 to-slate-500/0"
+                                    : ""
                                 }`}></div>
 
                             {/* Card del agente */}
                             <div className={`
                                 relative backdrop-blur-sm rounded-lg p-3 transition-all duration-300
                                 ${isSelected
-                                    ? "bg-gradient-to-br from-blue-500/20 to-purple-500/20 border-2 border-blue-400/50 scale-[1.02]"
+                                    ? "bg-linear-to-br from-blue-500/20 to-purple-500/20 border-2 border-blue-400/50 scale-[1.02]"
                                     : canSelect
                                         ? "bg-slate-800/60 border border-slate-700/50 hover:border-slate-600/60 hover:bg-slate-800/80"
                                         : "bg-slate-800/30 border border-slate-700/30 opacity-50 cursor-not-allowed"
@@ -76,9 +76,9 @@ const TeamSelector: React.FC<TeamSelectorProps> = ({
                                 <div className="flex items-center gap-2">
                                     {/* Número/Check */}
                                     <div className={`
-                                        flex-shrink-0 w-6 h-6 rounded flex items-center justify-center
+                                        shrink-0 w-6 h-6 rounded flex items-center justify-center
                                         ${isSelected
-                                            ? "bg-gradient-to-br from-blue-500 to-purple-600"
+                                            ? "bg-linear-to-br from-blue-500 to-purple-600"
                                             : canSelect
                                                 ? "bg-slate-700/70"
                                                 : "bg-slate-800/50"
@@ -95,10 +95,10 @@ const TeamSelector: React.FC<TeamSelectorProps> = ({
                                     {/* Nombre */}
                                     <div className="flex-1 min-w-0">
                                         <p className={`text-sm font-semibold truncate ${isSelected
-                                                ? "text-white"
-                                                : canSelect
-                                                    ? "text-slate-300"
-                                                    : "text-slate-600"
+                                            ? "text-white"
+                                            : canSelect
+                                                ? "text-slate-300"
+                                                : "text-slate-600"
                                             }`}>
                                             {player.name}
                                         </p>

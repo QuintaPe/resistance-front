@@ -1,39 +1,23 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router";
-import { useSocket } from "../context/SocketContext";
-import { useModal } from "../context/ModalContext";
+import { useSocket, useModal } from "../context";
+import { useKickedListener, useIsCreator, useKickPlayer } from "../hooks";
 import { MissionTracker } from "../components/mission";
 import { Trophy, Loader2, BarChart3, Drama, Home, UserX, Shield, CheckCircle, XCircle, RotateCcw, Users } from "lucide-react";
 
 const Reveal: React.FC = () => {
     const navigate = useNavigate();
     const { roomCode } = useParams<{ roomCode: string }>();
-    const { roomState, spies, playerId, restartGame, returnToLobby, kickPlayer, socket } = useSocket();
-    const { showAlert, showConfirm } = useModal();
+    const { roomState, spies, playerId, restartGame, returnToLobby } = useSocket();
     const [isRestarting, setIsRestarting] = useState(false);
     const [restartError, setRestartError] = useState<string | null>(null);
     const [isReturningToLobby, setIsReturningToLobby] = useState(false);
     const [returnToLobbyError, setReturnToLobbyError] = useState<string | null>(null);
 
-    // Detectar si soy el creador
-    const isCreator = roomState?.creatorId === playerId;
-
-    // Handler para expulsar jugador
-    const handleKickPlayer = (targetPlayerId: string, playerName: string) => {
-        if (!roomCode) return;
-        showConfirm(
-            `¿Estás seguro de expulsar a ${playerName}?`,
-            () => {
-                kickPlayer(roomCode, targetPlayerId, (ok, error) => {
-                    if (!ok && error) {
-                        showAlert(error, "error", "Error al expulsar");
-                    }
-                });
-            },
-            "Expulsar jugador",
-            "Expulsar"
-        );
-    };
+    // Hooks de lógica compartida
+    useKickedListener();
+    const isCreator = useIsCreator();
+    const handleKickPlayer = useKickPlayer();
 
     // Redirigir al lobby cuando se reinicia el juego
     useEffect(() => {
@@ -45,19 +29,6 @@ const Reveal: React.FC = () => {
             }
         }
     }, [roomState?.phase, roomCode, navigate]);
-
-    // Escuchar cuando nos expulsan
-    useEffect(() => {
-        const handleKicked = () => {
-            navigate("/");
-        };
-
-        socket.on("player:kicked", handleKicked);
-
-        return () => {
-            socket.off("player:kicked", handleKicked);
-        };
-    }, [socket, navigate]);
 
     const handleRestart = () => {
         if (!roomState?.code) return;
@@ -346,9 +317,9 @@ const Reveal: React.FC = () => {
                                             </div>
                                         </div>
                                         {/* Botón de expulsar (solo visible para el creador) */}
-                                        {canKick && (
+                                        {canKick && roomCode && (
                                             <button
-                                                onClick={() => handleKickPlayer(p.id, p.name)}
+                                                onClick={() => handleKickPlayer(roomCode, p.id, p.name)}
                                                 className="shrink-0 w-8 h-8 rounded bg-red-500/20 hover:bg-red-500/40 border border-red-500/40 hover:border-red-500/60 flex items-center justify-center transition-all opacity-0 group-hover/player:opacity-100"
                                                 title={`Expulsar a ${p.name}`}
                                             >

@@ -2,8 +2,7 @@ import React from "react";
 import { createRoot } from "react-dom/client";
 import { BrowserRouter } from "react-router";
 import App from "./App";
-import { SocketProvider } from "./context/SocketContext";
-import { ModalProvider } from "./context/ModalContext";
+import { SocketProvider, ModalProvider } from "./context";
 import "./index.css";
 
 const container = document.getElementById("root");

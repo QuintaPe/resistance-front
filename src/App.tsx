@@ -4,7 +4,7 @@ import Home from "./pages/Home";
 import Lobby from "./pages/Lobby";
 import Game from "./pages/Game";
 import Reveal from "./pages/Reveal";
-import { useSocket } from "./context/SocketContext";
+import { useSocket } from "./context";
 import { LoadingScreen } from "./components/common";
 import { ReconnectionNotification } from "./components/layout";
 import { UserSearch } from "lucide-react";

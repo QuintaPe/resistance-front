@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router";
-import { useSocket } from "../context/SocketContext";
-import { useModal } from "../context/ModalContext";
+import { useSocket, useModal } from "../context";
+import { useKickedListener, useIsCreator } from "../hooks";
 import { MIN_PLAYERS, TIMINGS } from "../constants";
 import { LoadingScreen, AnimatedBackground } from "../components/common";
 import { Clipboard, Check, Crown, Users, Rocket, Clock, Lightbulb, LogOut, UserX, ChevronUp, WifiOff } from "lucide-react";
@@ -9,11 +9,15 @@ import { Clipboard, Check, Crown, Users, Rocket, Clock, Lightbulb, LogOut, UserX
 const Lobby: React.FC = () => {
     const { roomCode } = useParams<{ roomCode: string }>();
     const navigate = useNavigate();
-    const { roomState, playerId, startGame, leaveRoom, kickPlayer, changeLeader, socket, disconnectedPlayers } = useSocket();
+    const { roomState, playerId, startGame, leaveRoom, kickPlayer, changeLeader, disconnectedPlayers } = useSocket();
     const { showAlert, showConfirm } = useModal();
     const [copied, setCopied] = useState(false);
     const [kickingPlayer, setKickingPlayer] = useState<string | null>(null);
     const [changingLeader, setChangingLeader] = useState(false);
+
+    // Hooks de lógica compartida
+    useKickedListener();
+    const isCreator = useIsCreator();
 
     // Navegar automáticamente cuando el juego comience
     useEffect(() => {
@@ -22,19 +26,6 @@ const Lobby: React.FC = () => {
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [roomState?.phase, roomCode, navigate]);
-
-    // Escuchar cuando nos expulsan
-    useEffect(() => {
-        const handleKicked = () => {
-            navigate("/");
-        };
-
-        socket.on("player:kicked", handleKicked);
-
-        return () => {
-            socket.off("player:kicked", handleKicked);
-        };
-    }, [socket, navigate]);
 
     const handleCopyCode = () => {
         if (roomState?.code) {
@@ -88,9 +79,6 @@ const Lobby: React.FC = () => {
             }
         });
     };
-
-    // Detectar si soy el creador
-    const isCreator = roomState?.creatorId === playerId;
 
     if (!roomState) {
         return (
